@@ -1,0 +1,34 @@
+<view class="showcase-page">
+  <view class="hero">
+    <view class="title">选择你的代表卡片</view>
+    <view class="desc">最多展示6张，排在第一张的卡片将成为主卡</view>
+    <view class="counter">{{selected.length}} / 6</view>
+  </view>
+
+  <view wx:if="{{selected.length}}" class="selected-section">
+    <view class="section-title">展示顺序</view>
+    <view class="selected-row">
+      <view class="selected-item" wx:for="{{selected}}" wx:key="*this">
+        <view class="order">{{index + 1}}</view>
+        <view class="mini-actions">
+          <text data-id="{{item}}" data-direction="-1" bindtap="move">‹</text>
+          <text data-id="{{item}}" data-direction="1" bindtap="move">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title all-title">全部卡片</view>
+  <view wx:if="{{displayCards.length}}" class="grid">
+    <view class="card {{item.selectedOrder ? 'selected' : ''}}" wx:for="{{displayCards}}" wx:key="viewId" data-id="{{item.viewId}}" bindtap="toggleCard">
+      <image wx:if="{{item.frontImage || item.coverImage || item.imageUrl}}" src="{{item.frontImage || item.coverImage || item.imageUrl}}" mode="aspectFill"/>
+      <view wx:else class="placeholder"><text>S</text><text>{{item.playerSnapshot.name || 'SPORTLIGHT'}}</text></view>
+      <view wx:if="{{item.selectedOrder}}" class="selected-badge">{{item.selectedOrder}}</view>
+    </view>
+  </view>
+  <view wx:else class="empty">暂无可展示卡片</view>
+
+  <view class="bottom-bar">
+    <button loading="{{saving}}" bindtap="save">保存主页展柜</button>
+  </view>
+</view>

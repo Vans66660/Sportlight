@@ -1,0 +1,126 @@
+<view class="generator-page">
+  <view class="generator-head">
+    <view class="generator-kicker">CERTIFIED MATCH CARD</view>
+    <view class="generator-title">生成你的比赛卡</view>
+    <view class="generator-desc">系统会在云端合成正反两面高清卡面，生成后自动存入卡包。点击下方按钮即可生成。</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="state-card">正在读取比赛卡信息…</view>
+  <view wx:elif="{{errorMessage}}" class="state-card error">
+    <view>{{errorMessage}}</view>
+    <button class="retry-btn" bindtap="loadCard">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view class="status-strip">
+      <view>
+        <view class="status-title">{{card.matchSnapshot.eventTitle || '认证比赛'}}</view>
+        <view class="status-note">{{playerName}} · {{card.playerSnapshot.teamName || '参赛球队'}}</view>
+      </view>
+      <view class="status-pill {{generated ? 'done' : ''}}">{{generated ? '已生成' : (needsRegeneration ? '待重新生成' : '待生成')}}</view>
+    </view>
+
+    <view wx:if="{{needsPortrait}}" class="portrait-required">
+      <view class="portrait-required-title">还没有可用的球星形象</view>
+      <view class="portrait-required-note">请先上传照片并完成抠图、精修和人物位置设置，再回来生成卡片。</view>
+      <button bindtap="goPortraitSetup">去设置球星形象</button>
+    </view>
+
+    <view wx:if="{{portraits.length > 1}}" class="portrait-picker">
+      <view class="portrait-picker-head">
+        <view class="portrait-picker-title">选择本张卡使用的形象</view>
+        <view class="portrait-picker-count">{{portraits.length}} / 3</view>
+      </view>
+      <scroll-view class="portrait-list" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="portrait-list-inner">
+          <view
+            wx:for="{{portraits}}"
+            wx:key="_portraitId"
+            class="portrait-option {{selectedPortraitId === item._portraitId ? 'active' : ''}}"
+            data-portrait-id="{{item._portraitId}}"
+            bindtap="selectPortrait"
+          >
+            <image src="{{item.cutoutFileID}}" mode="aspectFit"></image>
+            <view class="portrait-option-label">{{item._portraitLabel}}</view>
+            <view wx:if="{{selectedPortraitId === item._portraitId}}" class="portrait-check">✓</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view wx:if="{{!needsPortrait}}" class="preview-tabs">
+      <view class="{{activeSide === 'front' ? 'active' : ''}}" data-side="front" bindtap="switchSide">正面</view>
+      <view class="{{activeSide === 'back' ? 'active' : ''}}" data-side="back" bindtap="switchSide">背面</view>
+    </view>
+
+    <view wx:if="{{!needsPortrait}}" class="live-preview-shell">
+      <view wx:if="{{activeSide === 'front'}}" class="live-card">
+        <image class="live-template" src="{{frontTemplateSrc}}" mode="scaleToFill"></image>
+        <view class="live-player-viewport" style="{{playerViewportStyle}}">
+          <image class="live-player" src="{{portraitPreviewSrc || portrait.cutoutFileID}}" style="{{portraitPreviewStyle}}" mode="scaleToFill"></image>
+        </view>
+        <view class="live-front-team">{{previewTeam}}</view>
+        <view class="live-front-name">{{playerName}}</view>
+        <view class="live-front-position">{{previewPosition}}</view>
+      </view>
+      <view wx:else class="live-card">
+        <image class="live-template" src="{{backTemplateSrc}}" mode="scaleToFill"></image>
+        <image wx:if="{{card.matchSnapshot.organizerAvatar}}" class="live-organizer live-organizer-back" src="{{card.matchSnapshot.organizerAvatar}}" mode="aspectFill"></image>
+        <view class="live-back-event">{{previewEvent}}</view>
+        <view class="live-back-match">{{previewMatch}}</view>
+        <view class="live-back-date">{{previewDate}}</view>
+        <view class="live-back-stats">
+          <view wx:for="{{previewStats}}" wx:key="label">
+            <text>{{item.value}}</text>
+            <text>{{item.label}}</text>
+          </view>
+        </view>
+        <view class="live-back-card-id">{{previewCardId}}</view>
+      </view>
+      <view wx:if="{{rendering || saving}}" class="render-mask">
+        <view class="progress-bar-bg">
+          <view class="progress-bar-fill" style="width:{{progress}}%"></view>
+        </view>
+        <text>{{progressText}}</text>
+      </view>
+    </view>
+    <view wx:if="{{previewWarning}}" class="preview-warning">
+      <text>{{previewWarning}}</text>
+      <button bindtap="retryPreview">重试高清预览</button>
+    </view>
+    <view wx:if="{{!needsPortrait && activeSide === 'front'}}" class="layout-controls">
+      <view class="layout-controls-title">
+        <text>调整人物位置</text>
+        <text>预览与成品完全一致</text>
+      </view>
+      <view class="layout-control-row">
+        <text>大小</text>
+        <slider min="{{layoutScaleMin}}" max="{{layoutScaleMax}}" step="0.01" value="{{layoutScale}}" activeColor="#ff641e" backgroundColor="#343434" block-size="18" bindchanging="changeLayoutScale" bindchange="changeLayoutScale"></slider>
+        <text>{{layoutScalePercent}}%</text>
+      </view>
+      <view class="layout-control-row">
+        <text>左右</text>
+        <slider min="-13" max="16" step="1" value="{{layoutOffsetXPercent}}" activeColor="#ff641e" backgroundColor="#343434" block-size="18" bindchanging="changeLayoutX" bindchange="changeLayoutX"></slider>
+        <text>{{layoutOffsetXPercent}}</text>
+      </view>
+      <view class="layout-control-row">
+        <text>上下</text>
+        <slider min="-12" max="13" step="1" value="{{layoutOffsetYPercent}}" activeColor="#ff641e" backgroundColor="#343434" block-size="18" bindchanging="changeLayoutY" bindchange="changeLayoutY"></slider>
+        <text>{{layoutOffsetYPercent}}</text>
+      </view>
+    </view>
+    <view class="export-canvas-host" aria-hidden="true">
+      <canvas type="2d" id="frontCanvas" class="export-canvas"></canvas>
+      <canvas type="2d" id="backCanvas" class="export-canvas"></canvas>
+    </view>
+
+    <view wx:if="{{!needsPortrait}}" class="generation-note">
+      <view class="note-dot"></view>
+      <view>正反面会以高清图片保存；确认生成后卡片将永久锁定，不能更换肖像、调整位置或重新设计。</view>
+    </view>
+
+    <button wx:if="{{!needsPortrait}}" class="generate-btn" loading="{{saving}}" disabled="{{rendering || saving}}" bindtap="generateAndSave">
+      确认并生成比赛卡
+    </button>
+  </block>
+</view>

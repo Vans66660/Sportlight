@@ -1,0 +1,123 @@
+<view class="container">
+  <view class="section-title">账号与安全</view>
+  <view class="status-card">
+    <view class="status-row">
+      <text class="status-label">当前身份</text>
+      <text class="status-value">{{accountIdentityLabel}}</text>
+    </view>
+    <view class="status-row">
+      <text class="status-label">微信账号</text>
+      <text class="status-value green">已绑定</text>
+    </view>
+    <view class="status-row tappable-row" bindtap="goVerifyIdentity">
+      <text class="status-label">实名认证</text>
+      <view class="status-action">
+        <text class="status-value {{accountIdentityVerified ? 'green' : 'gray'}}">{{accountIdentityVerified ? '已实名' : '未认证'}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+    <view wx:if="{{accountPhoneVerified}}" class="status-row tappable-row" bindtap="showPhoneBoundInfo">
+      <text class="status-label">手机号</text>
+      <view class="status-action">
+        <text class="status-value green">已绑定</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+    <button wx:else class="status-row phone-bind-btn" open-type="getPhoneNumber" bindgetphonenumber="bindPhone">
+      <text class="status-label">手机号</text>
+      <view class="status-action">
+        <text class="status-value gray">未绑定</text>
+        <text class="phone-bind-text">去绑定</text>
+      </view>
+    </button>
+  </view>
+
+  <view class="section-title">常用功能</view>
+  <view class="menu-card">
+    <view class="menu-item" bindtap="goEdit">
+      <view class="menu-left">
+        <view class="menu-icon">✎</view>
+        <text class="menu-text">{{userType === 'boss' ? '编辑主办方资料' : userType === 'venue' ? '编辑球馆主页' : '编辑运动员资料'}}</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="menu-item" bindtap="goMyPosts">
+      <view class="menu-left">
+        <view class="menu-icon">◉</view>
+        <text class="menu-text">我的动态</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="menu-item" bindtap="goMyOrders">
+      <view class="menu-left">
+        <view class="menu-icon">▣</view>
+        <text class="menu-text">{{userType === 'boss' ? '比赛与合作管理' : userType === 'venue' ? '球馆管理工作台' : '我的日程'}}</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="menu-item" bindtap="goMessages">
+      <view class="menu-left">
+        <image class="menu-icon-img" src="/images/icons/message.png" mode="aspectFit" />
+        <text class="menu-text">消息与通知</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="section-title">关于与协议</view>
+  <view class="menu-card">
+    <view class="menu-item" bindtap="showPrivacySettings">
+      <view class="menu-left">
+        <view class="menu-icon">◎</view>
+        <text class="menu-text">隐私授权管理</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="menu-item" bindtap="showAgreement">
+      <view class="menu-left">
+        <view class="menu-icon">☰</view>
+        <text class="menu-text">用户协议</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="menu-item" bindtap="showPrivacy">
+      <view class="menu-left">
+        <view class="menu-icon">⌾</view>
+        <text class="menu-text">隐私政策</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="section-title">账号操作</view>
+  <view class="menu-card">
+    <view class="menu-item" bindtap="switchSubject">
+      <view class="menu-left">
+        <view class="menu-icon switch-icon">↻</view>
+        <text class="menu-text">切换主体</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="menu-item" bindtap="logout">
+      <view class="menu-left">
+        <view class="menu-icon logout-icon">⎋</view>
+        <text class="menu-text logout-text">退出账号</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="menu-item" bindtap="requestAccountCancellation">
+      <view class="menu-left">
+        <view class="menu-icon logout-icon">!</view>
+        <text class="menu-text logout-text">注销账号申请</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,248 @@
+.container {
+  min-height: 100vh;
+  background-color: #0F0F0F;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #111111;
+  padding: 20rpx 28rpx;
+}
+
+.back-btn {
+  font-size: 48rpx;
+  color: #FFFFFF;
+  width: 60rpx;
+}
+
+.header-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.header-right { width: 60rpx; }
+
+/* 老板信息卡 */
+.hero-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 28rpx 32rpx;
+  background-color: #111111;
+}
+
+.boss-avatar-wrap { margin-bottom: 20rpx; }
+
+.boss-logo {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+}
+
+.boss-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 48rpx;
+  font-weight: 700;
+  text-align: center;
+  line-height: 120rpx;
+}
+
+.boss-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 10rpx;
+}
+
+.boss-meta {
+  font-size: 26rpx;
+  color: #888888;
+  margin-bottom: 20rpx;
+}
+
+.badge-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.badge {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.badge.verified { background-color: #0A2A1A; color: #3DBB8A; }
+.badge.unverified { background-color: #1E1E1E; color: #555555; }
+
+/* 统计 */
+.stat-row {
+  display: flex;
+  background-color: #1A1A1A;
+  margin: 24rpx 28rpx;
+  border-radius: 20rpx;
+  padding: 28rpx 0;
+}
+
+.stat-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stat-divider {
+  width: 1rpx;
+  background-color: #2A2A2A;
+}
+
+.stat-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #FF6B1A;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #888888;
+}
+
+/* 详细介绍 */
+.desc-section {
+  margin: 0 28rpx 24rpx;
+  background-color: #1A1A1A;
+  border-radius: 20rpx;
+  padding: 24rpx;
+}
+
+.desc-text {
+  font-size: 26rpx;
+  color: #AAAAAA;
+  line-height: 1.7;
+}
+
+/* 最近动态 */
+.post-list {
+  padding: 0 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  padding-bottom: 40rpx;
+}
+
+.mini-post {
+  background-color: #1A1A1A;
+  border-radius: 20rpx;
+  padding: 20rpx 24rpx;
+}
+
+.mini-post-type {
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+  margin-bottom: 12rpx;
+}
+
+.type-match_result { color: #D85A30; background-color: #2A1008; }
+.type-training { color: #3DBB8A; background-color: #0A2A1A; }
+.type-collab { color: #5BA8D4; background-color: #0A1E2A; }
+.type-general { color: #888888; background-color: #222222; }
+.type-event { color: #CC8800; background-color: #2A1F00; }
+
+.mini-post-content {
+  font-size: 26rpx;
+  color: #DDDDDD;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-bottom: 12rpx;
+}
+
+.mini-post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mini-post-time { font-size: 22rpx; color: #555555; }
+.mini-post-likes { font-size: 22rpx; color: #555555; }
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+  padding: 0 28rpx;
+  margin-bottom: 16rpx;
+}
+
+.order-list {
+  padding: 0 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.order-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background-color: #1A1A1A;
+  border-radius: 20rpx;
+  padding: 20rpx;
+}
+
+.order-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.order-icon.match { background-color: #1A2A1A; }
+.order-icon.ad { background-color: #1A1A2A; }
+
+.order-info { flex: 1; min-width: 0; }
+
+.order-title {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  margin-bottom: 6rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-meta { font-size: 22rpx; color: #555555; }
+
+.order-status {
+  font-size: 22rpx;
+  padding: 6rpx 14rpx;
+  border-radius: 16rpx;
+  flex-shrink: 0;
+}
+
+.status-open { background-color: rgba(255,107,26,0.15); color: #FF6B1A; }
+.status-locked { background-color: #1A1A2A; color: #5BA8D4; }
+.status-done { background-color: #0A2A1A; color: #3DBB8A; }
+.status-cancelled { background-color: #2A1A1A; color: #888888; }
+
+.empty-box {
+  padding: 60rpx 28rpx;
+  text-align: center;
+  color: #555555;
+  font-size: 26rpx;
+}

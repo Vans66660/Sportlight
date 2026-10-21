@@ -1,0 +1,40 @@
+<view class="detail-page">
+  <view wx:if="{{loading}}" class="state">正在打开卡片...</view>
+  <block wx:elif="{{card}}">
+    <view class="detail-head">
+      <view class="eyebrow">SPORTLIGHT COLLECTION</view>
+      <view class="title">{{card.playerSnapshot.name || card.title || '我的比赛卡'}}</view>
+      <view class="subtitle">{{card.matchSnapshot.eventTitle || card.matchSnapshot.title || '认证参赛卡'}}</view>
+    </view>
+
+    <view class="card-stage" bindtap="flipCard">
+      <view class="card-shell {{side === 'back' ? 'show-back' : ''}}">
+        <view class="card-face card-front">
+          <image wx:if="{{card.frontImage || card.coverImage || card.imageUrl}}" src="{{card.frontImage || card.coverImage || card.imageUrl}}" mode="aspectFit"/>
+          <view wx:else class="card-pending"><text>S</text><text>卡片正在生成</text></view>
+        </view>
+        <view class="card-face card-back">
+          <image wx:if="{{card.backImage}}" src="{{card.backImage}}" mode="aspectFit"/>
+          <view wx:else class="card-pending back"><text>本场记录</text><text>{{card.playerSnapshot.teamName || 'SPORTLIGHT'}}</text></view>
+        </view>
+      </view>
+    </view>
+    <view class="flip-tip">点击卡片查看{{side === 'front' ? '背面' : '正面'}}</view>
+
+    <view class="actions">
+      <button wx:if="{{card.frontImage || card.coverImage || card.imageUrl}}" class="action secondary" bindtap="previewImage">查看大图</button>
+      <button wx:else class="action secondary" bindtap="retryGeneration">生成卡面</button>
+      <button wx:if="{{!shareReady}}" loading="{{preparingShare}}" class="action primary" bindtap="prepareShare">分享卡片</button>
+      <button wx:else class="action primary" open-type="share">发送给朋友</button>
+    </view>
+    <view wx:if="{{card.frontImage || card.backImage}}" class="share-ready">卡片已生成并锁定，卡面与比赛快照不可修改</view>
+    <view wx:if="{{shareReady}}" class="share-ready">分享页已生成，只会公开卡面和卡片上的比赛信息</view>
+    <view class="meta">
+      <view><text>卡片类型</text><text>{{card.cardType === 'match_base' ? '认证参赛卡' : (card.cardType || '比赛卡')}}</text></view>
+      <view><text>场上位置</text><text>{{card.playerSnapshot.position || '未填写'}}</text></view>
+      <view><text>比赛日期</text><text>{{card.matchSnapshot.eventDate || card.matchSnapshot.date || '—'}}</text></view>
+      <view><text>生成状态</text><text>{{card.generationStatus === 'generated' ? '已生成' : (card.generationStatus === 'stale' ? '数据已更新，待重新生成' : '待生成')}}</text></view>
+    </view>
+  </block>
+  <view wx:else class="state">没有找到这张卡片</view>
+</view>

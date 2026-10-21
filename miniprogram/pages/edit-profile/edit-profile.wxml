@@ -1,0 +1,208 @@
+<view class="container">
+
+<view class="header">
+  <view class="back-btn" bindtap="goBack">‹</view>
+  <view class="header-title">编辑资料</view>
+  <view class="save-btn" bindtap="saveProfile">保存</view>
+</view>
+
+<!-- 照片 -->
+<view class="section">
+  <view class="photo-wrap" bindtap="changePhoto">
+    <image class="profile-photo" src="{{form.photo}}" mode="aspectFill"/>
+    <view class="photo-edit">更换照片</view>
+  </view>
+</view>
+
+<!-- 基本信息 -->
+<view class="section">
+  <view class="section-title">基本信息</view>
+
+  <view class="label">姓名/称呼</view>
+  <input class="input-box input-disabled" value="{{form.name}}" disabled placeholder="注册时填写的展示称呼" placeholder-class="input-placeholder" cursor-spacing="80"/>
+
+  <view class="label">昵称</view>
+  <input class="input-box" value="{{form.nickname}}" bindinput="onInput" data-field="nickname" placeholder="平常展示给其他用户看的名字" placeholder-class="input-placeholder" cursor-spacing="80" maxlength="24"/>
+
+  <view class="label">性别</view>
+  <view class="tag-row">
+    <view class="tag-btn {{form.gender === 'male' ? 'active' : ''}}" bindtap="setGender" data-val="male">男</view>
+    <view class="tag-btn {{form.gender === 'female' ? 'active' : ''}}" bindtap="setGender" data-val="female">女</view>
+  </view>
+
+  <view class="label">所在城市</view>
+  <picker mode="region" bindchange="onCityChange">
+    <view class="select-box">
+      <text>{{form.city || '选择城市'}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <view class="phone-status-card" bindtap="goAccountSettings">
+    <view>
+      <view class="phone-status-title">手机号</view>
+      <view class="phone-status-desc">{{form.phoneVerified ? form.phone : '未绑定，影响报名和账号安全'}}</view>
+    </view>
+    <view class="phone-status-badge {{form.phoneVerified ? 'done' : ''}}">{{form.phoneVerified ? '已绑定' : '去绑定'}}</view>
+  </view>
+
+  <view class="label">所属院校 / 俱乐部</view>
+  <input class="input-box" value="{{form.affiliation}}" bindinput="onInput" data-field="affiliation" placeholder="请输入院校或俱乐部" placeholder-class="input-placeholder" cursor-spacing="80"/>
+
+  <view class="label">简介</view>
+  <textarea class="textarea-box" value="{{form.description}}" bindinput="onInput" data-field="description" placeholder="介绍你的球员身份..." placeholder-class="input-placeholder" cursor-spacing="80"/>
+</view>
+
+<!-- 运动信息 -->
+<view class="section">
+  <view class="section-title">运动信息</view>
+
+  <view class="label">主项运动</view>
+  <picker bindchange="onSportChange" value="{{sportIndex}}" range="{{sports}}">
+    <view class="select-box">
+      <text>{{form.sport || '选择运动项目'}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <view class="label">擅长位置 / 专项</view>
+  <input class="input-box" value="{{form.position}}" bindinput="onInput" data-field="position" placeholder="例：控卫、混双" placeholder-class="input-placeholder" cursor-spacing="80"/>
+
+  <view class="label" wx:if="{{form.secondaryPosition}}">副位置</view>
+  <input wx:if="{{form.secondaryPosition}}" class="input-box" value="{{form.secondaryPosition}}" bindinput="onInput" data-field="secondaryPosition" placeholder-class="input-placeholder" cursor-spacing="80"/>
+
+  <block wx:if="{{form.sport === '篮球' || form.sport === '足球'}}">
+    <view class="inline-row">
+      <view class="inline-item">
+        <view class="label">身高(cm)</view>
+        <input class="input-box" type="number" value="{{form.height}}" bindinput="onInput" data-field="height" placeholder="cm" placeholder-class="input-placeholder" cursor-spacing="80"/>
+      </view>
+      <view class="inline-item">
+        <view class="label">体重(kg)</view>
+        <input class="input-box" type="number" value="{{form.weight}}" bindinput="onInput" data-field="weight" placeholder="kg" placeholder-class="input-placeholder" cursor-spacing="80"/>
+      </view>
+    </view>
+  </block>
+
+  <block wx:if="{{form.sport === '篮球'}}">
+    <view class="label">臂展(cm)</view>
+    <input class="input-box" type="number" value="{{form.wingspan}}" bindinput="onInput" data-field="wingspan" placeholder="请输入臂展" placeholder-class="input-placeholder" cursor-spacing="80"/>
+    <view class="label">惯用手</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.preferredHand === 'right' ? 'active' : ''}}" bindtap="setHand" data-val="right">右手</view>
+      <view class="tag-btn {{form.preferredHand === 'left' ? 'active' : ''}}" bindtap="setHand" data-val="left">左手</view>
+      <view class="tag-btn {{form.preferredHand === 'both' ? 'active' : ''}}" bindtap="setHand" data-val="both">双手</view>
+    </view>
+  </block>
+
+  <block wx:if="{{form.sport === '足球'}}">
+    <view class="label">惯用脚</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.preferredFoot === 'right' ? 'active' : ''}}" bindtap="setFoot" data-val="right">右脚</view>
+      <view class="tag-btn {{form.preferredFoot === 'left' ? 'active' : ''}}" bindtap="setFoot" data-val="left">左脚</view>
+      <view class="tag-btn {{form.preferredFoot === 'both' ? 'active' : ''}}" bindtap="setFoot" data-val="both">双脚</view>
+    </view>
+  </block>
+
+  <view class="label">接单类型</view>
+  <view class="tag-row">
+    <view class="tag-btn {{form.acceptMatch ? 'active' : ''}}" bindtap="toggleType" data-type="acceptMatch">参赛雇佣</view>
+  </view>
+
+  <view class="label">期望报价</view>
+  <view class="price-row">
+    <view class="price-box" wx:if="{{form.acceptMatch}}">
+      <view class="price-label">参赛单起价</view>
+      <view class="price-input-wrap">
+        <text class="currency">¥</text>
+        <input class="price-input" type="digit" value="{{form.matchPrice}}" bindinput="onInput" data-field="matchPrice" placeholder="500" placeholder-class="input-placeholder" cursor-spacing="80"/>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 资质信息 -->
+<view class="section">
+  <view class="section-title">资质信息</view>
+  <view class="qualification-row" bindtap="uploadVideoProof">
+    <view>
+      <view class="qualification-title">比赛 / 训练视频</view>
+      <view class="qualification-desc">{{form.videoUploaded ? form.videoName || '已提交视频' : '未提交'}}</view>
+    </view>
+    <view class="qualification-badge {{form.videoUploaded ? 'done' : ''}}">{{form.videoUploaded ? '已提交' : '未提交'}}</view>
+  </view>
+  <view class="qualification-row no-border" bindtap="uploadCertProof">
+    <view>
+      <view class="qualification-title">获奖证书 / 赛事成绩</view>
+      <view class="qualification-desc">{{form.certUploaded ? form.certName || '已提交证书' : '未提交'}}</view>
+    </view>
+    <view class="qualification-badge {{form.certUploaded ? 'done' : ''}}">{{form.certUploaded ? '已提交' : '未提交'}}</view>
+  </view>
+  <view class="qualification-hint">资质资料会影响账号可信度，后续如需重新上传可进入独立认证流程。</view>
+</view>
+
+<!-- 段位审核 -->
+<view class="section">
+  <view class="section-title">段位审核</view>
+  <view class="level-review-card">
+    <view class="level-row">
+      <view class="level-label">当前段位</view>
+      <view class="level-value">
+        <view class="level-badge {{tierClass}}">{{currentTier}}级</view>
+      </view>
+    </view>
+    <view class="level-row">
+      <view class="level-label">审核状态</view>
+      <view class="level-status {{levelReviewStatus}}">
+        <block wx:if="{{levelReviewStatus === 'pending'}}">审核中</block>
+        <block wx:elif="{{levelReviewStatus === 'approved'}}">已通过</block>
+        <block wx:elif="{{levelReviewStatus === 'rejected'}}">已驳回，可重新申请</block>
+        <block wx:else>未申请</block>
+      </view>
+    </view>
+    <view class="level-action" bindtap="openLevelPicker" wx:if="{{levelReviewStatus !== 'pending'}}">
+      <text>{{levelReviewStatus === 'rejected' ? '重新申请段位审核' : '申请段位审核'}}</text>
+      <text class="arrow-right">›</text>
+    </view>
+  </view>
+
+  <!-- 段位选择弹层 -->
+  <view class="level-picker-mask" wx:if="{{showLevelPicker}}" bindtap="closeLevelPicker"></view>
+  <view class="level-picker-panel" wx:if="{{showLevelPicker}}">
+    <view class="level-picker-header">
+      <view class="level-picker-title">申请段位审核</view>
+      <view class="level-picker-close" bindtap="closeLevelPicker">✕</view>
+    </view>
+    <view class="level-picker-body">
+      <view class="level-picker-hint">选择你希望申请的段位，并上传获奖证书、赛事成绩等证明材料</view>
+      <view class="level-tier-grid">
+        <view class="level-tier-option {{selectedTier === item ? 'active' : ''}}" wx:for="{{tierOptions}}" wx:key="*this" bindtap="selectTier" data-tier="{{item}}">{{item}}</view>
+      </view>
+      <view class="level-note-label">证明材料</view>
+      <view class="level-proof-grid">
+        <view class="level-proof-item" wx:for="{{levelProofs}}" wx:key="index">
+          <image class="level-proof-img" src="{{item}}" mode="aspectFill" />
+          <view class="level-proof-remove" bindtap="removeLevelProof" data-index="{{index}}">✕</view>
+        </view>
+        <view class="level-proof-add" bindtap="uploadLevelProof" wx:if="{{levelProofs.length < 6}}">
+          <view class="level-proof-plus">+</view>
+          <view class="level-proof-add-text">上传</view>
+        </view>
+      </view>
+      <view class="level-note-label">备注说明（选填）</view>
+      <textarea class="level-note-input" value="{{levelNote}}" bindinput="onLevelNoteInput" placeholder="可补充说明申请理由或比赛成绩..." placeholder-class="input-placeholder" maxlength="200"></textarea>
+      <view class="level-submit-btn" bindtap="submitLevelReview">{{levelUploading > 0 ? '图片上传中...' : '提交申请'}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 荣誉 / 证书 -->
+<view class="section">
+  <view class="section-title">荣誉 / 证书</view>
+  <view class="honor-readonly-card">
+    <view class="honor-readonly-title">赛事荣誉由平台同步</view>
+    <view class="honor-readonly-desc">公开赛名次由主办方或管理员录入后，会自动显示在球员主页。</view>
+  </view>
+</view>
+
+</view>

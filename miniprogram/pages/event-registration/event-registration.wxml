@@ -1,0 +1,31 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state">加载中...</view>
+  <block wx:elif="{{post}}">
+    <view class="event-summary"><text class="event-label">报名赛事</text><text class="event-title">{{post.title}}</text><text class="event-meta">报名截止：{{post.registrationDeadline || '以赛事公告为准'}}</text></view>
+
+    <view wx:if="{{mode === 'choose'}}" class="content">
+      <text class="section-title">选择报名方式</text>
+      <view wx:if="{{post.registrationMode !== 'team'}}" class="choice-card" catchtap="chooseSolo"><text class="choice-title">散客报名</text><text class="choice-desc">进入散客报名池，后续可由队长邀请加入参赛队伍。</text></view>
+      <view wx:if="{{post.registrationMode !== 'solo'}}" class="choice-card choice-main" catchtap="chooseTeam"><text class="choice-title">球队报名</text><text class="choice-desc">以常驻球队或临时组建的队伍报名，可邀请队员确认参赛。</text></view>
+      <text class="captain-link-hint">非散客球队队员请通过队长发布链接报名</text>
+      <text class="payment-note">报名截止后，需参赛队员统一按 AA 方式完成缴费。</text>
+    </view>
+
+    <view wx:elif="{{mode === 'team'}}" class="content">
+      <view class="back" catchtap="goBack">返回报名方式</view>
+      <text class="section-title">选择球队方式</text>
+      <view wx:if="{{teams.length}}" class="choice-card choice-main"><text class="choice-title">我是队长</text><text class="choice-desc">选择你管理的常驻球队，确认本次赛事参赛名单。</text></view>
+      <view wx:for="{{teams}}" wx:key="_id" class="team-row" catchtap="selectTeam" data-index="{{index}}"><image wx:if="{{item.logo}}" class="team-logo" src="{{item.logo}}" mode="aspectFill"/><view wx:else class="team-logo placeholder">队</view><view><text class="team-name">{{item.name}}</text><text class="team-meta">{{item.sport}} · {{item.members.length}} 名成员</text></view><text class="arrow">›</text></view>
+      <view wx:if="{{!teams.length}}" class="empty">你目前没有可代表报名的{{post.sport}}球队。</view>
+      <view class="choice-card" catchtap="chooseTemporary"><text class="choice-title">组建临时队伍</text><text class="choice-desc">创建本次赛事专用队伍，填写队名并邀请队员加入。</text></view>
+    </view>
+
+    <view wx:elif="{{mode === 'roster'}}" class="content">
+      <view class="back" catchtap="goBack">返回球队选择</view>
+      <text class="section-title">确认参赛名单</text>
+      <text class="roster-note">{{selectedTeam.name}} · 已选 {{selectedCount}} 人，至少 {{post.minTeamSize}} 人</text>
+      <view wx:for="{{selectedTeam.members}}" wx:key="openid" class="member-row" catchtap="toggleMember" data-openid="{{item.openid}}"><image wx:if="{{item.avatar}}" class="avatar" src="{{item.avatar}}" mode="aspectFill"/><view wx:else class="avatar placeholder">{{item.name ? item.name[0] : '队'}}</view><view class="member-main"><text>{{item.name || '队员'}}</text><text wx:if="{{item.openid === selectedTeam.captainOpenid}}" class="captain">队长</text></view><text class="check {{selectedOpenids[item.openid] ? 'checked' : ''}}">{{selectedOpenids[item.openid] ? '✓' : ''}}</text></view>
+      <view class="submit-btn {{submitting ? 'disabled' : ''}}" catchtap="submitRegular">{{submitting ? '提交中...' : '确认球队报名'}}</view>
+    </view>
+  </block>
+</view>

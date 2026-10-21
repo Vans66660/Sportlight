@@ -1,0 +1,117 @@
+page {
+  background: #0F0F0F;
+}
+
+.container {
+  height: 100vh;
+  background: #0F0F0F;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: #111111;
+  padding: 20rpx 28rpx 16rpx;
+  border-bottom: 1rpx solid #1A1A1A;
+}
+
+.header-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.match-scroll {
+  flex: 1;
+  overflow: hidden;
+}
+
+.entry-list {
+  padding: 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+}
+
+.entry-card {
+  border-radius: 22rpx;
+  padding: 30rpx 28rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.entry-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 10rpx;
+}
+
+.entry-sub {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.map-card {
+  min-height: 360rpx;
+  background: linear-gradient(135deg, #174C4F 0%, #0F272A 100%);
+  border: 1rpx solid rgba(116, 232, 218, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+}
+
+.entry-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.map-preview-wrap {
+  position: relative;
+  height: 220rpx;
+  border-radius: 18rpx;
+  overflow: hidden;
+  background: #162326;
+}
+
+.map-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.map-mask {
+  position: absolute;
+  right: 18rpx;
+  bottom: 18rpx;
+  height: 44rpx;
+  padding: 0 18rpx;
+  border-radius: 22rpx;
+  background: rgba(0, 0, 0, 0.62);
+  color: #FFFFFF;
+  font-size: 22rpx;
+  line-height: 44rpx;
+}
+
+.match-card {
+  min-height: 170rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.recommend-card {
+  background: linear-gradient(135deg, #472B68 0%, #21162F 100%);
+  border: 1rpx solid rgba(191, 141, 255, 0.22);
+}
+
+.solo-card {
+  background: linear-gradient(135deg, #6B3F1E 0%, #271A12 100%);
+  border: 1rpx solid rgba(255, 171, 92, 0.22);
+}
+
+.team-card {
+  background: linear-gradient(135deg, #233F72 0%, #111D32 100%);
+  border: 1rpx solid rgba(107, 156, 255, 0.22);
+}

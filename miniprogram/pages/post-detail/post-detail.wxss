@@ -1,0 +1,1254 @@
+page {
+  height: 100%;
+  background-color: #0F0F0F;
+}
+
+.error-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 32rpx;
+}
+
+.error-text { font-size: 28rpx; color: #555555; }
+
+.error-back {
+  font-size: 28rpx;
+  color: #FF6B1A;
+  padding: 16rpx 40rpx;
+  border: 1rpx solid #FF6B1A;
+  border-radius: 40rpx;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #0F0F0F;
+}
+
+.content-scroll {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* =====================
+   公开赛详情
+   ===================== */
+
+/* 封面 */
+.ec-cover-wrap {
+  position: relative;
+  width: 100%;
+  height: 420rpx;
+  background-color: #1A1500;
+  overflow: hidden;
+}
+
+.ec-cover-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ec-cover-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #1E1800 0%, #2A2200 60%, #1A1500 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ec-cover-fallback-text {
+  font-size: 120rpx;
+  opacity: 0.25;
+}
+
+.ec-cover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 50%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 28rpx 28rpx;
+}
+
+.ec-status-chip {
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 8rpx 22rpx;
+  border-radius: 20rpx;
+}
+
+.ec-platform-certified {
+  position: absolute;
+  left: 50%;
+  top: 28rpx;
+  transform: translateX(-50%);
+  padding: 9rpx 18rpx;
+  border: 1rpx solid rgba(255,255,255,.42);
+  border-radius: 22rpx;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(255,116,37,.96), rgba(236,70,0,.96));
+  box-shadow: 0 10rpx 24rpx rgba(0,0,0,.25);
+  font-size: 19rpx;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.chip-open {
+  background: rgba(204, 136, 0, 0.88);
+  color: #FFFFFF;
+}
+
+.chip-closed {
+  background: rgba(60, 60, 60, 0.88);
+  color: #AAAAAA;
+}
+
+.chip-joined {
+  color: #FFFFFF;
+  background: rgba(61, 187, 138, 0.9);
+  border-color: rgba(255,255,255,0.28);
+}
+
+.ec-delete-btn {
+  font-size: 36rpx;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4rpx 16rpx;
+  border-radius: 10rpx;
+  letter-spacing: 2rpx;
+  line-height: 1.4;
+}
+
+/* 信息卡 */
+.ec-info-card {
+  margin: 20rpx 24rpx 0;
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.ec-info-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 28rpx;
+  border-bottom: 1rpx solid #222222;
+}
+
+.ec-info-row:last-child { border-bottom: none; }
+
+.ec-info-icon {
+  width: 32rpx;
+  height: 32rpx;
+  display: block;
+  filter: invert(1);
+  flex-shrink: 0;
+}
+
+.ec-info-emoji {
+  font-size: 28rpx;
+  flex-shrink: 0;
+  width: 32rpx;
+  text-align: center;
+}
+
+.ec-info-label {
+  font-size: 26rpx;
+  color: #666666;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.ec-info-value {
+  font-size: 28rpx;
+  color: #EEEEEE;
+  flex: 1;
+}
+
+.value-paid { color: #FF6B1A; font-weight: 600; }
+.value-free { color: #3DBB8A; font-weight: 600; }
+.value-prize { color: #FFB700; }
+
+/* 奖金设置卡片 */
+.ec-prizes-card {
+  margin: 20rpx 24rpx 0;
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.ec-prizes-header {
+  padding: 20rpx 28rpx 16rpx;
+  border-bottom: 1rpx solid #222222;
+}
+
+.ec-prizes-title {
+  font-size: 24rpx;
+  color: #888888;
+  font-weight: 500;
+}
+
+.ec-prize-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 28rpx;
+  border-bottom: 1rpx solid #1E1E1E;
+}
+
+.ec-prize-row:last-child { border-bottom: none; }
+
+.ec-prize-medal {
+  font-size: 32rpx;
+  width: 40rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ec-prize-medal-img {
+  width: 42rpx;
+  height: 42rpx;
+  display: block;
+  flex-shrink: 0;
+}
+
+.ec-prize-label {
+  font-size: 28rpx;
+  color: #DDDDDD;
+  flex: 1;
+}
+
+.ec-prize-amount {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #FFB700;
+}
+
+.ec-legacy-text {
+  padding: 20rpx 28rpx;
+  font-size: 28rpx;
+  color: #DDDDDD;
+  line-height: 1.6;
+}
+
+/* 报名按钮区 */
+.ec-action-wrap {
+  margin: 20rpx 24rpx 0;
+}
+
+.ec-register-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96rpx;
+  border-radius: 24rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+}
+
+.ec-register-btn + .ec-register-btn {
+  margin-top: 16rpx;
+}
+
+.reg-open       { background-color: #CC8800; color: #FFFFFF; }
+.reg-disabled   { opacity: 0.55; }
+.reg-done       { background-color: #1A2A1A; color: #3DBB8A; }
+.reg-pending    { background-color: #0A1E2A; color: #5BA8D4; }
+.reg-assembling { background-color: #1A1A2E; color: #9090DD; }
+.reg-closed     { background-color: #242424; color: #555555; }
+.reg-pay        { background-color: #FF6B1A; color: #FFFFFF; font-weight: 600; }
+.reg-cancel     { background-color: rgba(229,57,53,0.10); color: #E57373; border: 1rpx solid rgba(229,57,53,0.28); box-sizing: border-box; }
+
+.ec-invite-btn {
+  margin-top: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid #3A3A3A;
+  font-size: 28rpx;
+  color: #AAAAAA;
+  background: transparent;
+  padding: 0;
+  line-height: 80rpx;
+}
+
+.ec-invite-btn::after { border: none; }
+
+.expired-hint {
+  font-size: 22rpx;
+  color: #FF6B1A;
+  text-align: center;
+  margin-bottom: 12rpx;
+}
+
+.ec-author-btns {
+  display: flex;
+  gap: 16rpx;
+}
+
+.ec-author-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96rpx;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  position: relative;
+}
+
+.ec-btn-outline {
+  border: 1rpx solid #3A3A3A;
+  color: #AAAAAA;
+}
+
+.ec-btn-green {
+  background-color: #1A2A1A;
+  color: #3DBB8A;
+}
+
+.pending-badge {
+  display: inline-block;
+  background: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 20rpx;
+  font-weight: 700;
+  padding: 2rpx 10rpx;
+  border-radius: 20rpx;
+  margin-left: 8rpx;
+  vertical-align: middle;
+}
+
+.schedule-entry {
+  margin: 24rpx 0 0;
+  background: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.schedule-entry-title {
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.schedule-entry-sub {
+  color: #777777;
+  font-size: 24rpx;
+  margin-top: 6rpx;
+}
+
+.schedule-entry-arrow {
+  color: #FF6B1A;
+  font-size: 42rpx;
+}
+
+.dispute-entry {
+  background: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 16rpx;
+  padding: 22rpx 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.dispute-entry-text {
+  font-size: 24rpx;
+  color: #FF8C47;
+}
+
+/* 主办方 */
+.ec-organizer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx 28rpx;
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+}
+
+.ec-organizer-tag {
+  font-size: 22rpx;
+  color: #CC8800;
+  background: rgba(204, 136, 0, 0.12);
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  flex-shrink: 0;
+}
+
+.ec-organizer-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: #2A2A2A;
+}
+
+.ec-organizer-meta { flex: 1; min-width: 0; }
+.ec-organizer-name { font-size: 28rpx; color: #FFFFFF; font-weight: 500; }
+.ec-organizer-time { font-size: 22rpx; color: #555555; margin-top: 4rpx; }
+
+/* 赛事介绍 */
+.ec-desc-wrap {
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx 28rpx;
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+}
+
+.ec-desc-label {
+  display: block;
+  font-size: 24rpx;
+  color: #555555;
+  margin-bottom: 14rpx;
+}
+
+.ec-desc-text {
+  display: block;
+  font-size: 28rpx;
+  color: #DDDDDD;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+/* 图片 */
+.ec-images {
+  margin: 20rpx 24rpx 0;
+  border-radius: 20rpx;
+}
+
+/* 点赞行 */
+.ec-like-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin: 20rpx 24rpx 0;
+  padding: 20rpx 28rpx;
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+}
+
+/* =====================
+   普通动态
+   ===================== */
+
+.post-wrap {
+  background-color: #1A1A1A;
+  margin: 20rpx 24rpx 0;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 24rpx 16rpx;
+}
+
+.post-delete-btn {
+  margin-left: auto;
+  padding: 4rpx 12rpx;
+  font-size: 32rpx;
+  color: #555555;
+  letter-spacing: 2rpx;
+}
+
+.post-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: #2A2A2A;
+}
+
+.post-meta { flex: 1; }
+.post-name { font-size: 28rpx; font-weight: 500; color: #FFFFFF; margin-bottom: 4rpx; }
+.post-time { font-size: 22rpx; color: #555555; }
+
+.post-type-badge {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 10rpx;
+  flex-shrink: 0;
+}
+
+.type-match_result { color: #D85A30; background-color: #2A1008; }
+.type-training { color: #3DBB8A; background-color: #0A2A1A; }
+.type-collab { color: #5BA8D4; background-color: #0A1E2A; }
+.type-general { color: #888888; background-color: #222222; }
+
+.post-content {
+  font-size: 28rpx;
+  color: #DDDDDD;
+  line-height: 1.7;
+  padding: 0 24rpx 16rpx;
+  white-space: pre-wrap;
+}
+
+.post-images {
+  display: grid;
+  gap: 6rpx;
+  overflow: hidden;
+  margin: 0 24rpx 16rpx;
+  border-radius: 16rpx;
+}
+
+.img-count-1 { grid-template-columns: 1fr; }
+.img-count-2 { grid-template-columns: 1fr 1fr; }
+.img-count-3 { grid-template-columns: 1fr 1fr 1fr; }
+.img-count-4 { grid-template-columns: 1fr 1fr; }
+
+.post-img { width: 100%; aspect-ratio: 1; display: block; background-color: #2A2A2A; }
+.img-count-1 .post-img { aspect-ratio: 16/9; }
+
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 16rpx 24rpx;
+  border-top: 1rpx solid #242424;
+}
+
+/* 共用：点赞 / 评论 */
+.like-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.like-icon { font-size: 36rpx; }
+.like-count { font-size: 26rpx; color: #555555; }
+.like-btn.liked .like-count { color: #FF6B1A; }
+
+.comment-stat {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.comment-icon { font-size: 28rpx; }
+.comment-icon-img { width: 32rpx; height: 32rpx; }
+.comment-count-text { font-size: 24rpx; color: #555555; }
+
+/* =====================
+   赛事成绩
+   ===================== */
+
+.results-wrap {
+  margin: 20rpx 24rpx 0;
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 24rpx 16rpx;
+  border-bottom: 1rpx solid #252525;
+}
+
+.results-title { font-size: 26rpx; font-weight: 500; color: #FFFFFF; }
+.results-count { font-size: 22rpx; color: #555555; }
+
+.results-list { padding: 8rpx 0; }
+
+.result-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  gap: 20rpx;
+}
+
+.result-rank {
+  width: 48rpx;
+  text-align: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.result-medal-icon {
+  width: 42rpx;
+  height: 42rpx;
+  display: block;
+  margin: 0 auto;
+}
+
+.rank-num { font-size: 24rpx; font-weight: 500; color: #AAAAAA; }
+.rank-num.gray { color: #444444; }
+
+.result-name { flex: 1; font-size: 26rpx; color: #DDDDDD; }
+
+.result-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+
+.result-score { font-size: 26rpx; font-weight: 500; color: #FF6B1A; }
+.result-notes { font-size: 22rpx; color: #666666; }
+
+/* =====================
+   评论区
+   ===================== */
+
+.comments-wrap {
+  margin: 20rpx 24rpx 0;
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.comments-title {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #888888;
+  padding: 24rpx 24rpx 16rpx;
+  border-bottom: 1rpx solid #222222;
+}
+
+.no-comments {
+  padding: 40rpx 24rpx;
+  font-size: 26rpx;
+  color: #444444;
+  text-align: center;
+}
+
+.comment-list { padding: 0 24rpx; }
+
+.comment-item {
+  display: flex;
+  gap: 16rpx;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #222222;
+}
+
+.comment-item:last-child { border-bottom: none; }
+
+.comment-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: #2A2A2A;
+}
+
+.avatar-placeholder {
+  background-color: #2A2A2A;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-body { flex: 1; min-width: 0; }
+.comment-name { font-size: 24rpx; font-weight: 500; color: #888888; margin-bottom: 8rpx; }
+.comment-text { font-size: 28rpx; color: #DDDDDD; line-height: 1.6; margin-bottom: 8rpx; word-break: break-all; }
+.comment-time { font-size: 22rpx; color: #444444; }
+
+.bottom-spacer { height: 150rpx; }
+
+/* =====================
+   评论输入栏
+   ===================== */
+
+.input-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 12rpx 24rpx;
+  background-color: #111111;
+  border-top: 1rpx solid #1E1E1E;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.input-bar.keyboard-active {
+  padding-top: 10rpx;
+  padding-bottom: 10rpx;
+}
+
+.comment-input {
+  flex: 1;
+  height: 72rpx;
+  min-height: 72rpx;
+  background-color: #1E1E1E;
+  border-radius: 36rpx;
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  line-height: 72rpx;
+  color: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.input-placeholder { color: #444444; }
+
+.send-btn {
+  flex-shrink: 0;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #555555;
+  min-width: 104rpx;
+  height: 72rpx;
+  padding: 0 24rpx;
+  border-radius: 36rpx;
+  background: #2A2A2A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.send-btn.active {
+  background: #FF6B1A;
+  color: #FFFFFF;
+}
+
+/* =====================
+   队伍报名弹窗
+   ===================== */
+.modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 100;
+}
+
+.team-modal {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: #1A1A1A;
+  border-radius: 32rpx 32rpx 0 0;
+  z-index: 101;
+  height: 82vh;
+  max-height: 82vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.team-modal-body {
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 40rpx 32rpx 170rpx;
+  overflow-y: auto;
+}
+
+.team-modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  text-align: center;
+  margin-bottom: 36rpx;
+}
+
+.team-modal-label {
+  font-size: 22rpx;
+  color: #555555;
+  margin-bottom: 10rpx;
+  margin-top: 24rpx;
+}
+
+.team-modal-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #111111;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  color: #FFFFFF;
+}
+
+/* 队长槽 */
+.slot-captain {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: #111111;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 12rpx;
+}
+
+.slot-captain-icon { font-size: 40rpx; }
+.slot-captain-name { font-size: 28rpx; color: #AAAAAA; flex: 1; }
+
+/* 队员槽位 */
+.member-slot {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 12rpx;
+}
+
+.slot-empty {
+  background: #111111;
+  border: 1rpx dashed #333333;
+}
+
+.slot-filled {
+  background: #111111;
+}
+
+.slot-plus {
+  font-size: 36rpx;
+  color: #444444;
+  width: 40rpx;
+  text-align: center;
+}
+
+.slot-hint { font-size: 26rpx; color: #444444; flex: 1; }
+
+.slot-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: #2A2A2A;
+  display: block;
+  flex-shrink: 0;
+}
+
+.slot-avatar-placeholder {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: #2A2A2A;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.slot-name { flex: 1; font-size: 28rpx; color: #DDDDDD; }
+
+.slot-remove {
+  width: 56rpx;
+  height: 56rpx;
+  font-size: 32rpx;
+  color: #FF6B1A;
+  background: rgba(255,107,26,0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.team-modal-actions {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 16rpx;
+  padding: 20rpx 32rpx calc(28rpx + env(safe-area-inset-bottom));
+  background: #1A1A1A;
+  border-top: 1rpx solid #252525;
+  box-shadow: 0 -12rpx 30rpx rgba(0,0,0,0.22);
+  box-sizing: border-box;
+  z-index: 120;
+}
+
+.team-modal-cancel {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 20rpx;
+  background: #2A2A2A;
+  color: #888888;
+  font-size: 30rpx;
+}
+
+.team-modal-confirm {
+  flex: 2;
+  height: 88rpx;
+  margin: 0;
+  padding: 0;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 20rpx;
+  border: 0;
+  background: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.team-modal-confirm::after {
+  border: 0;
+}
+
+.team-modal-confirm.disabled {
+  opacity: 0.55;
+}
+
+.team-disclaimer-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.68);
+  z-index: 130;
+}
+
+.team-disclaimer-modal {
+  position: fixed;
+  left: 48rpx;
+  right: 48rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 131;
+  background: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 28rpx;
+  padding: 36rpx 32rpx 28rpx;
+  box-sizing: border-box;
+}
+
+.team-disclaimer-title {
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 18rpx;
+}
+
+.team-disclaimer-text {
+  color: #B8B8B8;
+  font-size: 27rpx;
+  line-height: 1.65;
+}
+
+.team-disclaimer-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 32rpx;
+}
+
+.team-disclaimer-cancel,
+.team-disclaimer-confirm {
+  flex: 1;
+  height: 84rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.team-disclaimer-cancel {
+  background: #2A2A2A;
+  color: #888888;
+}
+
+.team-disclaimer-confirm {
+  background: #FF6B1A;
+  color: #FFFFFF;
+}
+
+/* 搜索覆层 */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0F0F0F;
+  z-index: 102;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 20rpx 24rpx;
+  border-bottom: 1rpx solid #222222;
+  padding-top: calc(20rpx + env(safe-area-inset-top));
+}
+
+.search-input {
+  flex: 1;
+  background: #1E1E1E;
+  border-radius: 40rpx;
+  padding: 18rpx 28rpx;
+  font-size: 28rpx;
+  color: #FFFFFF;
+}
+
+.search-cancel {
+  font-size: 28rpx;
+  color: #AAAAAA;
+  padding: 8rpx 16rpx;
+  flex-shrink: 0;
+}
+
+.search-body { flex: 1; overflow-y: auto; padding: 16rpx 0; }
+
+.quick-section {
+  padding-top: 4rpx;
+}
+
+.quick-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  padding: 12rpx 32rpx 14rpx;
+}
+
+.quick-title {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.quick-sub {
+  font-size: 22rpx;
+  color: #666666;
+}
+
+.search-tip {
+  text-align: center;
+  font-size: 26rpx;
+  color: #444444;
+  padding: 48rpx 0;
+}
+
+.search-results { padding: 0; }
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #1A1A1A;
+}
+
+.result-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #2A2A2A;
+  display: block;
+  flex-shrink: 0;
+}
+
+.result-avatar-placeholder {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #2A2A2A;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.result-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.result-name { font-size: 30rpx; color: #DDDDDD; }
+
+.result-meta {
+  font-size: 22rpx;
+  color: #777777;
+  line-height: 1.4;
+}
+
+.result-disabled { opacity: 0.4; }
+.result-added-tag { font-size: 22rpx; color: #555555; flex-shrink: 0; }
+
+/* 赛务联系二维码 */
+.captain-qr-card {
+  margin: 0 24rpx 32rpx;
+  background: #141414;
+  border-radius: 24rpx;
+  border: 1rpx solid rgba(255, 107, 26, 0.28);
+  padding: 24rpx;
+}
+
+.captain-qr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.captain-qr-title {
+  font-size: 30rpx;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.captain-qr-sub {
+  font-size: 23rpx;
+  color: #888888;
+  margin-top: 6rpx;
+  line-height: 1.5;
+}
+
+.captain-qr-img {
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+  display: block;
+  margin: 8rpx auto 24rpx;
+}
+
+.captain-qr-save {
+  height: 72rpx;
+  border-radius: 12rpx;
+  background: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 我的队伍卡片 */
+.my-team-card {
+  margin: 0 24rpx 32rpx;
+  background: #141414;
+  border-radius: 24rpx;
+  border: 1rpx solid #2A2A2A;
+  overflow: hidden;
+}
+
+.my-team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 28rpx 20rpx;
+  border-bottom: 1rpx solid #222222;
+}
+
+.my-team-title {
+  font-size: 26rpx;
+  color: #888888;
+  font-weight: 500;
+  letter-spacing: 1rpx;
+}
+
+.my-team-name {
+  font-size: 28rpx;
+  color: #DDDDDD;
+  font-weight: 600;
+}
+
+.my-team-members {
+  padding: 12rpx 0 8rpx;
+}
+
+.my-team-member {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 18rpx 28rpx;
+}
+
+.my-team-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: block;
+  flex-shrink: 0;
+}
+
+.my-team-avatar-placeholder {
+  background: #2A2A4A;
+  color: #8888CC;
+  font-size: 28rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-team-avatar-empty {
+  background: #1E1E1E;
+  border: 2rpx dashed #333333;
+}
+
+.my-team-member-name {
+  flex: 1;
+  font-size: 28rpx;
+  color: #CCCCCC;
+}
+
+.my-team-member-name.empty-slot {
+  color: #444444;
+  font-style: italic;
+}
+
+.my-team-tag {
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+}
+
+.tag-captain {
+  background: #2A2A4A;
+  color: #8888CC;
+}
+
+.tag-confirmed {
+  background: #0D2D1A;
+  color: #3DBE6E;
+}
+
+.tag-pending {
+  background: #2A1E0A;
+  color: #CC8833;
+}

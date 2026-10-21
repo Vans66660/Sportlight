@@ -1,0 +1,48 @@
+<view class="page">
+  <view class="search-card">
+    <input
+      class="search-input"
+      value="{{keyword}}"
+      bindinput="onInput"
+      confirm-type="search"
+      bindconfirm="search"
+      placeholder="{{mode === 'teamInvite' ? '搜索真实姓名、昵称或 Sport Light ID' : '搜索 Sport Light ID、真实姓名或昵称'}}"
+      placeholder-class="input-placeholder"
+    />
+    <view class="search-btn" bindtap="search">搜索</view>
+  </view>
+
+  <view class="hint">
+    {{mode === 'teamInvite' ? '队长可以邀请任意球员加入球队，对方同意后才会成为队员。' : '可以用 Sport Light ID、真实姓名或昵称找到用户。'}}
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">搜索中...</view>
+  <view wx:elif="{{searched && results.length === 0}}" class="empty">没有找到相关用户</view>
+
+  <view wx:for="{{results}}" wx:key="openid" class="user-card">
+    <view class="user-main" bindtap="goProfile" data-openid="{{item.openid}}">
+      <image wx:if="{{item.avatar}}" class="avatar" src="{{item.avatar}}" mode="aspectFill"/>
+      <view wx:else class="avatar text">{{item.displayName ? item.displayName[0] : 'S'}}</view>
+      <view class="info">
+        <view class="name-row">
+          <text class="name">{{item.displayName}}</text>
+          <text class="tier">{{item.tier}}</text>
+        </view>
+        <view class="meta">Sport Light ID {{item.sportlightId || '未生成'}} · {{item.sport || '运动员'}} · 积分 {{item.score || 0}}</view>
+        <view wx:if="{{item.realName && item.realName !== item.displayName}}" class="real-name">真实姓名：{{item.realName}}</view>
+      </view>
+    </view>
+
+    <block wx:if="{{mode === 'teamInvite'}}">
+      <view wx:if="{{item.inTeam}}" class="action disabled">已在队</view>
+      <view wx:elif="{{item.teamInviteStatus === 'pending'}}" class="action disabled">已邀请</view>
+      <view wx:else class="action primary" bindtap="inviteTeam" data-index="{{index}}">邀请</view>
+    </block>
+    <block wx:else>
+      <view wx:if="{{item.friendStatus === 'friends'}}" class="action ghost" bindtap="startChat" data-index="{{index}}">发消息</view>
+      <view wx:elif="{{item.friendStatus === 'pending_sent'}}" class="action disabled">待通过</view>
+      <view wx:elif="{{item.friendStatus === 'pending_received'}}" class="action disabled">待处理</view>
+      <view wx:else class="action primary" bindtap="sendFriend" data-index="{{index}}">加好友</view>
+    </block>
+  </view>
+</view>

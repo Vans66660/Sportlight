@@ -1,0 +1,17 @@
+page { background: #0F0F0F; }
+.container { min-height: 100vh; padding-bottom: 60rpx; }
+.header { background: #111; padding: 20rpx 28rpx; display: flex; align-items: center; justify-content: space-between; }
+.back-btn { font-size: 60rpx; color: #FF6B1A; line-height: 1; width: 60rpx; }
+.header-title { font-size: 32rpx; font-weight: 500; color: #FFF; }
+.header-right { width: 60rpx; }
+.section { padding: 28rpx; }
+.section-title { font-size: 30rpx; font-weight: 600; color: #FFF; margin-bottom: 20rpx; }
+.label { font-size: 24rpx; color: #555; margin-bottom: 10rpx; margin-top: 16rpx; }
+.empty-hint { font-size: 26rpx; color: #444; padding: 40rpx 0; text-align: center; }
+.match-card { background: #1A1A1A; border: 1rpx solid #2A2A2A; border-radius: 16rpx; padding: 24rpx; margin-bottom: 12rpx; }
+.match-card.selected { border-color: #FF6B1A; background: rgba(255,107,26,0.08); }
+.match-label { font-size: 26rpx; color: #CCC; }
+.textarea-box { background: #1A1A1A; border: 1rpx solid #2A2A2A; border-radius: 16rpx; padding: 20rpx; font-size: 26rpx; color: #FFF; width: 100%; box-sizing: border-box; min-height: 160rpx; }
+.submit-btn { width: 100%; border-radius: 20rpx; padding: 28rpx; text-align: center; font-size: 30rpx; font-weight: 500; margin-top: 32rpx; }
+.submit-btn.active { background: #FF6B1A; color: #FFF; }
+.submit-btn.disabled { background: #1A1A1A; color: #444; }

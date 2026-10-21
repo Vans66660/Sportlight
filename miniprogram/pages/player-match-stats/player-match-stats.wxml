@@ -1,0 +1,45 @@
+<view class="container">
+  <view class="page-title">比赛数据明细</view>
+  <view class="page-sub">按单场公开赛记录统计，{{sport}}数据、胜场和参赛都可以回看来源。</view>
+
+  <view class="summary-grid">
+    <view class="summary-card" wx:for="{{summaryCards}}" wx:key="label">
+      <text class="summary-label">{{item.label}}</text>
+      <text class="summary-value">{{item.value}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="tab-scroll" scroll-x>
+    <view class="stat-tab {{activeTab === item.value ? 'active' : ''}}" wx:for="{{tabs}}" wx:key="value" data-value="{{item.value}}" bindtap="selectTab">{{item.label}}</view>
+  </scroll-view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{visibleMatches.length === 0}}" class="empty">暂无对应比赛记录</view>
+
+  <view wx:else class="match-list">
+    <view class="match-card" wx:for="{{visibleMatches}}" wx:key="_id" bindtap="goEventDetail" data-postid="{{item.postId}}">
+      <view class="match-head">
+        <view>
+          <view class="match-title">{{item.matchTitle || item.eventTitle}}</view>
+          <view class="match-meta">{{item.eventTitle}} · {{item.sport}} · {{item.matchTime || '时间待定'}}</view>
+        </view>
+        <view class="result-pill result-{{item.result}}">{{item.resultText}}</view>
+      </view>
+
+      <view class="team-line">{{item.teamName || '本队'}} vs {{item.opponentTeamName || '对手'}}</view>
+
+      <view class="stat-line">
+        <view class="mini-stat" wx:for="{{item.displayStats}}" wx:for-item="stat" wx:key="label">
+          <text>{{stat.label}}</text>
+          <text>{{stat.value}}</text>
+        </view>
+      </view>
+
+      <view class="score-line">
+        <text>比赛胜负 {{item.resultScore >= 0 ? '+' : ''}}{{item.resultScore}}</text>
+        <text>个人表现 {{item.personalScore >= 0 ? '+' : ''}}{{item.personalScore}}</text>
+        <text class="{{item.delta >= 0 ? 'plus' : 'minus'}}">积分 {{item.deltaText}}</text>
+      </view>
+    </view>
+  </view>
+</view>

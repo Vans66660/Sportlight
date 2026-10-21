@@ -1,0 +1,22 @@
+page { background: #0F0F0F; }
+.page { min-height: 100vh; padding: 28rpx; box-sizing: border-box; color: #FFFFFF; }
+.search-card { display: flex; align-items: center; gap: 14rpx; padding: 14rpx; border-radius: 18rpx; background: #1A1A1A; border: 1rpx solid #2A2A2A; }
+.search-input { flex: 1; height: 72rpx; padding: 0 18rpx; color: #FFFFFF; font-size: 27rpx; box-sizing: border-box; }
+.input-placeholder { color: #666666; }
+.search-btn { width: 124rpx; height: 72rpx; line-height: 72rpx; text-align: center; border-radius: 14rpx; background: #FF6B1A; color: #FFFFFF; font-weight: 800; font-size: 26rpx; }
+.hint { color: #777777; font-size: 24rpx; line-height: 1.5; margin: 18rpx 4rpx 26rpx; }
+.empty { color: #666666; text-align: center; margin-top: 140rpx; font-size: 28rpx; }
+.user-card { display: flex; align-items: center; gap: 14rpx; padding: 20rpx; border-radius: 18rpx; background: #1A1A1A; border: 1rpx solid #2A2A2A; margin-bottom: 14rpx; }
+.user-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 16rpx; }
+.avatar { width: 78rpx; height: 78rpx; border-radius: 50%; flex-shrink: 0; background: #282828; }
+.avatar.text { display: flex; align-items: center; justify-content: center; color: #FF6B1A; font-weight: 900; font-size: 30rpx; }
+.info { flex: 1; min-width: 0; }
+.name-row { display: flex; align-items: center; gap: 10rpx; min-width: 0; }
+.name { color: #FFFFFF; font-size: 29rpx; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tier { color: #FF8A3D; background: rgba(255,107,26,0.12); border-radius: 8rpx; padding: 2rpx 8rpx; font-size: 20rpx; font-weight: 800; }
+.meta, .real-name { color: #777777; font-size: 22rpx; margin-top: 8rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.real-name { color: #666666; }
+.action { width: 112rpx; height: 62rpx; line-height: 62rpx; text-align: center; border-radius: 14rpx; font-size: 24rpx; font-weight: 800; flex-shrink: 0; }
+.action.primary { color: #FFFFFF; background: #FF6B1A; }
+.action.ghost { color: #FF8A3D; background: rgba(255,107,26,.13); }
+.action.disabled { color: #666666; background: #242424; }

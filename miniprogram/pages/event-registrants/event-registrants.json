@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "报名管理",
+  "usingComponents": {
+    "page-guide": "/components/page-guide/index"
+  }
+}

@@ -1,0 +1,473 @@
+<view class="container">
+
+<!-- 未注册引导 -->
+<view class="not-registered" wx:if="{{!isRegistered}}">
+  <view class="guest-card">
+    <view class="guest-badge">游客模式</view>
+    <view class="nr-title">先逛逛 Sportlight</view>
+    <view class="nr-sub">登录入驻后可报名公开赛、创建队伍、发布赛事和管理赛程</view>
+    <view class="guest-actions">
+      <view class="nr-btn" bindtap="goRegister">登录/注册</view>
+      <view class="guest-secondary-btn" bindtap="goMarket">浏览公开赛</view>
+    </view>
+  </view>
+
+  <view class="guest-menu">
+    <view class="account-item" bindtap="goMarket">
+      <view class="account-item-left">
+        <image class="account-item-icon-img" src="/images/icons/trophy.png" mode="aspectFit" />
+        <text class="account-item-text">浏览公开赛</text>
+      </view>
+      <text class="account-item-arrow">›</text>
+    </view>
+    <view class="account-divider"></view>
+    <view class="account-item" bindtap="showAgreement">
+      <view class="account-item-left">
+        <image class="account-item-icon-img" src="/images/icons/agreement.png" mode="aspectFit" />
+        <text class="account-item-text">用户协议</text>
+      </view>
+      <text class="account-item-arrow">›</text>
+    </view>
+    <view class="account-divider"></view>
+    <view class="account-item" bindtap="showPrivacy">
+      <view class="account-item-left">
+        <image class="account-item-icon-img" src="/images/icons/privacy.png" mode="aspectFit" />
+        <text class="account-item-text">隐私政策</text>
+      </view>
+      <text class="account-item-arrow">›</text>
+    </view>
+  </view>
+</view>
+
+<!-- 已注册内容 -->
+<view wx:else>
+
+  <!-- 老板主页 -->
+  <view wx:if="{{userType === 'boss'}}">
+    <view class="boss-hero profile-edit-entry" bindtap="goEdit">
+      <view class="boss-avatar-wrap">
+        <image wx:if="{{profile.logo}}" class="boss-logo" src="{{profile.logo}}" mode="aspectFill"/>
+        <view wx:else class="boss-avatar">{{profile.name ? profile.name[0] : '老'}}</view>
+      </view>
+      <view class="boss-info">
+        <view class="boss-name">{{profile.name}}</view>
+        <view class="boss-meta">{{profile.city}} · {{profile.bossType === 'personal' ? '个人' : profile.bossType === 'company' ? '企业' : '俱乐部'}}</view>
+      </view>
+      <image class="edit-entry-icon" src="/images/icons/edit.png" mode="aspectFit" />
+    </view>
+
+    <view class="boss-stat-row">
+      <view class="stat-box">
+        <view class="stat-label">发布订单</view>
+        <view class="stat-value">{{profile.orderCount}}</view>
+      </view>
+      <view class="stat-box">
+        <view class="stat-label">微信认证</view>
+        <view class="stat-value {{profile.wechatVerified ? 'green' : 'gray'}}">{{profile.wechatVerified ? '✓ 已认证' : '未认证'}}</view>
+      </view>
+      <view class="stat-box">
+        <view class="stat-label">手机认证</view>
+        <view class="stat-value {{profile.phoneVerified ? 'green' : 'gray'}}">{{profile.phoneVerified ? '✓ 已认证' : '未认证'}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{bossGuide.visible}}" class="role-guide-card">
+      <view class="role-guide-head">
+        <view>
+          <view class="role-guide-kicker">老板运营引导</view>
+          <view class="role-guide-title">从资料到报名管理，只需三步</view>
+          <view class="role-guide-sub">先建立可信主体，再发布需求；报名和沟通都会集中到发布管理中处理。</view>
+        </view>
+        <view class="role-guide-count">{{bossGuide.completedCount}}/{{bossGuide.totalCount}}</view>
+      </view>
+      <view class="role-guide-route">
+        <view class="role-guide-route-item {{item.done ? 'done' : ''}}" wx:for="{{bossGuide.items}}" wx:key="key">
+          <view class="role-guide-route-dot">{{item.done ? '✓' : item.step}}</view>
+          <view>{{item.title}}</view>
+        </view>
+      </view>
+      <view class="role-guide-list">
+        <view wx:for="{{bossGuide.items}}" wx:key="key" class="role-guide-item {{item.done ? 'done' : ''}}" bindtap="goBossGuideStep" data-step="{{item.key}}">
+          <view class="role-guide-check">{{item.done ? '✓' : ''}}</view>
+          <view class="role-guide-copy">
+            <view class="role-guide-item-title">{{item.title}}</view>
+            <view class="role-guide-item-desc">{{item.desc}}</view>
+          </view>
+          <view class="role-guide-action">{{item.done ? '已完成' : item.actionLabel}}</view>
+        </view>
+      </view>
+      <view wx:if="{{bossGuide.next}}" class="role-guide-next" bindtap="goBossGuideStep" data-step="{{bossGuide.next.key}}">
+        <view><text class="role-guide-next-kicker">建议下一步</text><text class="role-guide-next-title">{{bossGuide.next.actionLabel}}</text></view>
+        <view class="role-guide-next-arrow">›</view>
+      </view>
+    </view>
+
+    <view class="desc-section">
+      <view class="desc-header">
+        <view class="section-title" style="margin:0;">关于我们</view>
+      </view>
+      <view wx:if="{{profile.description}}" class="desc-text">{{profile.description}}</view>
+      <view wx:else class="desc-placeholder">暂无企业/俱乐部介绍</view>
+    </view>
+
+    <view class="section-title" style="padding: 0 28rpx; margin-top: 8rpx;">最近动态</view>
+    <view style="padding: 0 28rpx;">
+      <view wx:if="{{profile.recentPosts && profile.recentPosts.length > 0}}">
+        <view
+          class="mini-post"
+          wx:for="{{profile.recentPosts}}"
+          wx:key="_id"
+          bindtap="goPostDetail"
+          data-id="{{item._id}}"
+        >
+          <view class="mini-post-type type-{{item.type}}">{{item.typeLabel}}</view>
+          <view class="mini-post-content">{{item.content}}</view>
+          <view class="mini-post-footer">
+            <text class="mini-post-time">{{item.timeLabel}}</text>
+            <text class="mini-post-likes">♡ {{item.likesCount}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty-box" wx:else>
+        <text>还没有发布动态，去动态 tab 发一条吧</text>
+      </view>
+    </view>
+
+  </view>
+
+  <!-- 球员主页 -->
+  <view wx:else>
+    <view class="hero-wrap profile-edit-entry" bindtap="goEdit">
+      <image class="hero-photo" src="{{user.photo}}" mode="aspectFill"/>
+      <view class="hero-gradient"></view>
+    </view>
+
+    <view class="info-wrap">
+      <view class="name-row profile-edit-entry" bindtap="goEdit">
+        <view class="name-wrap">
+          <view class="athlete-name">{{user.displayName || user.nickname || ('用户' + (user.sportlightId || ''))}}</view>
+          <view class="rank-badge rank-{{user.rank}}">{{user.rank}}级</view>
+        </view>
+        <image class="name-edit-icon" src="/images/icons/edit.png" mode="aspectFit" />
+      </view>
+
+      <view class="sl-id-row" wx:if="{{user.sportlightId}}" catchtap="copySportlightId">
+        <text class="sl-id-label">Sport Light ID</text>
+        <text class="sl-id-value">{{user.sportlightId}}</text>
+        <text class="sl-id-copy">复制</text>
+      </view>
+      <view class="join-date-row" wx:if="{{user.joinedDateLabel}}">
+        <text>{{user.joinedDateLabel}} 加入 Sport Light</text>
+      </view>
+
+      <view class="meta">{{user.sport}} · {{user.position}} · {{user.city}}</view>
+      <view class="affil-row">
+        <view class="affil-dot"></view>
+        <text>{{user.affiliation}}</text>
+      </view>
+
+      <view wx:if="{{user.hasAthleteLevelCert || user.isStudent}}" class="credential-card">
+        <view class="credential-title">资质材料</view>
+        <view class="credential-row" wx:if="{{user.hasAthleteLevelCert}}">
+          <view>
+            <view class="credential-name">运动员等级证书</view>
+            <view class="credential-desc">已提交，作为积分与报价参考材料</view>
+          </view>
+          <view class="credential-status">已上传</view>
+        </view>
+        <view class="credential-row" wx:if="{{user.isStudent}}">
+          <view>
+            <view class="credential-name">在校学生身份</view>
+            <view class="credential-desc">{{user.studentVerified ? '平台已核验学生证明' : '学生证明已提交，等待平台核验'}}</view>
+          </view>
+          <view class="credential-status {{user.studentVerified ? 'verified' : ''}}">{{user.studentVerified ? '已认证' : '待核验'}}</view>
+        </view>
+      </view>
+
+      <view class="stat-row">
+        <view class="stat-box score-clickable" hover-class="score-clickable-hover" bindtap="goScoreDetails">
+          <view class="stat-label">当季积分</view>
+          <view class="stat-value">{{user.currentSeasonScore}}</view>
+        </view>
+        <block wx:if="{{user.sport === '篮球'}}">
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="points" bindtap="goMatchStats">
+            <view class="stat-label">累积得分</view>
+            <view class="stat-value">{{user.totalBasketballPoints || 0}}</view>
+          </view>
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="rebounds" bindtap="goMatchStats">
+            <view class="stat-label">累积篮板</view>
+            <view class="stat-value">{{user.totalBasketballRebounds || 0}}</view>
+          </view>
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="assists" bindtap="goMatchStats">
+            <view class="stat-label">累积助攻</view>
+            <view class="stat-value">{{user.totalBasketballAssists || 0}}</view>
+          </view>
+        </block>
+        <block wx:elif="{{user.sport === '羽毛球'}}">
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="participations" bindtap="goMatchStats">
+            <view class="stat-label">累积参赛</view>
+            <view class="stat-value">{{user.matchParticipationCount || 0}}</view>
+          </view>
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="wins" bindtap="goMatchStats">
+            <view class="stat-label">正式胜场</view>
+            <view class="stat-value">{{user.formalWinCount || 0}}</view>
+          </view>
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="points" bindtap="goMatchStats">
+            <view class="stat-label">累积得分</view>
+            <view class="stat-value">{{user.totalBadmintonPoints || 0}}</view>
+          </view>
+          <view class="stat-box">
+            <view class="stat-label">胜率</view>
+            <view class="stat-value">{{user.winRateLabel || '0%'}}</view>
+          </view>
+        </block>
+        <block wx:else>
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="goals" bindtap="goMatchStats">
+            <view class="stat-label">累积进球</view>
+            <view class="stat-value">{{user.totalGoals || 0}}</view>
+          </view>
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="assists" bindtap="goMatchStats">
+            <view class="stat-label">累积助攻</view>
+            <view class="stat-value">{{user.totalAssists || 0}}</view>
+          </view>
+          <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="participations" bindtap="goMatchStats">
+            <view class="stat-label">累积参赛</view>
+            <view class="stat-value">{{user.matchParticipationCount || 0}}</view>
+          </view>
+        </block>
+        <view wx:if="{{user.sport !== '羽毛球'}}" class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="wins" bindtap="goMatchStats">
+          <view class="stat-label">正式胜场</view>
+          <view class="stat-value">{{user.formalWinCount || 0}}</view>
+        </view>
+        <view class="stat-box">
+          <view class="stat-label">信誉</view>
+          <view class="stat-value">{{user.reputation}}</view>
+        </view>
+      </view>
+
+      <view class="card-pack-entry" bindtap="goCardPack" hover-class="card-pack-entry-hover">
+        <view class="card-pack-entry-main">
+          <view class="card-pack-entry-icon">
+            <view class="card-pack-mini-card card-pack-mini-card-back"></view>
+            <view class="card-pack-mini-card card-pack-mini-card-front">S</view>
+          </view>
+          <view class="card-pack-entry-copy">
+          <view class="card-pack-entry-title">我的卡包</view>
+            <view class="card-pack-entry-sub">{{cardCount > 0 ? '已收藏 ' + cardCount + ' 张球星卡' : '收藏每一次真实出场'}}</view>
+          </view>
+        </view>
+        <view wx:if="{{unseenCardCount > 0}}" class="card-pack-new">{{unseenCardCount > 99 ? '99+' : unseenCardCount}}</view>
+        <view class="card-pack-entry-side">
+          <text wx:if="{{cardCount > 0}}">{{showcaseCards.length}}/6 展示</text>
+          <text class="card-pack-arrow">›</text>
+        </view>
+      </view>
+
+      <view class="showcase-section">
+        <view class="section-header showcase-header">
+          <view>
+            <view class="section-title" style="margin:0;">我的球星卡</view>
+            <view class="showcase-caption">主页展柜 · 最多展示6张</view>
+          </view>
+          <view class="section-action" bindtap="goCardPack">管理展示</view>
+        </view>
+        <view wx:if="{{showcaseCards.length > 0}}" class="showcase-grid">
+          <view class="showcase-card {{item._showBack ? 'is-back' : ''}}" wx:for="{{showcaseCards}}" wx:key="_id" data-index="{{index}}" bindtap="flipShowcaseCard">
+            <image wx:if="{{item.frontImage || item.coverImage || item.imageUrl}}" class="showcase-card-image" src="{{item._showBack ? item.backImage : (item.frontImage || item.coverImage || item.imageUrl)}}" mode="aspectFit"/>
+            <view wx:else class="showcase-card-placeholder">
+              <text class="showcase-card-mark">S</text>
+              <text class="showcase-card-name">{{item.title || 'SPORTLIGHT'}}</text>
+            </view>
+            <view wx:if="{{index === 0}}" class="showcase-main-badge">主卡</view>
+            <view wx:if="{{item.backImage}}" class="showcase-flip-badge">↻</view>
+          </view>
+        </view>
+        <view wx:else class="showcase-empty" bindtap="goCardPack">
+          <view class="showcase-empty-cards">
+            <view></view><view></view><view></view>
+          </view>
+          <view class="showcase-empty-title">你的展柜还是空的</view>
+          <view class="showcase-empty-sub">获得球星卡后，可以挑选代表卡片展示在这里</view>
+        </view>
+      </view>
+
+      <view class="soft-business-card">
+        <view class="soft-business-title">商业信息</view>
+        <view class="soft-business-grid">
+          <view>
+            <text>本月收入</text>
+            <text>¥{{user.monthIncome || 0}}</text>
+          </view>
+          <view>
+            <text>{{user.sport === '篮球' ? '单场最高可得' : '平台身价'}}</text>
+            <text wx:if="{{user.sport === '篮球' && user.levelReviewStatus === 'pending'}}">{{user.basketballRecommendedTier || 'D'}}级待验证</text>
+            <text wx:elif="{{user.marketValue}}">¥{{user.marketValue}}</text>
+            <text wx:else>待积累</text>
+          </view>
+        </view>
+        <view class="price-hint" wx:if="{{user.sport === '篮球' && user.levelReviewStatus === 'pending'}}">篮球档案审核通过后即可接取赏金令</view>
+        <view class="price-hint" wx:elif="{{user.sport === '篮球'}}">保障出场费 ¥{{user.guaranteedAppearanceFee || 0}} · 表现提成最高 ¥{{user.performanceBonus || 0}}</view>
+      </view>
+
+      <view class="progress-wrap">
+        <view class="progress-header">
+          <text class="progress-label">升{{user.nextTier}}级进度</text>
+          <text class="progress-pct">{{user.progress}}%</text>
+        </view>
+        <view class="progress-bg">
+          <view class="progress-fill" style="width:{{user.progress + '%'}}"></view>
+        </view>
+        <view class="progress-hint" wx:if="{{user.nextTier}}">再积 {{user.scoreNeeded}} 分即可升级</view>
+        <view class="progress-hint" wx:else>已达最高等级 🏆</view>
+      </view>
+
+      <view class="section-header">
+        <view class="section-title" style="margin:0;">我的球队</view>
+        <view class="section-action" bindtap="goMyTeams">{{myTeams.length > 0 ? '管理' : '去球队广场'}}</view>
+      </view>
+      <view class="team-mini-card" bindtap="goMyTeams">
+        <block wx:if="{{myTeams.length > 0}}">
+          <view
+            class="team-mini-item"
+            wx:for="{{myTeams}}"
+            wx:key="_id"
+            catchtap="goTeamHome"
+            data-id="{{item._id}}"
+          >
+            <image wx:if="{{item.logo}}" class="team-mini-logo" src="{{item.logo}}" mode="aspectFill"/>
+            <view wx:else class="team-mini-logo text">{{item.logoText}}</view>
+            <view class="team-mini-name">{{item.name}}</view>
+          </view>
+        </block>
+        <view wx:else class="team-mini-empty">
+          <view class="team-mini-empty-title">暂未加入球队</view>
+          <view class="team-mini-empty-sub">去球队广场看看附近队伍</view>
+        </view>
+      </view>
+
+      <view wx:if="{{user.honors && user.honors.length > 0}}">
+        <view class="section-title">赛事荣誉</view>
+        <view class="honor-tag-row">
+          <view class="honor-tag" wx:for="{{user.honors}}" wx:key="index">🏅 {{item}}</view>
+        </view>
+      </view>
+
+      <view wx:if="{{user.tournamentBadges && user.tournamentBadges.length > 0}}">
+        <view class="section-header">
+          <view class="section-title" style="margin:0;">赛事纪念徽章</view>
+          <view wx:if="{{user.tournamentBadges.length > 3}}" class="section-action" bindtap="toggleBadges">{{badgeExpanded ? '收起' : '展开全部'}}</view>
+        </view>
+        <view class="badge-grid">
+          <view
+            class="event-badge-card"
+            wx:for="{{user.tournamentBadges}}"
+            wx:key="postId"
+            hidden="{{!badgeExpanded && index >= 3}}"
+            data-index="{{index}}"
+            bindtap="openBadgeDetail"
+          >
+            <image class="event-badge-avatar" src="{{item.organizerAvatar || '/images/logo.png'}}" mode="aspectFill"/>
+            <view class="event-badge-name">{{item.eventTitle}}</view>
+            <view class="event-badge-sub">纪念徽章</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <view class="section-title" style="margin:0;">高光时刻</view>
+        <view class="section-action" bindtap="addHighlight">+ 添加</view>
+      </view>
+      <view class="highlight-grid">
+        <view class="highlight-cell" wx:for="{{user.highlights}}" wx:key="index">
+          <image class="highlight-img" src="{{item.isVideo ? item.poster : item.src}}" mode="aspectFill" catchtap="previewHighlight" data-index="{{index}}"/>
+          <view class="highlight-type-badge" wx:if="{{item.isVideo}}">▶</view>
+          <view class="delete-badge" catchtap="deleteHighlight" data-index="{{index}}">×</view>
+        </view>
+        <view class="highlight-add" bindtap="addHighlight">
+          <text class="add-icon">+</text>
+        </view>
+      </view>
+
+      <view class="section-title">近期合作</view>
+      <view wx:if="{{user.deals && user.deals.length > 0}}">
+        <view class="deal-row" wx:for="{{user.deals}}" wx:key="index" bindtap="goOrderDetail" data-id="{{item._id}}">
+          <view class="deal-icon {{item.type}}">
+            <image wx:if="{{item.bossLogo}}" class="deal-logo" src="{{item.bossLogo}}" mode="aspectFill"/>
+            <text wx:else>{{item.bossInitial}}</text>
+          </view>
+          <view class="deal-info">
+            <view class="deal-title">{{item.title}}</view>
+            <view class="deal-meta">{{item.typeLabel}} · {{item.date}}</view>
+          </view>
+          <view class="deal-status">已完成</view>
+        </view>
+      </view>
+      <view class="empty-box" wx:else>
+        <text>还没有合作记录，去接单吧！</text>
+      </view>
+
+      <view wx:if="{{user.eventHistory && user.eventHistory.length > 0}}">
+        <view class="section-title">赛事历史</view>
+        <view class="event-history-list">
+          <view class="event-history-row" wx:for="{{user.eventHistory}}" wx:key="index" bindtap="goEventDetail" data-id="{{item.postId}}">
+            <view class="event-hist-left">
+              <view class="event-hist-title">🏆 {{item.eventTitle || '赛事'}}</view>
+              <view class="event-hist-meta">{{item.eventDate}}{{item.sport ? ' · ' + item.sport : ''}}</view>
+            </view>
+            <view class="event-hist-right">
+              <view wx:if="{{item.rank !== null}}" class="event-hist-rank">第 {{item.rank}} 名</view>
+              <view wx:if="{{item.score !== null}}" class="event-hist-score">{{item.score}} 分</view>
+              <view wx:if="{{item.notes}}" class="event-hist-notes">{{item.notes}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+    </view>
+  </view>
+
+  <!-- 设置入口 -->
+  <view class="account-section">
+    <view class="account-menu">
+      <view class="account-item" bindtap="goSettings">
+        <view class="account-item-left">
+          <image class="account-item-icon-img" src="/images/icons/gear.png" mode="aspectFit" />
+          <text class="account-item-text">设置</text>
+        </view>
+      </view>
+      <view wx:if="{{isPlatformAdmin}}" class="account-divider"></view>
+      <view wx:if="{{isPlatformAdmin}}" class="account-item" bindtap="goAdminHub">
+        <view class="account-item-left">
+          <image class="account-item-icon-img" src="/images/icons/flashlight.png" mode="aspectFit" />
+          <text class="account-item-text">管理后台</text>
+        </view>
+        <text class="account-item-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+</view>
+
+<view wx:if="{{selectedBadge}}" class="badge-modal-mask" catchtap="closeBadgeDetail"></view>
+<view wx:if="{{selectedBadge}}" class="badge-modal">
+  <scroll-view class="badge-modal-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="badge-modal-head">
+      <image class="badge-modal-avatar" src="{{selectedBadge.organizerAvatar || '/images/logo.png'}}" mode="aspectFill"/>
+      <view class="badge-modal-title-wrap">
+        <view class="badge-modal-title">{{selectedBadge.badgeTitle}}</view>
+        <view class="badge-modal-meta">{{selectedBadge.eventDate}}{{selectedBadge.sport ? ' · ' + selectedBadge.sport : ''}}</view>
+        <view wx:if="{{selectedBadge.rankLabel}}" class="badge-modal-rank">{{selectedBadge.rankLabel}}</view>
+      </view>
+      <view class="badge-modal-close" bindtap="closeBadgeDetail">×</view>
+    </view>
+    <view class="badge-stat-grid">
+      <view class="badge-stat-item" wx:for="{{selectedBadge.stats}}" wx:key="label">
+        <view class="badge-stat-value">{{item.value}}</view>
+        <view class="badge-stat-label">{{item.label}}</view>
+      </view>
+    </view>
+    <view class="badge-modal-foot">该徽章由公开赛赛果与后台登记数据自动生成</view>
+  </scroll-view>
+</view>
+
+</view>

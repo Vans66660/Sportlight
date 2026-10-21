@@ -1,0 +1,74 @@
+<view class="card-pack-page">
+  <view class="pack-hero">
+    <view class="pack-eyebrow">SPORTLIGHT COLLECTION</view>
+    <view class="pack-title">我的卡包</view>
+    <view class="pack-subtitle">每一次真实出场，都值得被收藏</view>
+    <view class="pack-stats">
+      <view><text>{{cards.length}}</text><text>全部卡片</text></view>
+      <view><text>{{showcaseCards.length}}/6</text><text>主页展示</text></view>
+    </view>
+  </view>
+
+  <view class="pack-content">
+    <view class="portrait-library">
+      <view class="portrait-library-head">
+        <view>
+          <view class="portrait-entry-title">我的球星卡形象</view>
+          <view class="portrait-entry-sub">最多保存3个，可随时切换使用</view>
+        </view>
+        <view class="portrait-quota">{{portraitUploadQuota.label || ('本月可上传 ' + portraitUploadQuota.remaining + ' 次')}}</view>
+      </view>
+      <view class="portrait-slots">
+        <view class="portrait-slot {{item.isActive || (activeCardPortrait && activeCardPortrait.portraitId === item.portraitId) ? 'active' : ''}}"
+          wx:for="{{cardPortraits}}" wx:key="portraitId" data-id="{{item.portraitId || item._id}}" bindtap="goPortraitSlot">
+          <image wx:if="{{item.cutoutFileID}}" src="{{item.cutoutFileID}}" mode="aspectFit"/>
+          <view wx:if="{{item.isActive || (activeCardPortrait && activeCardPortrait.portraitId === item.portraitId)}}" class="portrait-active">使用中</view>
+        </view>
+        <view class="portrait-slot empty" wx:for="{{[0,1,2]}}" wx:key="*this" hidden="{{index < cardPortraits.length}}" bindtap="goPortraitSlot">
+          <text>＋</text><text>新增</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="pack-section-head">
+      <view>
+        <view class="pack-section-title">主页展柜</view>
+        <view class="pack-section-desc">挑选最能代表你的6张卡</view>
+      </view>
+      <view class="pack-manage {{cards.length ? '' : 'disabled'}}" bindtap="manageShowcase">管理展示</view>
+    </view>
+
+    <view wx:if="{{showcaseCards.length}}" class="pack-showcase-grid">
+      <view class="pack-card" wx:for="{{showcaseCards}}" wx:key="_id" data-id="{{item._id || item.cardId}}" bindtap="goCardDetail">
+        <image wx:if="{{item.frontImage || item.coverImage || item.imageUrl}}" src="{{item.frontImage || item.coverImage || item.imageUrl}}" mode="aspectFill"/>
+        <view wx:else class="pack-card-placeholder"><text>S</text><text>{{item.title || 'SPORTLIGHT'}}</text></view>
+        <view wx:if="{{index === 0}}" class="pack-main-badge">主卡</view>
+      </view>
+      <view class="pack-card pack-card-slot" wx:for="{{[0,1,2,3,4,5]}}" wx:key="*this" hidden="{{index < showcaseCards.length}}"><text>+</text></view>
+    </view>
+    <view wx:else class="pack-showcase-empty">
+      <view class="empty-stack"><view></view><view></view><view></view></view>
+      <view class="empty-title">还没有展示中的卡片</view>
+      <view class="empty-desc">获得卡片后，可从卡包中选择最多6张放进主页展柜</view>
+    </view>
+
+    <view class="pack-tabs">
+      <view class="pack-tab {{activeTab === 'all' ? 'active' : ''}}" data-tab="all" bindtap="switchTab">全部</view>
+      <view class="pack-tab {{activeTab === 'match' ? 'active' : ''}}" data-tab="match" bindtap="switchTab">比赛卡</view>
+      <view class="pack-tab {{activeTab === 'special' ? 'active' : ''}}" data-tab="special" bindtap="switchTab">纪念卡</view>
+    </view>
+
+    <view wx:if="{{visibleCards.length}}" class="pack-all-grid">
+      <view class="pack-card" wx:for="{{visibleCards}}" wx:key="_id" data-id="{{item._id || item.cardId}}" bindtap="goCardDetail">
+        <image wx:if="{{item.frontImage || item.coverImage || item.imageUrl}}" src="{{item.frontImage || item.coverImage || item.imageUrl}}" mode="aspectFill"/>
+        <view wx:else class="pack-card-placeholder"><text>S</text><text>{{item.title || 'SPORTLIGHT'}}</text></view>
+        <view wx:if="{{!item.seen}}" class="pack-new-badge">NEW</view>
+      </view>
+    </view>
+    <view wx:else class="pack-empty-all">
+      <view class="pack-empty-orbit"><view class="pack-empty-card">S</view></view>
+      <view class="empty-title">{{cards.length ? '这个分类还没有卡片' : '第一张卡，正在未来等你'}}</view>
+      <view class="empty-desc">{{cards.length ? '切换其他分类看看已收藏的卡片' : '实际参加平台认证比赛后，比赛卡将自动存入这里'}}</view>
+    </view>
+  </view>
+</view>

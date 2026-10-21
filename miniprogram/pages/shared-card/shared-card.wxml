@@ -1,0 +1,39 @@
+<view class="shared-page">
+  <view wx:if="{{loading}}" class="state">正在打开这张球星卡…</view>
+  <view wx:elif="{{errorMessage}}" class="state error">
+    <view class="state-mark">S</view>
+    <view>{{errorMessage}}</view>
+  </view>
+  <block wx:else>
+    <view class="shared-head">
+      <view class="eyebrow">SPORTLIGHT CERTIFIED CARD</view>
+      <view class="title">{{card.playerSnapshot.name || 'Sportlight 球员'}}</view>
+      <view class="subtitle">{{card.matchSnapshot.eventTitle || '认证参赛卡'}}</view>
+    </view>
+
+    <view class="card-stage" bindtap="flipCard">
+      <view class="card-shell {{side === 'back' ? 'show-back' : ''}}">
+        <view class="card-face">
+          <image src="{{card.frontImage}}" mode="aspectFit"/>
+        </view>
+        <view class="card-face card-back">
+          <image src="{{card.backImage || card.frontImage}}" mode="aspectFit"/>
+        </view>
+      </view>
+    </view>
+    <view class="flip-tip">点击卡片查看{{side === 'front' ? '背面' : '正面'}}</view>
+
+    <view class="info-card">
+      <view><text>球队</text><text>{{card.playerSnapshot.teamName || '—'}}</text></view>
+      <view><text>位置</text><text>{{card.playerSnapshot.position || '—'}}</text></view>
+      <view><text>赛事</text><text>{{card.matchSnapshot.eventTitle || '认证比赛'}}</text></view>
+      <view><text>日期</text><text>{{card.matchSnapshot.eventDate || '—'}}</text></view>
+    </view>
+
+    <view class="actions">
+      <button class="outline" bindtap="previewImage">查看大图</button>
+      <button class="share" open-type="share">继续分享</button>
+    </view>
+    <view class="brand-note">每一次真实出场，都值得被收藏</view>
+  </block>
+</view>

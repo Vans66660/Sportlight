@@ -1,0 +1,285 @@
+page {
+  background: #0F0F0F;
+}
+
+.container {
+  height: 100vh;
+  background-color: #0F0F0F;
+  background: #0F0F0F;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部 */
+.header {
+  background-color: #0F0F0F;
+  padding: 20rpx 28rpx 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-bottom: 1rpx solid #1A1A1A;
+}
+
+.header-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 1rpx;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.publish-plus {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 42rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding-bottom: 4rpx;
+  box-sizing: border-box;
+}
+
+.notif-bell {
+  position: relative;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bell-icon { width: 40rpx; height: 40rpx; display: block; filter: invert(1); opacity: 0.7; }
+
+.notif-red-dot {
+  position: absolute;
+  top: 4rpx;
+  right: 4rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background-color: #FF3B30;
+}
+
+/* 滚动区 */
+.feed-scroll {
+  flex: 1;
+  overflow: hidden;
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+/* 空态 */
+.empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+}
+.empty-icon { font-size: 80rpx; margin-bottom: 24rpx; }
+.empty-text { font-size: 28rpx; color: #444444; text-align: center; }
+
+/* ── 帖子条目 ── */
+.post-item { }
+
+.post-row {
+  display: flex;
+  gap: 20rpx;
+  padding: 28rpx 24rpx 20rpx;
+}
+
+.post-left { flex-shrink: 0; }
+
+.post-avatar {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 50%;
+  background-color: #2A2A2A;
+  display: block;
+}
+
+.post-right {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.post-name-time {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.post-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.post-dot { color: #333333; font-size: 22rpx; }
+
+.post-time { font-size: 22rpx; color: #555555; }
+
+.post-more {
+  font-size: 32rpx;
+  color: #444444;
+  letter-spacing: 2rpx;
+  padding: 0 4rpx;
+  flex-shrink: 0;
+}
+
+.post-content {
+  font-size: 28rpx;
+  color: #DDDDDD;
+  line-height: 1.65;
+  margin-bottom: 16rpx;
+  white-space: pre-wrap;
+}
+
+/* 图片网格 */
+.post-images {
+  display: grid;
+  gap: 4rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.img-count-1 { grid-template-columns: 1fr; }
+.img-count-2 { grid-template-columns: 1fr 1fr; }
+.img-count-3 { grid-template-columns: 1fr 1fr 1fr; }
+.img-count-4 { grid-template-columns: 1fr 1fr; }
+
+.post-img {
+  width: 100%;
+  aspect-ratio: 1;
+  display: block;
+  background-color: #2A2A2A;
+}
+
+.img-count-1 .post-img { aspect-ratio: 16/9; }
+
+/* 互动按钮行 */
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.like-icon { font-size: 30rpx; }
+.action-icon { font-size: 26rpx; }
+.action-icon-img { width: 32rpx; height: 32rpx; flex-shrink: 0; }
+.action-count { font-size: 24rpx; color: #555555; }
+.like-btn.liked .action-count { color: #FF6B1A; }
+
+/* 分隔线 */
+.post-divider {
+  height: 1rpx;
+  background-color: #1A1A1A;
+}
+
+/* ── 赛事卡专用 ── */
+.event-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 10rpx;
+}
+
+.event-status-tag {
+  font-size: 22rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5rpx;
+}
+
+.status-open { color: #CC8800; }
+.status-full { color: #555555; }
+.status-closed { color: #555555; }
+.tag-dot { font-size: 14rpx; }
+
+.event-sport-tag {
+  font-size: 22rpx;
+  color: #666666;
+  background: #1E1E1E;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+
+.event-quick-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.event-info-chip {
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.event-author-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 12rpx;
+}
+
+.mini-reg-btn {
+  font-size: 24rpx;
+  font-weight: 500;
+  padding: 12rpx 28rpx;
+  border-radius: 40rpx;
+}
+
+.reg-open { background: #CC8800; color: #FFFFFF; }
+.reg-done { background: rgba(61,187,138,0.12); color: #3DBB8A; }
+.reg-pending { background: rgba(91,168,212,0.12); color: #5BA8D4; }
+.reg-closed { background: #1E1E1E; color: #555555; }
+.reg-enter { background: #1E1E1E; color: #888888; }
+.outline-btn { border: 1rpx solid #2A2A2A; color: #888888; }
+
+.pending-badge {
+  display: inline-block;
+  background: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 20rpx;
+  font-weight: 700;
+  padding: 2rpx 10rpx;
+  border-radius: 20rpx;
+  margin-left: 6rpx;
+  vertical-align: middle;
+}
+
+/* 加载 / 没有更多 */
+.loading-tip,
+.no-more-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #333333;
+  padding: 40rpx;
+}

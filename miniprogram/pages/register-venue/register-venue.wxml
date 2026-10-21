@@ -1,0 +1,123 @@
+<view class="container">
+  <view class="header">
+    <view class="back" bindtap="goBack">‹</view>
+    <view class="step-bar">
+      <view class="step-dot {{step >= 1 ? 'active' : ''}}">1</view>
+      <view class="step-line {{step >= 2 ? 'done' : ''}}"></view>
+      <view class="step-dot {{step >= 2 ? 'active' : ''}}">2</view>
+      <view class="step-line {{step >= 3 ? 'done' : ''}}"></view>
+      <view class="step-dot {{step >= 3 ? 'active' : ''}}">3</view>
+    </view>
+  </view>
+
+  <view class="step-content" wx:if="{{step === 1}}">
+    <view class="step-title">球馆基础信息</view>
+    <view class="step-sub">位置必须通过地图选择，用于后续附近球局展示</view>
+
+    <view class="label">球馆名称 <text class="required">*</text></view>
+    <input class="input-box venue-name-input" placeholder="请输入球馆/场馆名称" placeholder-class="input-placeholder" value="{{form.name}}" data-field="name" bindinput="onInput"/>
+
+    <view class="label">经营类型 <text class="required">*</text></view>
+    <view class="tag-row">
+      <view wx:for="{{venueTypes}}" wx:key="index" class="tag-btn {{form.venueType === item ? 'active' : ''}}" data-value="{{item}}" bindtap="setVenueType">{{item}}</view>
+    </view>
+
+    <view class="label">地图定位 <text class="required">*</text></view>
+    <view class="location-card {{form.latitude ? 'done' : ''}}" bindtap="chooseLocation">
+      <view>
+        <view class="location-title">{{form.locationName || '在地图上选择球馆位置'}}</view>
+        <view class="location-sub">{{form.address || '点击打开地图选择，不支持手动定位'}}</view>
+      </view>
+      <view class="location-action">{{form.latitude ? '重选' : '选择'}}</view>
+    </view>
+
+    <view class="btn-next {{canNext1 ? 'active' : 'disabled'}}" bindtap="nextStep">下一步</view>
+    <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+  </view>
+
+  <view class="step-content" wx:elif="{{step === 2}}">
+    <view class="step-title">场地与照片</view>
+    <view class="step-sub">主页展示照片必填，详细相册可以后续补充</view>
+
+    <view class="label">支持运动 <text class="required">*</text></view>
+    <view class="tag-row">
+      <view wx:for="{{sportOptions}}" wx:key="label" class="tag-btn {{item.selected ? 'active' : ''}}" data-value="{{item.label}}" bindtap="toggleSport">{{item.label}}</view>
+    </view>
+
+    <view class="label">场地规格 <text class="required">*</text></view>
+    <view class="tag-row">
+      <view wx:for="{{courtTypeOptions}}" wx:key="label" class="tag-btn {{item.selected ? 'active' : ''}}" data-value="{{item.label}}" bindtap="toggleCourtType">{{item.label}}</view>
+    </view>
+
+    <view class="label" wx:if="{{form.courtTypes.length > 0}}">场地数量 <text class="required">*</text></view>
+    <block wx:for="{{courtTypeOptions}}" wx:key="label">
+      <view wx:if="{{item.selected}}" class="count-row">
+        <view class="count-label">{{item.label}}</view>
+        <input class="count-input" type="number" placeholder="数量" value="{{item.count}}" data-type="{{item.label}}" bindinput="onCourtCountInput"/>
+      </view>
+    </block>
+
+    <view class="label">营业时间 <text class="required">*</text></view>
+    <view class="time-row">
+      <picker mode="time" value="{{form.openingStart}}" bindchange="onOpeningStartChange">
+        <view class="time-picker">{{form.openingStart || '开始时间'}}</view>
+      </picker>
+      <view class="time-separator">至</view>
+      <picker mode="time" value="{{form.openingEnd}}" bindchange="onOpeningEndChange">
+        <view class="time-picker">{{form.openingEnd || '结束时间'}}</view>
+      </picker>
+    </view>
+
+    <view class="label">主页展示照片 <text class="required">*</text></view>
+    <view class="cover-upload {{form.coverImage ? 'has-image' : ''}}" bindtap="uploadCover">
+      <image wx:if="{{form.coverImage}}" class="upload-preview" src="{{form.coverImage}}" mode="aspectFill"/>
+      <view wx:else class="upload-placeholder">
+        <view class="upload-icon">＋</view>
+        <view class="upload-hint">上传主页照片</view>
+      </view>
+    </view>
+
+    <view class="label">详细相册</view>
+    <view class="gallery-grid">
+      <view class="gallery-item" wx:for="{{form.galleryImages}}" wx:key="index">
+        <image class="gallery-img" src="{{item}}" mode="aspectFill"/>
+        <view class="remove-btn" data-index="{{index}}" catchtap="removeGallery">×</view>
+      </view>
+      <view wx:if="{{form.galleryImages.length < 9}}" class="gallery-add" bindtap="uploadGallery">＋</view>
+    </view>
+
+    <view class="btn-next {{canNext2 ? 'active' : 'disabled'}}" bindtap="nextStep">下一步</view>
+    <view class="btn-prev" bindtap="prevStep">上一步</view>
+    <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+  </view>
+
+  <view class="step-content" wx:else>
+    <view class="step-title">运营者信息</view>
+    <view class="step-sub">平台审核通过后开放球馆管理入口</view>
+
+    <view class="label">运营者姓名 <text class="required">*</text></view>
+    <input class="input-box" placeholder="请输入运营者姓名" value="{{form.operatorName}}" data-field="operatorName" bindinput="onInput"/>
+
+    <view class="label">运营者手机号 <text class="required">*</text></view>
+    <view class="phone-only-box {{form.phoneVerified ? 'verified' : ''}}">
+      <button wx:if="{{!form.phoneVerified}}" class="bind-btn bind-btn-full" open-type="getPhoneNumber" bindgetphonenumber="bindPhone">手机号快捷验证</button>
+      <button wx:else class="bind-btn bind-btn-full done" disabled>已绑定手机号</button>
+    </view>
+
+    <view class="label">资质证明/营业执照</view>
+    <view class="gallery-grid">
+      <view class="gallery-item" wx:for="{{form.licenseImages}}" wx:key="index">
+        <image class="gallery-img" src="{{item}}" mode="aspectFill"/>
+        <view class="remove-btn" data-index="{{index}}" catchtap="removeLicense">×</view>
+      </view>
+      <view wx:if="{{form.licenseImages.length < 3}}" class="gallery-add" bindtap="uploadLicense">＋</view>
+    </view>
+
+    <view class="label">详细介绍</view>
+    <textarea class="textarea-box" maxlength="300" placeholder="介绍你的球馆/场馆，让其他人了解你的场地条件、服务方向和合作风格..." value="{{form.description}}" data-field="description" bindinput="onInput"/>
+
+    <view class="btn-next {{canSubmit ? 'active' : 'disabled'}}" bindtap="finish">提交审核</view>
+    <view class="btn-prev" bindtap="prevStep">上一步</view>
+    <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+  </view>
+</view>

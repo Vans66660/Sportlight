@@ -1,0 +1,138 @@
+<view class="container">
+
+  <page-guide guide-key="boss-edit-profile" title="主体资料" content="主体名称、头像、城市和介绍会用于赛事页、需求页和对外展示。"></page-guide>
+
+  <view class="header">
+    <view class="back-btn" catchtap="goBack">‹</view>
+    <view class="header-title">编辑资料</view>
+    <view class="save-btn" catchtap="save">保存</view>
+  </view>
+
+  <!-- 头像 -->
+  <view class="section">
+    <view class="avatar-row" catchtap="changeLogo">
+      <image wx:if="{{form.logo}}" class="logo-img" src="{{form.logo}}" mode="aspectFill"/>
+      <view wx:else class="logo-placeholder">
+        <text class="logo-icon">📷</text>
+        <text class="logo-hint">上传头像</text>
+      </view>
+      <view class="change-label">更换头像</view>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="section">
+    <view class="section-title">基本信息</view>
+
+    <view class="field-row">
+      <view class="field-label">姓名 / 机构名</view>
+      <input class="field-input" placeholder="请输入" value="{{form.name}}" bindinput="onInput" data-field="name"/>
+    </view>
+
+    <view class="field-row locked-row">
+      <view class="field-label">主体类型</view>
+      <view class="field-static">
+        {{form.bossType === 'company' ? '企业主体' : form.bossType === 'club' ? '俱乐部主体' : '个人主体'}}
+      </view>
+      <view class="field-hint">主体类型注册后不可在普通资料编辑中修改</view>
+    </view>
+
+    <view class="field-row">
+      <view class="field-label">城市</view>
+      <picker mode="region" value="{{[' ', form.city, ' ']}}" bindchange="onCityChange">
+        <view class="field-picker {{form.city ? '' : 'placeholder'}}">
+          {{form.city || '请选择城市'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="field-row no-border">
+      <view class="field-label">联系电话</view>
+      <view class="field-static" bindtap="goAccountSettings">{{form.phone || '去绑定手机号'}}</view>
+    </view>
+  </view>
+
+  <!-- 认证信息 -->
+  <view class="section">
+    <view class="section-title">认证信息</view>
+
+    <view class="cert-row" bindtap="goAccountSettings">
+      <view>
+        <view class="cert-title">手机号认证</view>
+        <view class="cert-desc">{{form.phoneVerified ? form.phone : '未绑定'}}</view>
+      </view>
+      <view class="cert-badge {{form.phoneVerified ? 'done' : ''}}">{{form.phoneVerified ? '已认证' : '去绑定'}}</view>
+    </view>
+
+    <view wx:if="{{form.bossType === 'personal'}}">
+      <view class="cert-row">
+        <view>
+          <view class="cert-title">实名信息</view>
+          <view class="cert-desc">{{form.realName ? form.realName + ' · 已提交身份证' : '未提交实名信息'}}</view>
+        </view>
+        <view class="cert-badge {{form.realName && form.idCard ? 'done' : ''}}">{{form.realName && form.idCard ? '已提交' : '未提交'}}</view>
+      </view>
+      <view class="cert-row no-border">
+        <view>
+          <view class="cert-title">收款方式</view>
+          <view class="cert-desc">{{form.receiveMethod === 'wechat' ? '微信收款' : '未设置'}}</view>
+        </view>
+        <view class="cert-badge {{form.receiveMethod ? 'done' : ''}}">{{form.receiveMethod ? '已设置' : '未设置'}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{form.bossType === 'company'}}">
+      <view class="cert-row">
+        <view>
+          <view class="cert-title">企业资质</view>
+          <view class="cert-desc">{{form.companyName || '未提交企业名称'}}{{form.creditCode ? ' · 信用代码已提交' : ''}}</view>
+        </view>
+        <view class="cert-badge {{form.companyName && form.creditCode && form.license ? 'done' : ''}}">{{form.companyName && form.creditCode && form.license ? '已提交' : '待完善'}}</view>
+      </view>
+      <view class="cert-row no-border">
+        <view>
+          <view class="cert-title">法人 / 经办人</view>
+          <view class="cert-desc">{{form.legalType === 'agent' ? (form.agentName || '经办人未提交') : (form.legalName || '法人未提交')}}</view>
+        </view>
+        <view class="cert-badge {{(form.legalType === 'agent' && form.agentName && form.agentIdCard) || (form.legalType === 'legal' && form.legalName && form.legalIdCard) ? 'done' : ''}}">{{((form.legalType === 'agent' && form.agentName && form.agentIdCard) || (form.legalType === 'legal' && form.legalName && form.legalIdCard)) ? '已提交' : '未提交'}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{form.bossType === 'club'}}">
+      <view class="cert-row">
+        <view>
+          <view class="cert-title">俱乐部类型</view>
+          <view class="cert-desc">{{form.clubType === 'registered' ? '注册俱乐部' : form.clubType === 'grassroots' ? '草根俱乐部 / 战队' : '未选择'}}</view>
+        </view>
+        <view class="cert-badge {{form.clubType ? 'done' : ''}}">{{form.clubType ? '已设置' : '未设置'}}</view>
+      </view>
+      <view class="cert-row no-border">
+        <view>
+          <view class="cert-title">{{form.clubType === 'registered' ? '执照资质' : '负责人实名'}}</view>
+          <view class="cert-desc">{{form.clubType === 'registered' ? (form.license ? '执照已提交' : '未提交执照') : (form.realName ? form.realName + ' · 已提交身份证' : '未提交负责人实名')}}</view>
+        </view>
+        <view class="cert-badge {{(form.clubType === 'registered' && form.license) || (form.clubType === 'grassroots' && form.realName && form.idCard) ? 'done' : ''}}">{{((form.clubType === 'registered' && form.license) || (form.clubType === 'grassroots' && form.realName && form.idCard)) ? '已提交' : '未提交'}}</view>
+      </view>
+    </view>
+
+    <view class="cert-hint">认证资料涉及实名、执照和收款信息，如需变更请联系平台客服或后续进入认证重提流程。</view>
+  </view>
+
+  <!-- 详细介绍 -->
+  <view class="section">
+    <view class="section-title">详细介绍</view>
+    <view class="desc-wrap">
+      <textarea
+        class="desc-input"
+        placeholder="介绍你的企业/俱乐部/团队，让球员了解你的背景、需求方向和合作风格..."
+        value="{{form.description}}"
+        bindinput="onInput"
+        data-field="description"
+        maxlength="300"
+        auto-height
+      />
+      <view class="desc-count">{{form.description.length}}/300</view>
+    </view>
+  </view>
+
+</view>

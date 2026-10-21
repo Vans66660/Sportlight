@@ -1,0 +1,94 @@
+<!--pages/login/login.wxml-->
+<view class="container">
+  <!-- Logo区域 -->
+  <view class="logo-wrap">
+    <view class="logo-text">Sport<span class="logo-dot">●</span>light</view>
+    <view class="logo-divider"></view>
+    <view class="logo-sub">让汗水自证价值</view>
+    <image class="logo-img" src="/images/logo66.png" mode="aspectFit" />
+  </view>
+
+  <!-- ========== 默认：登录视图 ========== -->
+  <view wx:if="{{mode === 'login'}}">
+    <view class="wechat-login-btn {{agreedPrivacy ? '' : 'wechat-login-btn--inactive'}}" bindtap="wechatLogin">
+      <text class="wechat-main">{{loggingIn ? '正在进入 Sportlight' : '登录/注册'}}</text>
+      <text class="wechat-arrow">›</text>
+    </view>
+
+    <!-- 先逛逛 -->
+    <view wx:if="{{showSkip}}" class="skip-wrap">
+      <view class="btn-skip" bindtap="goSkip">暂不登录，先逛逛</view>
+    </view>
+
+    <!-- 隐私协议 -->
+    <view class="terms">
+      <view class="terms-check" bindtap="toggleAgreement">
+        <view class="terms-checkbox {{agreedPrivacy ? 'checked' : ''}}">
+          <text wx:if="{{agreedPrivacy}}">✓</text>
+        </view>
+        <view class="terms-copy">
+          {{agreedPrivacy ? '我已阅读并同意' : '阅读并同意'}}
+          <text class="terms-link" catchtap="openUserAgreement">《用户服务协议》</text>
+          和
+          <text class="terms-link" catchtap="openPrivacyPolicy">《隐私政策》</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="brand-slogan">
+      <text>数字化体育</text>
+      <text class="brand-slogan-dot">·</text>
+      <text>一站式平台</text>
+    </view>
+  </view>
+
+  <!-- ========== 注册视图：身份选择 ========== -->
+  <view wx:if="{{mode === 'register'}}">
+    <view class="section-label">选择你的身份</view>
+    <view class="identity-wrap">
+      <view class="identity-btn {{selected === 'athlete' ? 'active' : ''}}" bindtap="selectIdentity" data-type="athlete">
+        <view class="identity-icon identity-icon-athlete">
+          <image class="identity-pic identity-pic-athlete" src="/images/icons/sporter.png" mode="aspectFit" />
+        </view>
+        <view class="identity-info">
+          <view class="identity-name">我是运动员</view>
+          <view class="identity-desc">找比赛、组队参赛、展示实力</view>
+        </view>
+        <view class="identity-check" wx:if="{{selected === 'athlete'}}">✓</view>
+      </view>
+      <view class="identity-btn {{selected === 'boss' ? 'active' : ''}}" bindtap="selectIdentity" data-type="boss">
+        <view class="identity-icon identity-icon-boss">
+          <image class="identity-pic identity-pic-boss" src="/images/icons/holder.png" mode="aspectFit" />
+        </view>
+        <view class="identity-info">
+          <view class="identity-name">我是主办方</view>
+          <view class="identity-desc">发布赛事、招募球员、管理队伍</view>
+        </view>
+        <view class="identity-check" wx:if="{{selected === 'boss'}}">✓</view>
+      </view>
+      <view class="identity-btn {{selected === 'venue' ? 'active' : ''}}" bindtap="selectIdentity" data-type="venue">
+        <view class="identity-icon identity-icon-venue">
+          <image class="identity-pic identity-pic-venue" src="/images/icons/venue-register.png" mode="aspectFit" />
+        </view>
+        <view class="identity-info">
+          <view class="identity-name">我是球馆方</view>
+          <view class="identity-desc">入驻场馆、管理球局、连接附近玩家</view>
+        </view>
+        <view class="identity-check" wx:if="{{selected === 'venue'}}">✓</view>
+      </view>
+    </view>
+
+    <button class="btn-continue {{selected ? 'btn-active' : 'btn-disabled'}}" bindtap="goNext" hover-class="none">
+      {{selected ? '去入驻' : '请先选择身份'}}
+    </button>
+
+    <view class="back-to-login" bindtap="goBackToLogin">← 返回登录</view>
+  </view>
+
+  <!-- ========== 登录成功：轻提示后自动跳转 ========== -->
+  <view class="login-success-box" wx:if="{{loginSuccess}}">
+    <view class="success-icon">✓</view>
+    <view class="success-title">登录成功</view>
+    <view class="success-name" wx:if="{{userProfile.name}}">{{userProfile.name}}</view>
+  </view>
+</view>

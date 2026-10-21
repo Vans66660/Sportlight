@@ -1,0 +1,49 @@
+<view class="page">
+  <view wx:if="{{team}}" class="team-card">
+    <image wx:if="{{team.logo}}" class="logo" src="{{team.logo}}" mode="aspectFill"/>
+    <view wx:else class="logo text">{{team.logoText || '队'}}</view>
+    <view class="main">
+      <view class="name">{{team.name}}</view>
+      <view class="meta">{{team.sport}} · 平均积分 {{team.averageScore}}</view>
+    </view>
+  </view>
+
+  <view class="label">比赛规格</view>
+  <view class="seg-row">
+    <view wx:for="{{specOptions}}" wx:key="item" class="seg {{form.spec === item ? 'active' : ''}}" data-value="{{item}}" bindtap="setSpec">{{item}}</view>
+  </view>
+
+  <view class="label">日期</view>
+  <picker mode="date" value="{{form.date}}" bindchange="onDate">
+    <view class="picker">{{form.date}}</view>
+  </picker>
+
+  <view class="label">时间</view>
+  <picker mode="time" value="{{form.time}}" bindchange="onTime">
+    <view class="picker">{{form.time}}</view>
+  </picker>
+
+  <view class="label">球馆</view>
+  <view wx:for="{{venues}}" wx:key="_id" class="venue {{selectedVenue._id === item._id ? 'selected' : ''}}" bindtap="selectVenue" data-id="{{item._id}}">
+    <view>
+      <view class="venue-name">{{item.name}}</view>
+      <view class="venue-address">{{item.city}} · {{item.address || item.locationName}}</view>
+    </view>
+    <view class="check">{{selectedVenue._id === item._id ? '✓' : ''}}</view>
+  </view>
+
+  <view class="label">费用方式</view>
+  <view class="seg-row">
+    <view wx:for="{{paymentOptions}}" wx:key="key" class="seg {{form.paymentMethod === item.key ? 'active' : ''}}" data-value="{{item.key}}" bindtap="setPayment">{{item.label}}</view>
+  </view>
+
+  <view class="label">对手要求</view>
+  <view class="seg-row">
+    <view wx:for="{{requirementOptions}}" wx:key="item" class="seg {{form.opponentRequirement === item ? 'active' : ''}}" data-value="{{item}}" bindtap="setReq">{{item}}</view>
+  </view>
+
+  <view class="label">约战说明</view>
+  <textarea class="textarea" maxlength="300" placeholder="补充比赛强度、规则、注意事项..." value="{{form.description}}" data-field="description" bindinput="onInput"/>
+
+  <view class="submit" bindtap="submit">发布约战</view>
+</view>

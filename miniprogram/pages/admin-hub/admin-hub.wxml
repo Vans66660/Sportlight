@@ -1,0 +1,682 @@
+<view class="container">
+
+  <view class="page-header">
+    <view class="page-heading">
+      <view class="page-eyebrow">平台运营中心</view>
+      <view class="page-title">{{currentMode.title}}</view>
+      <view class="page-subtitle">{{currentMode.subtitle}}</view>
+    </view>
+    <view class="header-actions">
+      <view wx:if="{{mode === 'events'}}" class="seed-btn" bindtap="seedDemoData">生成测试数据</view>
+      <view class="refresh-btn" bindtap="refreshCurrent">刷新</view>
+      <view wx:if="{{availableSubjectTypes.length}}" class="switch-role-btn" bindtap="switchToRole">切换身份</view>
+    </view>
+  </view>
+
+  <view class="mode-nav">
+    <scroll-view class="primary-nav" scroll-x>
+      <view wx:for="{{navSections}}" wx:key="key" class="primary-tab {{activeSection === item.key ? 'active' : ''}}" bindtap="switchSection" data-section="{{item.key}}">{{item.label}}</view>
+    </scroll-view>
+    <view class="sub-nav-label">{{currentMode.title}}</view>
+    <view class="mode-grid sub-mode-grid {{activeSubNav.length === 1 ? 'single' : ''}}">
+      <view wx:for="{{activeSubNav}}" wx:key="key" class="mode-tab {{mode === item.key ? 'active' : ''}}" bindtap="switchMode" data-mode="{{item.key}}">
+        <text class="mode-icon">{{item.icon}}</text>
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="admin-todo" wx:if="{{mode === 'events'}}">
+    <view class="todo-heading">
+      <view>
+        <view class="todo-title">运营待办</view>
+        <view class="todo-subtitle">{{adminOverview.total}} 项待处理，请优先完成审核</view>
+      </view>
+      <view class="todo-total">{{adminOverview.total}}</view>
+    </view>
+    <view class="todo-grid">
+      <view class="todo-item" bindtap="switchMode" data-mode="venues"><text>球馆</text><text>{{adminOverview.venues}}</text></view>
+      <view class="todo-item" bindtap="switchMode" data-mode="levels"><text>等级</text><text>{{adminOverview.levels}}</text></view>
+      <view class="todo-item" bindtap="switchMode" data-mode="reports"><text>举报</text><text>{{adminOverview.reports}}</text></view>
+      <view class="todo-item" bindtap="switchMode" data-mode="disputes"><text>异议</text><text>{{adminOverview.disputes}}</text></view>
+    </view>
+  </view>
+
+  <view class="workbench-summary" wx:if="{{mode === 'events'}}">
+    <view class="summary-cell">
+      <text class="summary-number">{{eventStats.pendingReview}}</text>
+      <text class="summary-label">待审队伍</text>
+    </view>
+    <view class="summary-cell">
+      <text class="summary-number">{{eventStats.active}}</text>
+      <text class="summary-label">进行中赛事</text>
+    </view>
+    <view class="summary-cell">
+      <text class="summary-number">{{eventStats.closed}}</text>
+      <text class="summary-label">已截止</text>
+    </view>
+    <view class="summary-cell">
+      <text class="summary-number">{{eventStats.total}}</text>
+      <text class="summary-label">全部赛事</text>
+    </view>
+  </view>
+
+  <!-- 筛选 -->
+  <view class="filter-row" wx:if="{{mode === 'events'}}">
+    <view
+      class="filter-chip {{activeFilter === 'pending' ? 'active' : ''}}"
+      bindtap="setFilter"
+      data-filter="pending"
+    >待录入</view>
+    <view
+      class="filter-chip {{activeFilter === 'all' ? 'active' : ''}}"
+      bindtap="setFilter"
+      data-filter="all"
+    >全部赛事</view>
+    <view
+      class="filter-chip {{activeFilter === 'certified' ? 'active' : ''}}"
+      bindtap="setFilter"
+      data-filter="certified"
+    >认证赛事</view>
+  </view>
+
+  <view class="filter-row" wx:elif="{{mode === 'venues'}}">
+    <view
+      class="filter-chip {{venueFilter === 'pending' ? 'active' : ''}}"
+      bindtap="setVenueFilter"
+      data-filter="pending"
+    >待审核</view>
+    <view
+      class="filter-chip {{venueFilter === 'approved' ? 'active' : ''}}"
+      bindtap="setVenueFilter"
+      data-filter="approved"
+    >已通过</view>
+    <view
+      class="filter-chip {{venueFilter === 'rejected' ? 'active' : ''}}"
+      bindtap="setVenueFilter"
+      data-filter="rejected"
+    >已驳回</view>
+    <view
+      class="filter-chip {{venueFilter === 'all' ? 'active' : ''}}"
+      bindtap="setVenueFilter"
+      data-filter="all"
+    >全部</view>
+  </view>
+
+  <view class="filter-row" wx:elif="{{mode === 'reports'}}">
+    <view class="filter-chip {{reportFilter === 'pending' ? 'active' : ''}}" bindtap="setReportFilter" data-filter="pending">待审核</view>
+    <view class="filter-chip {{reportFilter === 'done' ? 'active' : ''}}" bindtap="setReportFilter" data-filter="done">已处理</view>
+    <view class="filter-chip {{reportFilter === 'all' ? 'active' : ''}}" bindtap="setReportFilter" data-filter="all">全部</view>
+  </view>
+
+  <view class="filter-row" wx:elif="{{mode === 'levels'}}">
+    <view class="filter-chip {{levelFilter === 'pending' ? 'active' : ''}}" bindtap="setLevelFilter" data-filter="pending">待审核</view>
+    <view class="filter-chip {{levelFilter === 'approved' ? 'active' : ''}}" bindtap="setLevelFilter" data-filter="approved">已通过</view>
+    <view class="filter-chip {{levelFilter === 'rejected' ? 'active' : ''}}" bindtap="setLevelFilter" data-filter="rejected">已驳回</view>
+    <view class="filter-chip {{levelFilter === 'all' ? 'active' : ''}}" bindtap="setLevelFilter" data-filter="all">全部</view>
+  </view>
+
+  <view wx:if="{{mode !== 'settings' && mode !== 'todo' && mode !== 'metrics'}}" class="admin-search">
+    <text class="search-icon">🔍</text>
+    <input class="search-input" placeholder="{{mode === 'users' ? '输入手机号、openid、姓名或Sportlight ID' : (mode === 'posts' ? '搜索帖子、作者、openid、地点' : (mode === 'reports' ? '搜索举报人、对象、原因' : (mode === 'levels' ? '搜索球员、等级、运动背景' : (mode === 'venues' ? '搜索球馆、城市、地址、运营者' : '搜索赛事名称、地点、主办方、运动项目'))))}}" value="{{keyword}}" bindinput="onSearch" bindconfirm="submitUserSearch" confirm-type="search"/>
+    <view wx:if="{{keyword}}" class="search-clear" bindtap="clearSearch">×</view>
+    <view wx:if="{{mode === 'users'}}" class="search-action" bindtap="submitUserSearch">查询</view>
+  </view>
+
+  <view wx:if="{{mode === 'todo'}}" class="todo-panel">
+    <view class="todo-panel-head">
+      <view>
+        <view class="todo-panel-title">统一待办</view>
+        <view class="todo-panel-desc">按优先级处理后，相关审核状态会自动更新。</view>
+      </view>
+      <view class="todo-panel-count">{{adminOverview.total}} 项</view>
+    </view>
+    <view class="todo-filter-row">
+      <view class="todo-filter {{todoView === 'all' ? 'active' : ''}}" bindtap="setTodoView" data-view="all">全部</view>
+      <view class="todo-filter {{todoView === 'overdue' ? 'active' : ''}}" bindtap="setTodoView" data-view="overdue">已超时</view>
+      <view class="todo-filter {{todoView === 'normal' ? 'active' : ''}}" bindtap="setTodoView" data-view="normal">未超时</view>
+    </view>
+    <view wx:for="{{todoItems}}" wx:key="key" wx:if="{{todoView === 'all' || (todoView === 'overdue' && item.overdue > 0) || (todoView === 'normal' && item.count > 0 && !item.overdue)}}" class="todo-card todo-{{item.tone}}" bindtap="openTodo" data-mode="{{item.key}}">
+      <view class="todo-card-main">
+        <view class="todo-card-title-row">
+          <view class="todo-card-title">{{item.title}}</view>
+          <view class="todo-priority priority-{{item.tone}}">{{item.priority}}</view>
+        </view>
+        <view class="todo-card-desc">{{item.desc}}</view>
+      </view>
+      <view class="todo-card-action">
+        <text class="todo-card-count">{{item.count}}</text>
+        <text class="todo-card-enter">进入处理 ›</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{mode === 'metrics'}}" class="todo-panel">
+    <view class="todo-panel-head">
+      <view>
+        <view class="todo-panel-title">运营数据</view>
+        <view class="todo-panel-desc">观察新增、报名、约场和支付表现。</view>
+      </view>
+      <view class="todo-panel-count" bindtap="loadMetrics">刷新</view>
+    </view>
+    <view wx:if="{{metricsLoading}}" class="loading-wrap"><view class="loading-text">加载中...</view></view>
+    <block wx:else>
+      <view class="todo-grid">
+        <view class="todo-item" wx:for="{{metricsCards}}" wx:key="label"><text>{{item.label}}</text><text>{{item.value}}</text></view>
+      </view>
+      <view class="todo-panel-title" style="margin-top: 24rpx;">运营健康</view>
+      <view class="todo-card todo-normal" wx:for="{{metricsHealth}}" wx:key="label">
+        <view class="todo-card-main"><view class="todo-card-title">{{item.label}}</view></view>
+        <view class="todo-card-action"><text class="todo-card-count">{{item.value}}</text></view>
+      </view>
+    </block>
+  </view>
+
+  <view wx:elif="{{mode === 'deletedPosts'}}" class="audit-panel">
+    <view wx:if="{{deletedPostsLoading}}" class="loading-wrap"><view class="loading-text">加载中...</view></view>
+    <view wx:elif="{{deletedPosts.length === 0}}" class="empty-wrap"><view class="empty-icon">↶</view><view class="empty-text">没有可恢复的帖子</view></view>
+    <block wx:else>
+      <view wx:for="{{deletedPosts}}" wx:key="postId" class="audit-card">
+        <view class="audit-action">{{item.contentPreview}}</view>
+        <view class="audit-meta">保留至：{{item.restoreUntil || '未知'}}</view>
+        <view class="restore-btn" bindtap="restoreDeletedPost" data-id="{{item.postId}}">恢复帖子</view>
+      </view>
+    </block>
+  </view>
+
+  <view wx:elif="{{mode === 'auditLogs'}}" class="audit-panel">
+    <view class="filter-row">
+      <view class="filter-chip {{auditCategory === 'all' ? 'active' : ''}}" bindtap="setAuditCategory" data-category="all">全部</view>
+      <view class="filter-chip {{auditCategory === 'review' ? 'active' : ''}}" bindtap="setAuditCategory" data-category="review">审核</view>
+      <view class="filter-chip {{auditCategory === 'content' ? 'active' : ''}}" bindtap="setAuditCategory" data-category="content">内容</view>
+      <view class="filter-chip {{auditCategory === 'account' ? 'active' : ''}}" bindtap="setAuditCategory" data-category="account">账户</view>
+      <view class="filter-chip {{auditCategory === 'settings' ? 'active' : ''}}" bindtap="setAuditCategory" data-category="settings">设置</view>
+    </view>
+    <view wx:if="{{auditLogsLoading}}" class="loading-wrap"><view class="loading-text">加载中...</view></view>
+    <view wx:elif="{{auditLogs.length === 0}}" class="empty-wrap"><view class="empty-icon">◷</view><view class="empty-text">暂无操作记录</view></view>
+    <block wx:else>
+      <view wx:for="{{auditLogs}}" wx:key="_id" class="audit-card">
+        <view class="audit-card-head">
+          <view class="audit-action">{{item.actionLabel}}</view>
+          <view class="audit-time">{{item.timeLabel}}</view>
+        </view>
+        <view class="audit-target">对象：{{item.targetName || item.targetId || '未记录'}}</view>
+        <view class="audit-meta">操作人：{{item.adminOpenidMasked || '未记录'}}</view>
+        <view wx:if="{{item.detail.reason || item.detail.note}}" class="audit-note">说明：{{item.detail.reason || item.detail.note}}</view>
+      </view>
+      <view wx:if="{{auditHasMore}}" class="load-more-btn" bindtap="loadMoreAuditLogs">加载更多操作记录</view>
+    </block>
+  </view>
+
+  <view wx:elif="{{mode === 'settings'}}" class="settings-panel">
+    <view class="settings-card">
+      <view class="settings-title">球场收入抽成比例</view>
+      <view class="settings-desc">用于球馆散客拼局、包场订单结算。这里保存的是平台从球馆收入中抽取的比例。</view>
+      <view class="commission-row">
+        <input class="commission-input" type="text" value="{{venueCommissionRate}}" bindinput="onCommissionInput" placeholder="8"/>
+        <text class="commission-unit">%</text>
+      </view>
+      <view class="settings-hint">建议范围 0-50，保存后新订单结算按新比例读取。</view>
+      <view class="save-settings-btn" bindtap="savePlatformSettings">保存比例</view>
+    </view>
+
+    <view class="settings-card">
+      <view class="settings-title">微信支付配置自检</view>
+      <view class="settings-desc">上线前建议全部配置为已完成，平台公钥用于支付回调验签。</view>
+      <view class="todo-card todo-normal" wx:for="{{paymentConfig}}" wx:key="key">
+        <view class="todo-card-main"><view class="todo-card-title">{{item.label}}</view><view class="todo-card-desc">{{item.key}}</view></view>
+        <view class="todo-card-action"><text class="todo-card-enter">{{item.configured ? '已配置' : '未配置'}}</text></view>
+      </view>
+    </view>
+
+    <view class="settings-card formula-card" wx:if="{{scoreFormula}}">
+      <view class="settings-title">公开赛积分公式</view>
+      <view class="settings-desc formula-desc">{{scoreFormulaText}}</view>
+
+      <view class="formula-section-title">通用系数</view>
+      <view class="formula-grid two">
+        <view class="formula-field">
+          <text>强度下限</text>
+          <input type="text" value="{{scoreFormula.intensityMin}}" data-path="intensityMin" bindinput="onScoreFormulaInput"/>
+        </view>
+        <view class="formula-field">
+          <text>强度上限</text>
+          <input type="text" value="{{scoreFormula.intensityMax}}" data-path="intensityMax" bindinput="onScoreFormulaInput"/>
+        </view>
+      </view>
+
+      <view class="formula-section-title">段位系数</view>
+      <view class="formula-grid five">
+        <view class="formula-field compact" wx:for="{{formulaTierRows}}" wx:key="key">
+          <text>{{item.key}}</text>
+          <input type="text" value="{{item.value}}" data-path="tierCoefficients.{{item.key}}" bindinput="onScoreFormulaInput"/>
+        </view>
+      </view>
+
+      <view class="formula-section-title">胜负表现折扣</view>
+      <view class="formula-grid three">
+        <view class="formula-field"><text>胜</text><input type="text" value="{{scoreFormula.resultPerformanceFactor.win}}" data-path="resultPerformanceFactor.win" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>平</text><input type="text" value="{{scoreFormula.resultPerformanceFactor.draw}}" data-path="resultPerformanceFactor.draw" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>负</text><input type="text" value="{{scoreFormula.resultPerformanceFactor.loss}}" data-path="resultPerformanceFactor.loss" bindinput="onScoreFormulaInput"/></view>
+      </view>
+
+      <view class="formula-section-title">篮球基础分与数据权重</view>
+      <view class="formula-grid two">
+        <view class="formula-field"><text>赢球</text><input type="text" value="{{scoreFormula.basketball.resultBase.win}}" data-path="basketball.resultBase.win" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>输球</text><input type="text" value="{{scoreFormula.basketball.resultBase.loss}}" data-path="basketball.resultBase.loss" bindinput="onScoreFormulaInput"/></view>
+      </view>
+      <view class="formula-grid three">
+        <view class="formula-field"><text>得分</text><input type="text" value="{{scoreFormula.basketball.statWeights.points}}" data-path="basketball.statWeights.points" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>篮板</text><input type="text" value="{{scoreFormula.basketball.statWeights.rebounds}}" data-path="basketball.statWeights.rebounds" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>助攻</text><input type="text" value="{{scoreFormula.basketball.statWeights.assists}}" data-path="basketball.statWeights.assists" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>抢断</text><input type="text" value="{{scoreFormula.basketball.statWeights.steals}}" data-path="basketball.statWeights.steals" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>盖帽</text><input type="text" value="{{scoreFormula.basketball.statWeights.blocks}}" data-path="basketball.statWeights.blocks" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>失误</text><input type="text" value="{{scoreFormula.basketball.statWeights.turnovers}}" data-path="basketball.statWeights.turnovers" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>单场下限</text><input type="text" value="{{scoreFormula.basketball.detailCaps.matchDeltaMin}}" data-path="basketball.detailCaps.matchDeltaMin" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>单场上限</text><input type="text" value="{{scoreFormula.basketball.detailCaps.matchDeltaMax}}" data-path="basketball.detailCaps.matchDeltaMax" bindinput="onScoreFormulaInput"/></view>
+      </view>
+
+      <view class="formula-section-title">羽毛球基础分与数据权重</view>
+      <view class="formula-grid two">
+        <view class="formula-field"><text>赢球</text><input type="text" value="{{scoreFormula.badminton.resultBase.win}}" data-path="badminton.resultBase.win" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>输球</text><input type="text" value="{{scoreFormula.badminton.resultBase.loss}}" data-path="badminton.resultBase.loss" bindinput="onScoreFormulaInput"/></view>
+      </view>
+      <view class="formula-grid three">
+        <view class="formula-field"><text>得分</text><input type="text" value="{{scoreFormula.badminton.statWeights.points}}" data-path="badminton.statWeights.points" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>制胜分</text><input type="text" value="{{scoreFormula.badminton.statWeights.winners}}" data-path="badminton.statWeights.winners" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>发球得分</text><input type="text" value="{{scoreFormula.badminton.statWeights.aces}}" data-path="badminton.statWeights.aces" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>救球</text><input type="text" value="{{scoreFormula.badminton.statWeights.saves}}" data-path="badminton.statWeights.saves" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>失误</text><input type="text" value="{{scoreFormula.badminton.statWeights.errors}}" data-path="badminton.statWeights.errors" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>单场下限</text><input type="text" value="{{scoreFormula.badminton.detailCaps.matchDeltaMin}}" data-path="badminton.detailCaps.matchDeltaMin" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>单场上限</text><input type="text" value="{{scoreFormula.badminton.detailCaps.matchDeltaMax}}" data-path="badminton.detailCaps.matchDeltaMax" bindinput="onScoreFormulaInput"/></view>
+      </view>
+
+      <view class="formula-section-title">足球基础分与事件权重</view>
+      <view class="formula-grid three">
+        <view class="formula-field"><text>赢</text><input type="text" value="{{scoreFormula.football.resultBase.win}}" data-path="football.resultBase.win" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>平</text><input type="text" value="{{scoreFormula.football.resultBase.draw}}" data-path="football.resultBase.draw" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>输</text><input type="text" value="{{scoreFormula.football.resultBase.loss}}" data-path="football.resultBase.loss" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>进球</text><input type="text" value="{{scoreFormula.football.eventWeights.goal}}" data-path="football.eventWeights.goal" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>助攻</text><input type="text" value="{{scoreFormula.football.eventWeights.assist}}" data-path="football.eventWeights.assist" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>射正</text><input type="text" value="{{scoreFormula.football.eventWeights.shot_on_target}}" data-path="football.eventWeights.shot_on_target" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>成功过人</text><input type="text" value="{{scoreFormula.football.eventWeights.successful_dribble}}" data-path="football.eventWeights.successful_dribble" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>关键直塞</text><input type="text" value="{{scoreFormula.football.eventWeights.through_ball}}" data-path="football.eventWeights.through_ball" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>关键传球</text><input type="text" value="{{scoreFormula.football.eventWeights.key_pass}}" data-path="football.eventWeights.key_pass" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>成功抢断</text><input type="text" value="{{scoreFormula.football.eventWeights.successful_tackle}}" data-path="football.eventWeights.successful_tackle" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>扑救</text><input type="text" value="{{scoreFormula.football.eventWeights.save}}" data-path="football.eventWeights.save" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>黄牌</text><input type="text" value="{{scoreFormula.football.eventWeights.yellow_card}}" data-path="football.eventWeights.yellow_card" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>红牌</text><input type="text" value="{{scoreFormula.football.eventWeights.red_card}}" data-path="football.eventWeights.red_card" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>位置补偿</text><input type="text" value="{{scoreFormula.football.balanceScale}}" data-path="football.balanceScale" bindinput="onScoreFormulaInput"/></view>
+      </view>
+
+      <view class="formula-section-title">足球团队进攻/防守分</view>
+      <view class="formula-grid five">
+        <view class="formula-field compact" wx:for="{{footballAttackRows}}" wx:key="path">
+          <text>{{item.label}}</text>
+          <input type="text" value="{{item.value}}" data-path="{{item.path}}" bindinput="onScoreFormulaInput"/>
+        </view>
+        <view class="formula-field compact" wx:for="{{footballDefenseRows}}" wx:key="path">
+          <text>{{item.label}}</text>
+          <input type="text" value="{{item.value}}" data-path="{{item.path}}" bindinput="onScoreFormulaInput"/>
+        </view>
+      </view>
+
+      <view wx:if="{{false}}" class="formula-section-title">足球旧版详细数据权重</view>
+      <view wx:if="{{false}}" class="formula-grid three">
+        <view class="formula-field" wx:for="{{footballDetailWeightRows}}" wx:key="key">
+          <text>{{item.label}}</text>
+          <input type="text" value="{{item.value}}" data-path="{{item.path}}" bindinput="onScoreFormulaInput"/>
+        </view>
+      </view>
+
+      <view class="formula-section-title">足球单场保护</view>
+      <view class="formula-grid three">
+        <view class="formula-field"><text>单场扣分下限</text><input type="text" value="{{scoreFormula.football.detailCaps.matchDeltaMin}}" data-path="football.detailCaps.matchDeltaMin" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field"><text>单场加分上限</text><input type="text" value="{{scoreFormula.football.detailCaps.matchDeltaMax}}" data-path="football.detailCaps.matchDeltaMax" bindinput="onScoreFormulaInput"/></view>
+      </view>
+
+      <view class="formula-section-title">足球位置权重</view>
+      <view class="position-weight-row" wx:for="{{footballPositionRows}}" wx:key="key">
+        <view class="position-name">{{item.key}}</view>
+        <view class="formula-field mini"><text>攻</text><input type="text" value="{{item.attack}}" data-path="football.positionWeights.{{item.key}}.attack" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field mini"><text>守</text><input type="text" value="{{item.defense}}" data-path="football.positionWeights.{{item.key}}.defense" bindinput="onScoreFormulaInput"/></view>
+        <view class="formula-field mini"><text>机会</text><input type="text" value="{{item.opportunity}}" data-path="football.positionWeights.{{item.key}}.opportunity" bindinput="onScoreFormulaInput"/></view>
+      </view>
+
+      <view class="save-settings-btn" bindtap="savePlatformSettings">保存积分公式</view>
+    </view>
+  </view>
+
+  <view wx:elif="{{mode !== 'users' && loading}}" class="loading-wrap">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <view wx:elif="{{mode === 'events' && visibleEvents.length === 0}}" class="empty-wrap">
+    <view class="empty-icon">🏆</view>
+    <view class="empty-text">{{keyword ? '没有搜索到赛事' : '暂无赛事'}}</view>
+  </view>
+
+  <view wx:elif="{{mode === 'venues' && visibleVenues.length === 0}}" class="empty-wrap">
+    <view class="empty-icon">🏟</view>
+    <view class="empty-text">{{keyword ? '没有搜索到球馆' : '暂无球馆'}}</view>
+  </view>
+
+  <view wx:elif="{{mode === 'reports' && visibleReports.length === 0}}" class="empty-wrap">
+    <view class="empty-icon">!</view>
+    <view class="empty-text">{{keyword ? '没有搜索到举报' : '暂无举报'}}</view>
+  </view>
+
+  <view wx:elif="{{mode === 'posts' && visiblePosts.length === 0}}" class="empty-wrap">
+    <view class="empty-icon">帖</view>
+    <view class="empty-text">{{keyword ? '没有搜索到帖子' : '暂无帖子'}}</view>
+  </view>
+
+  <view wx:elif="{{mode === 'users' && userSearchLoading}}" class="loading-wrap">
+    <view class="loading-text">查询中...</view>
+  </view>
+
+  <view wx:elif="{{mode === 'users' && userResults.length === 0}}" class="empty-wrap">
+    <view class="empty-icon">👤</view>
+    <view class="empty-text">{{keyword ? '没有查到用户' : '输入手机号或openid开始查询'}}</view>
+  </view>
+
+  <scroll-view wx:elif="{{mode === 'events'}}" class="event-scroll events-workbench" scroll-y>
+    <block wx:for="{{visibleEvents}}" wx:key="_id">
+      <view class="event-card {{item.eventStatus === 'closed' ? 'card-done' : ''}}">
+        <view class="event-card-main" bindtap="goEnterResults" data-id="{{item._id}}">
+          <view class="card-header">
+            <view class="status-badge status-{{item.eventStatus}}">{{item.statusLabel}}</view>
+            <view wx:if="{{item.platformCertified}}" class="certification-badge">
+              <text class="certification-mark">S</text>
+              <text>Sportlight 官方认证</text>
+            </view>
+            <view wx:else class="uncertified-badge">未认证 · 不发卡</view>
+            <view wx:if="{{item.pendingCount > 0}}" class="pending-label">{{item.pendingCount}} 待审</view>
+          </view>
+
+          <view class="card-content">{{item.title || item.content || '（无标题）'}}</view>
+
+          <view class="event-info-grid">
+            <view class="event-info-item">
+              <text class="event-info-label">报名</text>
+              <text class="event-info-value">{{item.registeredTeams || 0}}{{item.maxTeams ? '/' + item.maxTeams : ''}} 队</text>
+            </view>
+            <view class="event-info-item">
+              <text class="event-info-label">运动</text>
+              <text class="event-info-value">{{item.sport || '未填'}}</text>
+            </view>
+            <view class="event-info-item">
+              <text class="event-info-label">日期</text>
+              <text class="event-info-value">{{item.eventDate || '待定'}}</text>
+            </view>
+          </view>
+
+          <view class="card-meta">
+            <view wx:if="{{item.eventLocation}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/location.png" mode="aspectFit"/><text>{{item.eventLocation}}</text></view>
+            <text wx:else>地点待定</text>
+          </view>
+
+          <view class="author-label">发起人：{{item.authorName || '未知'}}</view>
+        </view>
+
+        <view class="card-footer">
+          <view class="event-card-actions">
+            <view class="enter-btn {{item.platformCertified ? 'btn-cancel-certification' : 'btn-certification'}}" catchtap="toggleEventCertification" data-id="{{item._id}}" data-title="{{item.title || item.content}}" data-certified="{{item.platformCertified}}">{{item.platformCertified ? '取消认证' : '认证赛事'}}</view>
+            <view class="enter-btn btn-outline" catchtap="goEventRegistrants" data-id="{{item._id}}">报名管理</view>
+            <view class="enter-btn {{item.eventStatus === 'closed' ? 'btn-done' : 'btn-primary'}}" catchtap="goEnterResults" data-id="{{item._id}}">{{item.eventStatus === 'closed' ? '查看/修改成绩' : '录入成绩 ›'}}</view>
+            <view class="enter-btn btn-outline" catchtap="resyncEventCards" data-id="{{item._id}}" data-title="{{item.title || item.content}}">补发卡片</view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+
+  <scroll-view wx:elif="{{mode === 'venues'}}" class="event-scroll" scroll-y>
+    <block wx:for="{{visibleVenues}}" wx:key="_id">
+      <view class="venue-card status-card-{{item.status}}">
+        <view class="venue-top">
+          <image wx:if="{{item.coverImage}}" class="venue-cover" src="{{item.coverImage}}" mode="aspectFill" bindtap="previewImage" data-src="{{item.coverImage}}" data-urls="{{item.previewImages}}"/>
+          <view wx:else class="venue-cover empty-cover">图</view>
+          <view class="venue-main">
+            <view class="venue-title-row">
+              <view class="venue-title">{{item.name || '未命名球馆'}}</view>
+              <view class="status-badge venue-status-{{item.status}}">{{item.statusLabel}}</view>
+            </view>
+            <view class="venue-meta">{{item.venueType}} · {{item.city}}</view>
+            <view class="venue-address">{{item.address}}</view>
+          </view>
+        </view>
+
+        <view class="venue-info-grid">
+          <view class="venue-info-item">
+            <view class="venue-info-label">支持运动</view>
+            <view class="venue-info-value">{{item.sportsText || '未填写'}}</view>
+          </view>
+          <view class="venue-info-item">
+            <view class="venue-info-label">场地规格</view>
+            <view class="venue-info-value">{{item.courtSummary || '未填写'}}</view>
+          </view>
+          <view class="venue-info-item">
+            <view class="venue-info-label">营业时间</view>
+            <view class="venue-info-value">{{item.openingHours || '未填写'}}</view>
+          </view>
+          <view class="venue-info-item">
+            <view class="venue-info-label">运营者</view>
+            <view class="venue-info-value">{{item.operatorText || '未填写'}}</view>
+          </view>
+        </view>
+
+        <view wx:if="{{item.description}}" class="venue-desc">{{item.description}}</view>
+
+        <view wx:if="{{item.licenseImages.length > 0}}" class="license-row">
+          <image wx:for="{{item.licenseImages}}" wx:key="index" class="license-thumb" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}" data-urls="{{item.licenseImages}}"/>
+        </view>
+
+        <view wx:if="{{item.status === 'rejected' && item.rejectReason}}" class="reject-reason">驳回原因：{{item.rejectReason}}</view>
+
+        <view class="venue-actions" wx:if="{{item.status === 'pending'}}">
+          <view class="venue-action reject" catchtap="rejectVenue" data-id="{{item._id}}" data-name="{{item.name}}">驳回</view>
+          <view class="venue-action approve" catchtap="approveVenue" data-id="{{item._id}}" data-name="{{item.name}}">通过</view>
+        </view>
+      </view>
+    </block>
+    <view wx:if="{{venueHasMore}}" class="load-more-btn" bindtap="loadMoreReviews" data-type="venues">加载更多球馆</view>
+  </scroll-view>
+
+  <scroll-view wx:elif="{{mode === 'reports'}}" class="event-scroll" scroll-y>
+    <view wx:for="{{visibleReports}}" wx:key="_id" class="report-card status-report-{{item.status || 'pending'}}">
+      <view class="report-head">
+        <view>
+          <view class="report-title">{{item.targetName}} 被举报</view>
+          <view class="report-sub">举报人：{{item.reporterName}} · {{item.statusLabel}} · <text class="risk-tag risk-{{item.riskTone}}">{{item.riskLabel}}</text></view>
+        </view>
+        <view class="status-badge venue-status-{{item.status || 'pending'}}">{{item.statusLabel}}</view>
+      </view>
+      <view class="report-reason">{{item.reason}}</view>
+      <view class="report-meta">场景：{{item.scene || '未记录'}} · 当前信誉：{{item.targetReputation || '未知'}}</view>
+      <view wx:if="{{item.status === 'deducted'}}" class="report-result">已扣 {{item.deductPoints}} 分，处理后信誉 {{item.finalReputation}}</view>
+      <view wx:if="{{item.adminNote}}" class="report-result">备注：{{item.adminNote}}</view>
+      <view class="venue-actions" wx:if="{{(item.status || 'pending') === 'pending'}}">
+        <view class="venue-action reject" catchtap="rejectReport" data-id="{{item._id}}">驳回</view>
+        <view class="venue-action warn" catchtap="warnReport" data-id="{{item._id}}">警告</view>
+        <view class="venue-action approve" catchtap="deductReport" data-id="{{item._id}}">扣信誉分</view>
+      </view>
+    </view>
+    <view wx:if="{{reportHasMore}}" class="load-more-btn" bindtap="loadMoreReviews" data-type="reports">加载更多举报</view>
+  </scroll-view>
+
+  <scroll-view wx:elif="{{mode === 'posts'}}" class="event-scroll" scroll-y>
+    <view wx:for="{{visiblePosts}}" wx:key="_id" class="report-card">
+      <view class="report-head">
+        <view>
+          <view class="report-title">{{item.contentPreview}}</view>
+          <view class="report-sub">{{item.typeLabel}} · 作者：{{item.authorName}} · {{item.createdAtLabel || '时间未知'}}</view>
+        </view>
+        <view class="status-badge">{{item.imageCount}} 图</view>
+      </view>
+
+      <view wx:if="{{item.eventDate || item.eventLocation}}" class="report-meta">
+        {{item.eventDate || '日期未知'}} · {{item.eventLocation || '地点未知'}}
+      </view>
+      <view class="report-meta">点赞 {{item.likesCount || 0}} · 评论 {{item.commentsCount || 0}}</view>
+      <view class="openid-box">
+        <view class="openid-label">作者 openid</view>
+        <view class="openid-text">{{item.authorOpenid || '未知'}}</view>
+      </view>
+
+      <view wx:if="{{item.imageUrls && item.imageUrls.length}}" class="license-row">
+        <image wx:for="{{item.imageUrls}}" wx:key="index" class="license-thumb" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}" data-urls="{{item.imageUrls}}"/>
+      </view>
+
+      <view class="venue-actions">
+        <view class="venue-action reject" catchtap="deleteAdminPost" data-id="{{item._id}}" data-title="{{item.contentPreview}}" data-author="{{item.authorName}}">删除帖子</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view wx:elif="{{mode === 'levels'}}" class="event-scroll" scroll-y>
+    <view wx:for="{{visibleLevelReviews}}" wx:key="_id" class="level-card status-level-{{item.levelReviewStatus}}">
+      <view class="level-head">
+        <view>
+          <view class="level-name">{{item.name || '未命名球员'}}</view>
+          <view class="level-sub">{{item.sportlightId || '无ID'}} · {{item.sport || '项目未知'}} · {{item.position || '位置未知'}} · {{item.city || '城市未知'}}</view>
+        </view>
+        <view class="status-badge venue-status-{{item.levelReviewStatus}}">{{item.statusLabel}}</view>
+      </view>
+
+      <view class="level-main-row">
+        <view class="level-tier-box">
+          <view class="level-tier-label">申请等级</view>
+          <view class="level-tier-value">{{item.proposedTier}}级</view>
+        </view>
+        <view class="level-tier-box">
+          <view class="level-tier-label">当前等级</view>
+          <view class="level-tier-value muted">{{item.currentTier}}级</view>
+        </view>
+      </view>
+
+      <view class="level-info-line">运动背景：{{item.careerLabel || '未记录'}}</view>
+      <view class="level-info-line">注册结论：{{item.levelLabel || '未记录'}}</view>
+      <view class="level-info-line">单位/学校：{{item.affiliation || '未填写'}}</view>
+      <view wx:if="{{item.levelReviewNote}}" class="level-info-line">{{item.levelReviewSource === 'athlete_self' ? '球员自述' : '管理员备注'}}：{{item.levelReviewNote}}</view>
+      <view wx:if="{{item.levelRejectReason}}" class="reject-reason">驳回原因：{{item.levelRejectReason}}</view>
+
+      <view class="level-resume">
+        <view class="level-resume-title">球员履历</view>
+        <view class="level-resume-grid">
+          <view class="level-resume-item">
+            <text>项目位置</text>
+            <text>{{item.sport || '未记录'}} · {{item.position || '未记录'}}{{item.secondaryPosition ? ' / ' + item.secondaryPosition : ''}}</text>
+          </view>
+          <view class="level-resume-item">
+            <text>城市</text>
+            <text>{{item.city || '未记录'}}</text>
+          </view>
+          <view class="level-resume-item" wx:for="{{item.physicalItems}}" wx:key="label">
+            <text>{{item.label}}</text>
+            <text>{{item.value}}</text>
+          </view>
+        </view>
+        <view class="level-exp-list" wx:if="{{item.experienceItems && item.experienceItems.length}}">
+          <view class="level-exp-row" wx:for="{{item.experienceItems}}" wx:key="label">
+            <text>{{item.label}}</text>
+            <text>{{item.value}}</text>
+          </view>
+        </view>
+        <view wx:if="{{item.description}}" class="level-desc">个人简介：{{item.description}}</view>
+        <view wx:if="{{item.certName || item.videoName}}" class="level-desc">
+          补充材料：{{item.certName || '无证书名'}}{{item.videoName ? ' · ' + item.videoName : ''}}
+        </view>
+      </view>
+
+      <view wx:if="{{item.proofPreview}}" class="license-row">
+        <image class="license-thumb" src="{{item.proofPreview}}" mode="aspectFill" bindtap="previewImage" data-src="{{item.proofPreview}}" data-urls="{{item.proofFiles}}"/>
+        <view class="proof-count">证明材料 {{item.proofCount}} 份<text wx:if="{{item.reviewProofCount > 0}}">（含本次审核上传 {{item.reviewProofCount}} 份）</text></view>
+      </view>
+
+      <view class="venue-actions" wx:if="{{item.levelReviewStatus === 'pending'}}">
+        <view class="venue-action reject" catchtap="rejectLevel" data-id="{{item._id}}" data-name="{{item.name}}">不通过</view>
+        <view class="venue-action approve" catchtap="approveLevel" data-id="{{item._id}}" data-name="{{item.name}}" data-tier="{{item.proposedTier}}">通过</view>
+      </view>
+    </view>
+    <view wx:if="{{levelHasMore}}" class="load-more-btn" bindtap="loadMoreReviews" data-type="levels">加载更多审核</view>
+  </scroll-view>
+
+  <scroll-view wx:elif="{{mode === 'disputes'}}" class="event-scroll" scroll-y>
+    <view class="filter-row">
+      <view class="filter-chip {{disputeFilter === 'pending' ? 'active' : ''}}" bindtap="setDisputeFilter" data-filter="pending">待处理</view>
+      <view class="filter-chip {{disputeFilter === 'all' ? 'active' : ''}}" bindtap="setDisputeFilter" data-filter="all">全部</view>
+    </view>
+    <view wx:for="{{visibleDisputes}}" wx:key="_id" class="dispute-card">
+      <view class="dispute-head">
+        <text class="dispute-athlete">{{item.athleteName}}（{{item.athleteSportlightId}}）</text>
+        <text class="dispute-status status-{{item.status}}">{{item.status === 'pending' ? '待处理' : '已处理'}}</text>
+      </view>
+      <view class="dispute-match">{{item.groupName}} {{item.round}}：{{item.teamA}} vs {{item.teamB}}</view>
+      <view class="dispute-reason">反馈：{{item.reason || '无详细说明'}}</view>
+      <view class="dispute-time">提交时间：{{item.createdAt}}</view>
+      <view class="venue-actions" wx:if="{{item.status === 'pending'}}">
+        <view class="venue-action approve" catchtap="resolveDispute" data-id="{{item._id}}">标记已处理</view>
+      </view>
+    </view>
+    <view wx:if="{{visibleDisputes.length === 0 && !loading}}" class="empty-hint">暂无数据异议</view>
+    <view wx:if="{{disputeHasMore}}" class="load-more-btn" bindtap="loadMoreReviews" data-type="disputes">加载更多异议</view>
+  </scroll-view>
+
+  <scroll-view wx:elif="{{mode === 'users'}}" class="event-scroll" scroll-y>
+    <view wx:for="{{userResults}}" wx:key="openid" class="user-card">
+      <view class="user-card-head">
+        <view>
+          <view class="user-name">{{item.name || '未填写姓名'}}</view>
+          <view class="user-sub">{{item.roleLabel}} · {{item.registeredLabel}}</view>
+        </view>
+        <view class="user-head-actions">
+          <view class="status-badge user-role-{{item.userType || 'none'}}">{{item.roleLabel}}</view>
+        </view>
+      </view>
+
+      <view class="user-info-grid">
+        <view class="user-info-item">
+          <view class="user-info-label">手机号</view>
+          <view class="user-info-value">{{item.phoneMasked || '未绑定'}}</view>
+        </view>
+        <view class="user-info-item">
+          <view class="user-info-label">手机认证</view>
+          <view class="user-info-value {{item.phoneVerified ? 'green' : 'gray'}}">{{item.phoneVerified ? '已认证' : '未认证'}}</view>
+        </view>
+        <view class="user-info-item">
+          <view class="user-info-label">Sportlight ID</view>
+          <view class="user-info-value">{{item.sportlightId || '无'}}</view>
+        </view>
+        <view class="user-info-item">
+          <view class="user-info-label">实名认证</view>
+          <view class="user-info-value {{item.realNameVerified ? 'green' : 'gray'}}">{{item.realNameVerified ? '已实名' : (item.realNameStatus || '未实名')}}</view>
+        </view>
+      </view>
+
+      <view wx:if="{{item.sport || item.city || item.tier}}" class="user-athlete-line">
+        {{item.sport || '运动项目未知'}} · {{item.city || '城市未知'}} · {{item.tier || '未定级'}} · {{item.competitionScore || 0}}分
+      </view>
+
+      <view wx:if="{{item.userType === 'athlete'}}" class="user-level-review-line status-{{item.levelReviewStatus || 'none'}}">
+        等级审核：{{item.levelReviewStatus === 'pending' ? ('待审核 ' + (item.proposedTier || '')) : (item.levelReviewStatus === 'approved' ? '已通过' : (item.levelReviewStatus === 'rejected' ? '已驳回' : '未发起'))}}
+      </view>
+      <view wx:if="{{item.activityAdmin}}" class="activity-admin-line">活动管理员：可发布活动、公告、公众号转载和联名内容</view>
+
+      <view class="openid-box">
+        <view class="openid-label">OpenID（已脱敏）</view>
+        <view class="openid-text">{{item.openidMasked || '无'}}</view>
+      </view>
+      <view class="user-date-row">
+        <text>创建：{{item.createdAtLabel || '未知'}}</text>
+        <text>更新：{{item.updatedAtLabel || '未知'}}</text>
+      </view>
+      <view class="user-actions">
+        <button class="user-action" bindtap="viewSensitiveUserData" data-openid="{{item.openid}}" data-name="{{item.name || item.openid}}">查看敏感信息</button>
+        <button wx:if="{{item.userType !== 'admin'}}" class="user-action admin" bindtap="handleUserAction" data-action="level" data-index="{{index}}" data-openid="{{item.openid}}" data-name="{{item.name || item.openid}}" data-usertype="{{item.userType}}">管理操作</button>
+        <button class="user-action danger" bindtap="handleUserAction" data-action="reset" data-index="{{index}}" data-openid="{{item.openid}}" data-name="{{item.name || item.openid}}">重置账号</button>
+      </view>
+    </view>
+  </scroll-view>
+
+</view>

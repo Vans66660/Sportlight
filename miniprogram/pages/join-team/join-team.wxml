@@ -1,0 +1,52 @@
+<view class="page">
+
+  <view wx:if="{{loading}}" class="center-wrap">
+    <text class="tip-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{error}}" class="center-wrap">
+    <text class="tip-text error">{{error}}</text>
+    <view class="back-btn" bindtap="goBack">返回</view>
+  </view>
+
+  <view wx:elif="{{joined}}" class="center-wrap">
+    <text class="success-icon">🎉</text>
+    <text class="success-title">{{isRegularTeam ? '已加入球队并确认参赛' : '已加入队伍'}}</text>
+    <text class="success-sub">「{{teamName}}」</text>
+    <view class="back-btn" bindtap="goBack">返回首页</view>
+  </view>
+
+  <view wx:else class="content">
+    <view class="event-card">
+      <text class="event-label">赛事</text>
+      <text class="event-title">{{postTitle}}</text>
+      <view class="event-meta" wx:if="{{eventDate || eventLocation}}">
+        <text wx:if="{{eventDate}}">📅 {{eventDate}}</text>
+        <text wx:if="{{eventLocation}}">  📍 {{eventLocation}}</text>
+      </view>
+    </view>
+
+    <view class="team-card">
+      <view class="team-header">
+        <text class="team-name">{{reg.teamName}}</text>
+        <text class="team-count">{{filledCount}}/{{reg.members.length}} 人</text>
+      </view>
+      <view class="member-list">
+        <view wx:for="{{reg.members}}" wx:key="index" class="member-row">
+          <view class="member-avatar-wrap">
+            <image wx:if="{{item.photoUrl}}" class="member-avatar" src="{{item.photoUrl}}" mode="aspectFill" catchtap="goAthleteProfile" data-openid="{{item.openid}}"/>
+            <view wx:else class="member-avatar avatar-placeholder" catchtap="goAthleteProfile" data-openid="{{item.openid}}">{{item.name ? item.name[0] : '?'}}</view>
+          </view>
+          <text class="member-name">{{item.openid ? item.name || '队员' : '（空缺）'}}</text>
+          <text wx:if="{{item.role === 'captain'}}" class="captain-tag">队长</text>
+          <text wx:elif="{{item.confirmed}}" class="confirmed-tag">✓</text>
+          <text wx:elif="{{item.openid}}" class="pending-tag">待确认</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="join-btn" bindtap="joinTeam">{{isRegularTeam ? '加入球队并加入本次赛事名单' : '加入这支队伍'}}</view>
+    <text class="join-hint">{{isRegularTeam ? '确认后将成为球队成员，并加入本次赛事参赛名单' : '加入后队长将收到通知，达到成队人数后可提交审核'}}</text>
+  </view>
+
+</view>

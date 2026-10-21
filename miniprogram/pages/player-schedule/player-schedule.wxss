@@ -1,0 +1,249 @@
+page {
+  background: #0D0F10;
+}
+
+.container {
+  min-height: 100vh;
+  background: #0D0F10;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.hero {
+  padding: 34rpx 28rpx 26rpx;
+  background: #101214;
+  border-bottom: 1rpx solid rgba(255,255,255,0.06);
+}
+
+.hero-kicker {
+  color: #74808A;
+  font-size: 18rpx;
+  font-weight: 800;
+  margin-bottom: 10rpx;
+}
+
+.hero-title {
+  font-size: 44rpx;
+  color: #FFFFFF;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.hero-sub {
+  margin-top: 10rpx;
+  color: #7D858C;
+  font-size: 24rpx;
+}
+
+.filter-scroll {
+  width: 100%;
+  white-space: nowrap;
+  padding: 22rpx 28rpx 6rpx;
+  box-sizing: border-box;
+  background: #0D0F10;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 64rpx;
+  min-width: 112rpx;
+  padding: 0 28rpx;
+  margin-right: 16rpx;
+  border-radius: 32rpx;
+  background: #1A1C1F;
+  border: 1rpx solid rgba(255,255,255,0.06);
+  color: #8C9197;
+  font-size: 26rpx;
+  font-weight: 800;
+  box-sizing: border-box;
+}
+
+.filter-pill.active {
+  background: #FF6B1A;
+  border-color: #FF6B1A;
+  color: #FFFFFF;
+}
+
+.schedule-list {
+  padding: 24rpx 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.schedule-card {
+  background: #171A1D;
+  border: 1rpx solid rgba(255,255,255,0.07);
+  border-radius: 18rpx;
+  padding: 24rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.schedule-card.type-event,
+.schedule-card.type-eventMatch {
+  border-top: 4rpx solid #3DBB8A;
+}
+
+.schedule-card.type-order {
+  border-top: 4rpx solid #FF6B1A;
+}
+
+.schedule-card.type-teamChallenge {
+  border-top: 4rpx solid #5BA8D4;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.type-pill,
+.status-pill {
+  font-size: 21rpx;
+  font-weight: 800;
+  padding: 7rpx 14rpx;
+  border-radius: 10rpx;
+}
+
+.type-pill {
+  color: #111214;
+  background: #F6F8FA;
+}
+
+.status-pill {
+  color: #FFB36F;
+  background: rgba(255,107,26,0.12);
+}
+
+.schedule-card.status-completed .status-pill {
+  color: #9DA6AE;
+  background: rgba(157,166,174,0.12);
+}
+
+.schedule-card.status-cancelled {
+  opacity: 0.78;
+}
+
+.schedule-card.status-cancelled .status-pill {
+  color: #C87272;
+  background: rgba(200,114,114,0.12);
+}
+
+.schedule-card.status-ongoing .status-pill {
+  color: #63D7A2;
+  background: rgba(99,215,162,0.12);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.35;
+}
+
+.card-sub {
+  color: #8C949B;
+  font-size: 24rpx;
+  line-height: 1.4;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  color: #8A949C;
+  font-size: 24rpx;
+  line-height: 1.4;
+}
+
+.meta-icon {
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
+  opacity: 0.72;
+  filter: invert(1);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding-top: 10rpx;
+  border-top: 1rpx solid rgba(255,255,255,0.06);
+}
+
+.price {
+  color: #FF6B1A;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.price.muted {
+  color: #68727A;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.detail-link {
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 56rpx 28rpx 0;
+  padding: 72rpx 40rpx;
+  gap: 14rpx;
+  background: #121518;
+  border-radius: 18rpx;
+  border: 1rpx solid rgba(255,255,255,0.06);
+}
+
+.empty-icon {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 16rpx;
+  background: #1B2025;
+  color: #3DBB8A;
+  font-size: 24rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.empty-hint {
+  font-size: 23rpx;
+  color: #69737C;
+}
+
+.empty-btn {
+  margin-top: 14rpx;
+  height: 72rpx;
+  padding: 0 34rpx;
+  border-radius: 36rpx;
+  background: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

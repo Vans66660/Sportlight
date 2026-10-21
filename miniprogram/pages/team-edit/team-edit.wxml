@@ -1,0 +1,52 @@
+<view class="page">
+  <view class="form-card">
+    <view class="label">球队封面照 *</view>
+    <view class="cover-picker" bindtap="chooseCover">
+      <image wx:if="{{form.cover}}" class="cover-img" src="{{form.cover}}" mode="aspectFill"/>
+      <view wx:else class="upload-plus">+</view>
+    </view>
+
+    <view class="label">队徽 *</view>
+    <view class="logo-picker" bindtap="chooseLogo">
+      <image wx:if="{{form.logo}}" class="logo-img" src="{{form.logo}}" mode="aspectFill"/>
+      <view wx:else class="upload-plus small">+</view>
+    </view>
+
+    <view class="label">球队名称 *</view>
+    <input class="input" placeholder="填写球队名称" placeholder-class="input-placeholder" value="{{form.name}}" data-field="name" bindinput="onInput" cursor-spacing="80"/>
+
+    <view class="label">运动类型 *</view>
+    <view class="seg-row">
+      <view wx:for="{{sportOptions}}" wx:key="item" class="seg {{form.sport === item ? 'active' : ''}}" data-value="{{item}}" bindtap="setSport">{{item}}</view>
+    </view>
+
+    <view class="label">简介</view>
+    <textarea class="textarea" maxlength="300" placeholder="介绍球队风格、常驻区域、约战偏好..." placeholder-class="input-placeholder" value="{{form.description}}" data-field="description" bindinput="onInput" cursor-spacing="80"/>
+
+    <view class="label">相册</view>
+    <view class="gallery">
+      <view wx:for="{{form.gallery}}" wx:key="index" class="gallery-item">
+        <image class="gallery-img" src="{{item}}" mode="aspectFill"/>
+        <view class="delete" data-index="{{index}}" catchtap="removeGallery">×</view>
+      </view>
+      <view wx:if="{{form.gallery.length < 9}}" class="gallery-add" bindtap="chooseGallery">+</view>
+    </view>
+
+    <view class="label">常驻球馆（可不选，最多3个）</view>
+    <view wx:if="{{loadingVenues}}" class="hint">加载球馆中...</view>
+    <view wx:for="{{venues}}" wx:key="_id" class="venue-row {{item.selected ? 'selected' : ''}}" bindtap="toggleVenue" data-id="{{item._id}}">
+      <view>
+        <view class="venue-name">{{item.name}}</view>
+        <view class="venue-address">{{item.city}} · {{item.address || item.locationName}}</view>
+      </view>
+      <view class="check">{{item.selected ? '✓' : ''}}</view>
+    </view>
+
+    <view class="label">招募状态</view>
+    <view class="seg-row">
+      <view class="seg {{form.recruitmentStatus === 'open' ? 'active' : ''}}" data-value="open" bindtap="setRecruit">招募中</view>
+      <view class="seg {{form.recruitmentStatus === 'closed' ? 'active' : ''}}" data-value="closed" bindtap="setRecruit">暂不招募</view>
+    </view>
+  </view>
+  <view class="submit" bindtap="submit">保存球队</view>
+</view>

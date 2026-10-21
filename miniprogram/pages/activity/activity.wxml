@@ -1,0 +1,69 @@
+<view class="container">
+  <view class="header">
+    <view>
+      <view class="header-title">活动</view>
+      <view class="header-sub">公告、活动、公众号转载与联名合作</view>
+    </view>
+    <view wx:if="{{canManage}}" class="publish-btn" bindtap="openEditor">发布</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty-card">加载中...</view>
+  <view wx:elif="{{activities.length === 0}}" class="empty-card">暂无活动内容</view>
+
+  <view class="activity-list">
+    <view class="activity-card type-{{item.type}}" wx:for="{{activities}}" wx:key="_id">
+      <image wx:if="{{item.cover}}" class="cover" src="{{item.cover}}" mode="aspectFill"/>
+      <view class="card-body">
+        <view class="card-top">
+          <view class="type-tag">{{item.typeLabel}}</view>
+          <view wx:if="{{item.pinned}}" class="pin-tag">置顶</view>
+          <view class="date">{{item.dateLabel}}</view>
+        </view>
+        <view class="title">{{item.title}}</view>
+        <view wx:if="{{item.summary}}" class="summary">{{item.summary}}</view>
+        <view wx:if="{{item.content}}" class="content">{{item.content}}</view>
+        <view wx:if="{{item.sourceName || item.partnerName}}" class="source">
+          {{item.sourceName ? '来源：' + item.sourceName : ''}}{{item.sourceName && item.partnerName ? ' · ' : ''}}{{item.partnerName ? '联名：' + item.partnerName : ''}}
+        </view>
+        <view wx:if="{{item.linkUrl}}" class="link-btn" data-url="{{item.linkUrl}}" bindtap="openLink">复制原文链接</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showEditor}}" class="modal-mask" catchtap="closeEditor"></view>
+  <view wx:if="{{showEditor}}" class="editor-modal">
+    <view class="modal-head">
+      <view>
+        <view class="modal-title">发布活动内容</view>
+        <view class="modal-sub">支持活动、更新公告、公众号转载和联名合作</view>
+      </view>
+      <view class="modal-close" bindtap="closeEditor">×</view>
+    </view>
+
+    <picker range="{{typeOptions}}" range-key="label" value="{{typeIndex}}" bindchange="onTypeChange">
+      <view class="input select">类型：{{typeOptions[typeIndex].label}}</view>
+    </picker>
+    <input class="input" placeholder="标题" value="{{form.title}}" data-field="title" bindinput="onInput"/>
+    <textarea class="textarea" placeholder="摘要，用于卡片快速浏览" value="{{form.summary}}" data-field="summary" bindinput="onInput"/>
+    <textarea class="textarea large" placeholder="正文内容" value="{{form.content}}" data-field="content" bindinput="onInput"/>
+    <input class="input" placeholder="公众号/原文链接，选填" value="{{form.linkUrl}}" data-field="linkUrl" bindinput="onInput"/>
+    <input class="input" placeholder="来源名称，例如 Sportlight 公众号，选填" value="{{form.sourceName}}" data-field="sourceName" bindinput="onInput"/>
+    <input class="input" placeholder="联名方名称，选填" value="{{form.partnerName}}" data-field="partnerName" bindinput="onInput"/>
+    <picker mode="date" value="{{form.displayDate}}" bindchange="onDateChange">
+      <view class="input select">展示日期：{{form.displayDate || '默认今天'}}</view>
+    </picker>
+
+    <view class="cover-uploader" bindtap="uploadCover">
+      <image wx:if="{{form.cover}}" class="cover-preview" src="{{form.cover}}" mode="aspectFill"/>
+      <view wx:else class="cover-placeholder">{{uploading ? '上传中...' : '上传封面图'}}</view>
+      <view wx:if="{{form.cover}}" class="cover-remove" catchtap="removeCover">×</view>
+    </view>
+
+    <view class="pin-row" bindtap="togglePinned">
+      <view class="check {{form.pinned ? 'on' : ''}}">{{form.pinned ? '✓' : ''}}</view>
+      <text>置顶展示</text>
+    </view>
+
+    <view class="submit-btn" bindtap="submitActivity">{{submitting ? '发布中...' : '发布'}}</view>
+  </view>
+</view>

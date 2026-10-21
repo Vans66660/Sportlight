@@ -1,0 +1,126 @@
+.container {
+  background: #0F0F0F;
+  min-height: 100vh;
+  padding: 16rpx 0;
+}
+
+.empty-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 160rpx;
+  gap: 20rpx;
+}
+
+.empty-icon { font-size: 80rpx; }
+.empty-text { font-size: 28rpx; color: #555555; }
+
+.notif-card {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 28rpx 28rpx 20rpx;
+  border-bottom: 1rpx solid #1A1A1A;
+  gap: 16rpx;
+  position: relative;
+}
+
+.notif-card.unread {
+  background: #111111;
+}
+
+.notif-card.read {
+  background: #0F0F0F;
+}
+
+.notif-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #FF6B1A;
+  flex-shrink: 0;
+}
+
+.notif-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-label {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+}
+
+.notif-content {
+  font-size: 26rpx;
+  color: #888888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notif-message {
+  margin-top: 12rpx;
+  padding: 16rpx;
+  border-radius: 14rpx;
+  background: rgba(255,255,255,0.04);
+  color: #AAAAAA;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.notif-time {
+  font-size: 22rpx;
+  color: #555555;
+  margin-top: 8rpx;
+}
+
+.notif-chevron {
+  font-size: 36rpx;
+  color: #444444;
+  flex-shrink: 0;
+}
+
+/* 队伍邀请卡片 */
+.invite-card { align-items: flex-start; }
+
+.invite-btns {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.invite-btn {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.invite-btn.single {
+  width: 220rpx;
+  margin-top: 16rpx;
+  flex: none;
+}
+
+.decline-btn {
+  background: #1E1E1E;
+  color: #888888;
+  border: 1rpx solid #2A2A2A;
+}
+
+.accept-btn {
+  background: #0A2A1A;
+  color: #3DBB8A;
+}
+
+.invite-responded {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #555555;
+}

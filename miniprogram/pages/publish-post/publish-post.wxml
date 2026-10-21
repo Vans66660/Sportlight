@@ -1,0 +1,51 @@
+<view class="container">
+
+  <!-- 顶部栏 -->
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-cancel" bindtap="goBack">取消</view>
+    <view class="nav-title">发动态</view>
+    <view class="nav-spacer"></view>
+  </view>
+
+  <!-- 发布操作 -->
+  <view class="compose-actions">
+    <view class="send-btn {{canSubmit ? '' : 'disabled'}}" bindtap="submit">发送</view>
+  </view>
+
+  <!-- 输入区 -->
+  <textarea
+    class="content-input"
+    placeholder="记录你的今天"
+    placeholder-class="input-placeholder"
+    value="{{content}}"
+    bindinput="onContentInput"
+    maxlength="500"
+    auto-height
+    focus
+  />
+
+  <view class="visibility-row">
+    <view
+      wx:for="{{visibilityOptions}}"
+      wx:key="key"
+      class="visibility-chip {{visibility === item.key ? 'active' : ''}}"
+      bindtap="setVisibility"
+      data-key="{{item.key}}"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 图片网格 -->
+  <view class="img-grid">
+    <view class="img-item" wx:for="{{images}}" wx:key="index">
+      <image class="img-preview" src="{{item}}" mode="aspectFill"/>
+      <view class="img-remove" catchtap="removeImage" data-index="{{index}}">×</view>
+    </view>
+    <view class="img-add" wx:if="{{images.length < 9 && !uploading}}" bindtap="addImage">
+      <text class="img-add-icon">＋</text>
+    </view>
+    <view class="img-add uploading" wx:elif="{{uploading}}">
+      <text class="img-add-icon">···</text>
+    </view>
+  </view>
+
+</view>

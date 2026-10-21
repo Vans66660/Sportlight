@@ -1,0 +1,395 @@
+<view class="container">
+
+<view class="header">
+  <view class="back" bindtap="goBack">‹</view>
+  <view class="step-bar">
+    <view class="step-dot {{step >= 1 ? 'done' : ''}} {{step === 1 ? 'active' : ''}}">
+      <text wx:if="{{step > 1}}">✓</text><text wx:else>1</text>
+    </view>
+    <view class="step-line {{step > 1 ? 'done' : ''}}"></view>
+    <view class="step-dot {{step >= 2 ? 'done' : ''}} {{step === 2 ? 'active' : ''}}">
+      <text wx:if="{{step > 2}}">✓</text><text wx:else>2</text>
+    </view>
+    <view class="step-line {{step > 2 ? 'done' : ''}}"></view>
+    <view class="step-dot {{step >= 3 ? 'done' : ''}} {{step === 3 ? 'active' : ''}}">
+      <text wx:if="{{step > 3}}">✓</text><text wx:else>3</text>
+    </view>
+  </view>
+</view>
+
+<!-- ========== Step 1: 基本信息 ========== -->
+<view wx:if="{{step === 1}}" class="step-content">
+  <view class="step-title">运动员入驻</view>
+  <view class="step-sub">填写你的运动信息</view>
+
+  <view class="label">头像 <text class="required">*</text></view>
+  <view class="avatar-upload-row" bindtap="uploadAvatar">
+    <view class="avatar-upload">
+      <image wx:if="{{form.photo}}" src="{{form.photo}}" class="avatar-preview" mode="aspectFill"/>
+      <view wx:else class="avatar-placeholder">+</view>
+    </view>
+    <view class="avatar-upload-copy">
+      <view class="avatar-upload-title">{{form.photo ? '更换头像' : '上传头像'}}</view>
+      <view class="avatar-upload-desc">建议上传清晰的打球照片，头像可裁剪，将用于主页、赛事和招募展示</view>
+    </view>
+  </view>
+
+  <view class="label">从事运动 <text class="required">*</text></view>
+  <picker bindchange="onSportChange" value="{{sportIndex}}" range="{{sports}}">
+    <view class="select-box">
+      <text class="{{form.sport ? '' : 'placeholder'}}">{{form.sport || '选择运动项目'}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <!-- 足球专项字段 -->
+  <block wx:if="{{form.sport === '足球'}}">
+    <view class="inline-row">
+      <view class="inline-item">
+        <view class="label">出生日期 <text class="required">*</text></view>
+        <picker mode="date" value="{{form.birthDate}}" end="{{maxBirthDate}}" bindchange="onBirthDateChange">
+          <view class="select-box compact-select">
+            <text class="{{form.birthDate ? '' : 'placeholder'}}">{{form.birthDate || '选择日期'}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+      <view class="inline-item">
+        <view class="label">身高(cm)</view>
+        <input class="input-box" type="number" placeholder="cm" bindinput="onInput" data-field="height" value="{{form.height}}"/>
+      </view>
+      <view class="inline-item">
+        <view class="label">体重(kg)</view>
+        <input class="input-box" type="number" placeholder="kg" bindinput="onInput" data-field="weight" value="{{form.weight}}"/>
+      </view>
+    </view>
+    <view class="label">惯用脚</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.preferredFoot === 'right' ? 'active' : ''}}" bindtap="setFoot" data-val="right">右脚</view>
+      <view class="tag-btn {{form.preferredFoot === 'left' ? 'active' : ''}}" bindtap="setFoot" data-val="left">左脚</view>
+      <view class="tag-btn {{form.preferredFoot === 'both' ? 'active' : ''}}" bindtap="setFoot" data-val="both">双脚</view>
+    </view>
+  </block>
+
+  <!-- 篮球专项字段 -->
+  <block wx:if="{{form.sport === '篮球'}}">
+    <view class="inline-row">
+      <view class="inline-item">
+        <view class="label">出生日期 <text class="required">*</text></view>
+        <picker mode="date" value="{{form.birthDate}}" end="{{maxBirthDate}}" bindchange="onBirthDateChange">
+          <view class="select-box compact-select">
+            <text class="{{form.birthDate ? '' : 'placeholder'}}">{{form.birthDate || '选择日期'}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+      <view class="inline-item">
+        <view class="label">身高(cm) <text class="required">*</text></view>
+        <input class="input-box" type="number" placeholder="cm" bindinput="onInput" data-field="height" value="{{form.height}}"/>
+      </view>
+      <view class="inline-item">
+        <view class="label">体重(kg) <text class="required">*</text></view>
+        <input class="input-box" type="number" placeholder="kg" bindinput="onInput" data-field="weight" value="{{form.weight}}"/>
+      </view>
+    </view>
+    <view class="label">臂展(cm) <text class="required">*</text></view>
+    <input class="input-box" type="number" placeholder="请输入臂展" bindinput="onInput" data-field="wingspan" value="{{form.wingspan}}"/>
+    <view class="label">惯用手 <text class="required">*</text></view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.preferredHand === 'right' ? 'active' : ''}}" bindtap="setHand" data-val="right">右手</view>
+      <view class="tag-btn {{form.preferredHand === 'left' ? 'active' : ''}}" bindtap="setHand" data-val="left">左手</view>
+      <view class="tag-btn {{form.preferredHand === 'both' ? 'active' : ''}}" bindtap="setHand" data-val="both">双手</view>
+    </view>
+  </block>
+
+  <block wx:if="{{isFootball}}">
+    <view class="label">主位置 <text class="required">*</text></view>
+    <view class="tag-row position-row">
+      <view
+        class="tag-btn {{form.position === item ? 'active' : ''}}"
+        wx:for="{{footballPositions}}"
+        wx:key="*this"
+        bindtap="setSportPosition"
+        data-field="position"
+        data-val="{{item}}"
+      >{{item}}</view>
+    </view>
+    <view class="label">副位置</view>
+    <view class="tag-row position-row">
+      <view
+        class="tag-btn {{form.secondaryPosition === item ? 'active' : ''}} {{form.position === item ? 'disabled' : ''}}"
+        wx:for="{{footballPositions}}"
+        wx:key="*this"
+        bindtap="setSportPosition"
+        data-field="secondaryPosition"
+        data-val="{{item}}"
+      >{{item}}</view>
+    </view>
+  </block>
+  <block wx:elif="{{isBasketball}}">
+    <view class="label">主位置 <text class="required">*</text></view>
+    <view class="tag-row position-row">
+      <view
+        class="tag-btn {{form.position === item ? 'active' : ''}}"
+        wx:for="{{basketballPositions}}"
+        wx:key="*this"
+        bindtap="setSportPosition"
+        data-field="position"
+        data-val="{{item}}"
+      >{{item}}</view>
+    </view>
+    <view class="label">副位置</view>
+    <view class="tag-row position-row">
+      <view
+        class="tag-btn {{form.secondaryPosition === item ? 'active' : ''}} {{form.position === item ? 'disabled' : ''}}"
+        wx:for="{{basketballPositions}}"
+        wx:key="*this"
+        bindtap="setSportPosition"
+        data-field="secondaryPosition"
+        data-val="{{item}}"
+      >{{item}}</view>
+    </view>
+  </block>
+  <block wx:elif="{{isBadminton}}">
+    <view class="label">专项 <text class="required">*</text></view>
+    <view class="tag-row position-row">
+      <view
+        class="tag-btn {{form.position === item ? 'active' : ''}}"
+        wx:for="{{badmintonPositions}}"
+        wx:key="*this"
+        bindtap="setSportPosition"
+        data-field="position"
+        data-val="{{item}}"
+      >{{item}}</view>
+    </view>
+    <view class="label">兼项</view>
+    <view class="tag-row position-row">
+      <view
+        class="tag-btn {{form.secondaryPosition === item ? 'active' : ''}} {{form.position === item ? 'disabled' : ''}}"
+        wx:for="{{badmintonPositions}}"
+        wx:key="*this"
+        bindtap="setSportPosition"
+        data-field="secondaryPosition"
+        data-val="{{item}}"
+      >{{item}}</view>
+    </view>
+  </block>
+
+  <view class="label">性别 <text class="required">*</text></view>
+  <view class="tag-row">
+    <view class="tag-btn {{form.gender === 'male' ? 'active' : ''}}" bindtap="setGender" data-val="male">男</view>
+    <view class="tag-btn {{form.gender === 'female' ? 'active' : ''}}" bindtap="setGender" data-val="female">女</view>
+  </view>
+
+  <view class="label">真实姓名 <text class="required">*</text></view>
+  <input class="input-box" placeholder="请输入真实姓名，不可填写数字或符号" bindinput="onInput" data-field="name" value="{{form.name}}" maxlength="30"/>
+
+  <view class="label">所在城市 <text class="required">*</text></view>
+  <picker mode="region" bindchange="onCityChange">
+    <view class="select-box">
+      <text>{{form.city || '选择城市'}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <view class="label">手机号 <text class="required">*</text></view>
+  <view class="phone-auth-card phone-auth-simple {{form.phoneVerified ? 'done' : ''}}">
+    <button wx:if="{{!form.phoneVerified}}" class="phone-auth-btn phone-auth-btn-full" open-type="getPhoneNumber" bindgetphonenumber="bindPhone">手机号快捷验证</button>
+    <button wx:else class="phone-auth-btn phone-auth-btn-full done" disabled>已绑定手机号</button>
+  </view>
+
+  <view class="label">详细介绍</view>
+  <textarea
+    class="textarea-box"
+    placeholder="介绍你的球员身份，让其他人了解你的背景，需求方向和合作风格..."
+    maxlength="300"
+    bindinput="onInput"
+    data-field="description"
+    value="{{form.description}}"
+  />
+
+  <view class="btn-next {{canNext1 ? 'active' : 'disabled'}}" bindtap="nextStep">下一步</view>
+  <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+</view>
+
+<!-- ========== Step 2: 核心履历分流 ========== -->
+<view wx:if="{{step === 2}}" class="step-content">
+  <view class="step-title">核心履历</view>
+  <view class="step-sub">帮助我们评估你的运动背景</view>
+  <view class="material-hint">请您如实上传证明材料，这将直接影响您的出场费。</view>
+
+  <view class="module-card">
+    <view class="qa-num">学生</view>
+    <view class="qa-question">你目前是否是在校学生？</view>
+    <view class="qa-desc">在校身份可帮助主办方识别校园赛事、青训和学生联赛经历。</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.isStudent === true ? 'active' : ''}}" bindtap="setStudent" data-val="{{true}}">是，在校学生</view>
+      <view class="tag-btn {{form.isStudent === false ? 'active' : ''}}" bindtap="setStudent" data-val="{{false}}">否，不是在校学生</view>
+    </view>
+    <view wx:if="{{form.isStudent === true}}" class="proof-section">
+      <view class="divider"></view>
+      <view class="label">上传学生证明 <text class="required">*</text></view>
+      <view class="proof-upload" bindtap="uploadStudentProof">
+        <image wx:if="{{form.studentProofFile}}" src="{{form.studentProofFile}}" class="proof-preview" mode="aspectFit"/>
+        <view wx:else class="proof-placeholder"><text class="proof-icon">📎</text><text class="proof-hint">上传学生证 / 学信网照片</text></view>
+      </view>
+      <view wx:if="{{form.studentProofFile}}" class="proof-status">✓ 学生证明已上传</view>
+    </view>
+  </view>
+
+  <view class="module-card">
+    <view class="qa-num">证书</view>
+    <view class="qa-question">是否拥有运动员等级证书？</view>
+    <view class="qa-desc">可上传国家运动员等级证书；没有可跳过，不影响平台等级或赏金计算。</view>
+    <view class="proof-upload optional-proof" bindtap="uploadAthleteLevelCert">
+      <image wx:if="{{form.athleteLevelCertFile}}" src="{{form.athleteLevelCertFile}}" class="proof-preview" mode="aspectFit"/>
+      <view wx:else class="proof-placeholder"><text class="proof-icon">📎</text><text class="proof-hint">上传运动员等级证书（可跳过）</text></view>
+    </view>
+    <view wx:if="{{form.athleteLevelCertFile}}" class="proof-status">✓ 等级证书已上传</view>
+    <input wx:if="{{form.athleteLevelCertFile}}" class="input-box" placeholder="证书等级，如：国家二级运动员" bindinput="onInput" data-field="athleteLevelCertLevel" value="{{form.athleteLevelCertLevel}}"/>
+  </view>
+
+  <!-- Qa -->
+  <view class="module-card">
+    <view class="qa-num">Q1</view>
+    <view class="qa-question">{{isFootball ? '是否接受过系统足球训练？' : '是否受过专业训练？'}}</view>
+    <view class="qa-desc">{{isFootball ? '例如：足球学校、职业俱乐部梯队、校队系统训练等' : '例如：体校、专业队、职业俱乐部梯队等'}}</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.trainedProfessionally === true ? 'active' : ''}}" bindtap="setTrained" data-val="{{true}}">{{isFootball ? '是，接受过系统训练' : '是，受过专业训练'}}</view>
+      <view class="tag-btn {{form.trainedProfessionally === false ? 'active' : ''}}" bindtap="setTrained" data-val="{{false}}">{{isFootball ? '否，自学/业余爱好' : '否，自学/业余爱好'}}</view>
+    </view>
+  </view>
+
+  <!-- Qb (Qa=是) -->
+  <view wx:if="{{form.trainedProfessionally === true}}" class="module-card">
+    <view class="qa-num">Q2</view>
+    <view class="qa-question">{{isFootball ? '是否拥有职业足球背景？' : '是否有过职业背景？'}}</view>
+    <view class="qa-desc">{{isFootball ? '例如：职业梯队、足协注册球员等' : '例如：CBA / NBL / 超3联赛 / 商业网红球员等'}}</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.hasProBackground === true ? 'active' : ''}}" bindtap="setProBg" data-val="{{true}}">{{isFootball ? '是，有职业背景' : '是，有职业经历'}}</view>
+      <view class="tag-btn {{form.hasProBackground === false ? 'active' : ''}}" bindtap="setProBg" data-val="{{false}}">{{isFootball ? '否，无职业背景' : '否，无职业背景'}}</view>
+    </view>
+
+    <!-- Qb=是 → 证明 -->
+    <view wx:if="{{form.hasProBackground === true}}" class="proof-section">
+      <view class="divider"></view>
+      <view class="label">提交证明资料 <text class="required">*</text></view>
+      <view class="proof-upload" bindtap="uploadProof">
+        <image wx:if="{{form.proofFile}}" src="{{form.proofFile}}" class="proof-preview" mode="aspectFit"/>
+        <view wx:else class="proof-placeholder"><text class="proof-icon">📎</text><text class="proof-hint">{{isFootball ? '上传职业经历证明材料' : '上传职业经历证明材料'}}</text></view>
+      </view>
+      <view wx:if="{{form.proofFile}}" class="proof-status">✓ 已上传，后台审核中</view>
+    </view>
+
+    <!-- Qb=否 → Qd -->
+    <view wx:if="{{form.hasProBackground === false}}" class="module-card" style="margin-top:24rpx;">
+      <view class="qa-num">Q3</view>
+      <view class="qa-question">{{isFootball ? '是否拥有高水平足球竞技经历？' : '是否有 CUBAL / 省BA 背景？'}}</view>
+      <view class="qa-desc">{{isFootball ? '包括职业梯队或青训、校队及高水平青少年赛事等' : '包括大学高水平联赛、省级篮球联赛等'}}</view>
+      <view class="tag-row col-3">
+        <view class="tag-btn {{form.competitiveBackground === 'levelA' ? 'active' : ''}}" bindtap="setCompetitiveBackground" data-val="levelA">{{isFootball ? '职业梯队 / 青训经历' : 'CUBAL一级 / 省BA'}}</view>
+        <view class="tag-btn {{form.competitiveBackground === 'levelB' ? 'active' : ''}}" bindtap="setCompetitiveBackground" data-val="levelB">{{isFootball ? '校队 / 高水平青少年赛事' : 'CUBAL二级'}}</view>
+        <view class="tag-btn {{form.competitiveBackground === 'none' ? 'active' : ''}}" bindtap="setCompetitiveBackground" data-val="none">否</view>
+      </view>
+
+      <view wx:if="{{form.competitiveBackground === 'levelA' || form.competitiveBackground === 'levelB'}}" class="proof-section">
+        <view class="divider"></view>
+        <view class="label">提交证明资料 <text class="required">*</text></view>
+        <view class="proof-upload" bindtap="uploadProof">
+          <image wx:if="{{form.proofFile}}" src="{{form.proofFile}}" class="proof-preview" mode="aspectFit"/>
+          <view wx:else class="proof-placeholder"><text class="proof-icon">📎</text><text class="proof-hint">{{isFootball ? '上传训练/比赛资料' : '上传参赛证明材料'}}</text></view>
+        </view>
+        <view wx:if="{{form.proofFile}}" class="proof-status">✓ 已上传，后台审核中</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Qc (Qa=否 或 Qd=否) -->
+  <view wx:if="{{form.trainedProfessionally === false || (form.trainedProfessionally === true && form.hasProBackground === false && form.competitiveBackground === 'none')}}" class="module-card">
+    <view class="qa-num">Q2</view>
+    <view class="qa-question">{{isFootball ? '是否参加过业余足球比赛？' : '是否参加过业余城市联赛？'}}</view>
+    <view class="qa-desc">{{isFootball ? '例如：社区联赛、企业杯、校园杯等' : '例如：城市碗、地方联赛、企业杯等'}}</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.hasAmateurLeague === true ? 'active' : ''}}" bindtap="setAmateur" data-val="{{true}}">{{isFootball ? '是，参加过业余比赛' : '是，参加过业余联赛'}}</view>
+      <view class="tag-btn {{form.hasAmateurLeague === false ? 'active' : ''}}" bindtap="setAmateur" data-val="{{false}}">否，未参加过</view>
+    </view>
+
+    <!-- Qc=是 → Qe -->
+    <view wx:if="{{form.hasAmateurLeague === true}}" style="margin-top:20rpx;">
+      <view class="qa-num-small">Q3</view>
+      <view class="qa-question">{{isFootball ? '是否进入过城市联赛/校园足球联赛？' : '是否进过前三名？'}}</view>
+      <view class="qa-desc">{{isFootball ? '指在业余比赛中取得较好名次' : '指在上述业余联赛中取得的名次'}}</view>
+      <view class="tag-row">
+        <view class="tag-btn {{form.hasTopThree === true ? 'active' : ''}}" bindtap="setTopThree" data-val="{{true}}">{{isFootball ? '是，进入过联赛' : '是，拿过前三名'}}</view>
+        <view class="tag-btn {{form.hasTopThree === false ? 'active' : ''}}" bindtap="setTopThree" data-val="{{false}}">否</view>
+      </view>
+
+      <!-- Qe=是 → Qf -->
+      <view wx:if="{{form.hasTopThree === true}}" style="margin-top:16rpx;">
+        <view class="qa-num-small">Q4</view>
+        <view class="qa-question">{{isFootball ? '所获四强次数？' : '进前三名的次数？'}}</view>
+        <view class="tag-row">
+          <view class="tag-btn {{form.topThreeCount === 'gt3' ? 'active' : ''}}" bindtap="setTopThreeCount" data-val="gt3">三次以上</view>
+          <view class="tag-btn {{form.topThreeCount === 'lte3' ? 'active' : ''}}" bindtap="setTopThreeCount" data-val="lte3">三次及以下</view>
+        </view>
+        <view wx:if="{{form.topThreeCount}}" class="proof-section">
+          <view class="divider"></view>
+          <view class="label">提交证明资料 <text class="required">*</text></view>
+          <view class="proof-upload" bindtap="uploadProof">
+            <image wx:if="{{form.proofFile}}" src="{{form.proofFile}}" class="proof-preview" mode="aspectFit"/>
+            <view wx:else class="proof-placeholder"><text class="proof-icon">📎</text><text class="proof-hint">上传获奖证明材料</text></view>
+          </view>
+          <view wx:if="{{form.proofFile}}" class="proof-status">✓ 已上传，后台审核中</view>
+        </view>
+      </view>
+
+      <!-- Qe=否 → 球龄 -->
+      <view wx:if="{{form.hasTopThree === false}}" style="margin-top:16rpx;">
+        <view class="qa-num-small">补充</view>
+        <view class="qa-question">您的球龄是？</view>
+        <view class="tag-row col-4">
+          <view class="tag-btn {{form.playYears === 'lt1' ? 'active' : ''}}" bindtap="setPlayYears" data-val="lt1">{{'<'}}1年</view>
+          <view class="tag-btn {{form.playYears === '1to3' ? 'active' : ''}}" bindtap="setPlayYears" data-val="1to3">1-3年</view>
+          <view class="tag-btn {{form.playYears === '3to5' ? 'active' : ''}}" bindtap="setPlayYears" data-val="3to5">3-5年</view>
+          <view class="tag-btn {{form.playYears === 'gt5' ? 'active' : ''}}" bindtap="setPlayYears" data-val="gt5">{{'>'}}5年</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Qc=否 → 球龄 -->
+    <view wx:if="{{form.hasAmateurLeague === false}}" style="margin-top:20rpx;">
+      <view class="qa-num-small">补充</view>
+      <view class="qa-question">您的球龄是？</view>
+      <view class="tag-row col-4">
+        <view class="tag-btn {{form.playYears === 'lt1' ? 'active' : ''}}" bindtap="setPlayYears" data-val="lt1">{{'<'}}1年</view>
+        <view class="tag-btn {{form.playYears === '1to3' ? 'active' : ''}}" bindtap="setPlayYears" data-val="1to3">1-3年</view>
+        <view class="tag-btn {{form.playYears === '3to5' ? 'active' : ''}}" bindtap="setPlayYears" data-val="3to5">3-5年</view>
+        <view class="tag-btn {{form.playYears === 'gt5' ? 'active' : ''}}" bindtap="setPlayYears" data-val="gt5">{{'>'}}5年</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="btn-next {{canNext2 ? 'active' : 'disabled'}}" bindtap="nextStep">下一步</view>
+  <view class="btn-prev" bindtap="prevStep">上一步</view>
+  <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+</view>
+
+<!-- ========== Step 3: 确认提交 ========== -->
+<view wx:if="{{step === 3}}" class="step-content complete-wrap">
+  <view class="complete-icon">⚡</view>
+  <view class="complete-title">确认入驻资料</view>
+  <view class="complete-sub">提交后将创建你的运动员档案</view>
+  <view class="complete-card">
+    <view class="complete-row"><text class="complete-label">运动项目</text><text class="complete-value">{{form.sport}}</text></view>
+    <view class="complete-row"><text class="complete-label">真实姓名</text><text class="complete-value">{{form.name}}</text></view>
+    <view wx:if="{{form.birthDate}}" class="complete-row"><text class="complete-label">出生日期</text><text class="complete-value">{{form.birthDate}}</text></view>
+    <view class="complete-row"><text class="complete-label">擅长位置</text><text class="complete-value">{{form.position}}{{form.secondaryPosition ? ' / ' + form.secondaryPosition : ''}}</text></view>
+    <view class="complete-row"><text class="complete-label">运动背景</text><text class="complete-value">{{careerLabel}}</text></view>
+    <view class="complete-row" style="border:none;"><text class="complete-label">当前等级</text><view class="rank-badge rank-f">{{levelLabel}}</view></view>
+  </view>
+  <button class="btn-next active" bindtap="goToMarket">提交并完成注册</button>
+  <view class="btn-prev" bindtap="prevStep">上一步</view>
+  <view class="complete-hint">完善更多资料，提升初始身价</view>
+</view>
+
+</view>

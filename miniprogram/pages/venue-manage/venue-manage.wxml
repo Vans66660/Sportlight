@@ -1,0 +1,63 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading-wrap">加载中...</view>
+
+  <block wx:else>
+    <view class="hero-card status-{{status}}">
+      <view>
+        <view class="venue-name">{{venue.name || '球馆管理'}}</view>
+        <view class="venue-sub">{{venue.city}} · {{venue.venueType}}</view>
+      </view>
+      <view class="status-pill">{{statusLabel}}</view>
+    </view>
+
+    <view wx:if="{{status === 'pending'}}" class="notice-card">
+      资料已提交，平台审核通过后开放完整经营功能。你可以先完善价格、主页和排班草稿。
+    </view>
+    <view wx:elif="{{status === 'rejected'}}" class="notice-card rejected">
+      {{rejectText}}
+    </view>
+
+    <view wx:if="{{venueGuide.visible}}" class="venue-guide-card">
+      <view class="venue-guide-head">
+        <view>
+          <view class="venue-guide-title">开始运营球馆</view>
+          <view class="venue-guide-sub">完成 {{venueGuide.completedCount}}/{{venueGuide.totalCount}} 项，先把用户可见信息和可预约规则准备好</view>
+        </view>
+        <view class="venue-guide-count">{{venueGuide.completedCount}}/{{venueGuide.totalCount}}</view>
+      </view>
+      <view class="venue-guide-list">
+        <view wx:for="{{venueGuide.items}}" wx:key="key" class="venue-guide-item {{item.done ? 'done' : ''}}" bindtap="goVenueGuideStep" data-panel="{{item.key}}">
+          <view class="venue-guide-check">{{item.done ? '✓' : ''}}</view>
+          <view class="venue-guide-copy">
+            <view class="venue-guide-item-title">{{item.title}}</view>
+            <view class="venue-guide-item-desc">{{item.desc}}</view>
+          </view>
+          <view class="venue-guide-arrow">›</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="metric-grid">
+      <view class="metric-card" wx:for="{{metricCards}}" wx:key="label">
+        <view class="metric-value">{{item.value}}</view>
+        <view class="metric-label">{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="panel-grid">
+      <view
+        wx:for="{{panels}}"
+        wx:key="key"
+        class="panel-card panel-{{item.accent}}"
+        bindtap="switchPanel"
+        data-panel="{{item.key}}"
+      >
+        <view class="panel-topline"></view>
+        <view class="panel-title">{{item.title}}</view>
+        <view class="panel-desc">{{item.desc}}</view>
+        <view class="panel-arrow">›</view>
+      </view>
+    </view>
+
+  </block>
+</view>

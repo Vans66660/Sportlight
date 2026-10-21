@@ -1,0 +1,4 @@
+<view class="container">
+  <view class="title">{{title}}</view>
+  <view class="placeholder">入口已预留</view>
+</view>

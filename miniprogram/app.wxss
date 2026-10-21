@@ -1,0 +1,87 @@
+/* Sportlight 全局样式 */
+page {
+  background-color: #0F0F0F;
+  background: #0F0F0F;
+  min-height: 100vh;
+  color: #FFFFFF;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  overflow-x: hidden;
+}
+
+/* 消除页面切换白屏：所有顶层容器立即继承黑色背景 */
+page > view:first-child,
+page > navigator:first-child {
+  background-color: #0F0F0F;
+  min-height: 100vh;
+}
+
+/* 颜色变量 */
+.sl-orange { color: #FF6B1A; }
+.sl-gray { color: #555555; }
+.sl-white { color: #FFFFFF; }
+.sl-light { color: #AAAAAA; }
+
+/* 常用背景 */
+.bg-black { background-color: #111111; }
+.bg-dark { background-color: #1A1A1A; }
+.bg-card { background-color: #1A1A1A; }
+.bg-orange { background-color: #FF6B1A; }
+
+/* 常用按钮 */
+.btn-primary {
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+  border-radius: 12rpx;
+  padding: 26rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: #1A1A1A;
+  color: #666666;
+  border-radius: 12rpx;
+  padding: 26rpx;
+  text-align: center;
+  font-size: 28rpx;
+  border: none;
+}
+
+/* 等级颜色 */
+.rank-f { color: #A32D2D; background-color: #2A1010; }
+.rank-d { color: #FF8C47; background-color: #2A1800; }
+.rank-c { color: #5BA8D4; background-color: #0A1E2A; }
+.rank-b { color: #3DBB8A; background-color: #0A2A1A; }
+.rank-a { color: #7B7BDD; background-color: #0A0A20; }
+.rank-s { color: #D85A30; background-color: #2A1008; }
+
+/* 卡片通用样式 */
+.card {
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+  padding: 28rpx;
+}
+
+/* 分割线 */
+.divider {
+  height: 1rpx;
+  background-color: #1E1E1E;
+  margin: 28rpx 0;
+}
+
+/* 标签 */
+.tag {
+  display: inline-block;
+  font-size: 20rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 40rpx;
+  background-color: #1E1E1E;
+  color: #888888;
+}
+
+/* 安全区底部间距 */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

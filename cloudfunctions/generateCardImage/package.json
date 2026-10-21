@@ -1,0 +1,10 @@
+{
+  "name": "generateCardImage",
+  "version": "1.0.0",
+  "description": "服务端卡面合成 - 使用 Jimp",
+  "main": "index.js",
+  "dependencies": {
+    "jimp": "^0.22.12",
+    "wx-server-sdk": "latest"
+  }
+}

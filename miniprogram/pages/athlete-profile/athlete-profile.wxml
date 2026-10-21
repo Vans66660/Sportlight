@@ -1,0 +1,457 @@
+<view class="container">
+
+<!-- 大图头部 -->
+<view class="hero-wrap">
+  <image class="hero-photo" src="{{athlete.photo}}" mode="aspectFill"/>
+  <view class="hero-overlay">
+    <view class="back-btn" bindtap="goBack">‹</view>
+  </view>
+  <view class="hero-gradient"></view>
+</view>
+
+<!-- 基本信息 -->
+<view class="info-wrap">
+  <view class="name-row">
+    <view class="name-wrap">
+      <view class="athlete-name">{{athlete.displayName || athlete.nickname || athlete.name}}</view>
+      <view class="rank-badge rank-{{athlete.rankBase}}">{{athlete.rankLabel || athlete.rank}}</view>
+      <view class="rep-badge rep-{{athlete.reputationLevel}}">🛡 {{athlete.reputation}}</view>
+    </view>
+  </view>
+
+  <view class="meta">Sport Light ID {{athlete.sportlightId || '未生成'}} · {{athlete.sport}} · {{athlete.position}} · {{athlete.city}}</view>
+  <view class="join-date-row" wx:if="{{athlete.joinedDateLabel}}">
+    <text>{{athlete.joinedDateLabel}} 加入 Sport Light</text>
+  </view>
+  <view class="physical-row" wx:if="{{athlete.height || athlete.weight || athlete.wingspan || athlete.preferredHand || athlete.preferredFoot}}">
+    <view class="physical-chip" wx:if="{{athlete.height}}">身高 {{athlete.height}}cm</view>
+    <view class="physical-chip" wx:if="{{athlete.weight}}">体重 {{athlete.weight}}kg</view>
+    <view class="physical-chip" wx:if="{{athlete.sport === '篮球' && athlete.wingspan}}">臂展 {{athlete.wingspan}}cm</view>
+    <view class="physical-chip" wx:if="{{athlete.sport === '篮球' && athlete.preferredHand}}">惯用{{athlete.preferredHand === 'left' ? '左手' : athlete.preferredHand === 'both' ? '双手' : '右手'}}</view>
+    <view class="physical-chip" wx:if="{{athlete.sport === '足球' && athlete.preferredFoot}}">惯用{{athlete.preferredFoot === 'left' ? '左脚' : athlete.preferredFoot === 'both' ? '双脚' : '右脚'}}</view>
+  </view>
+  <view class="affil-row">
+    <view class="affil-dot"></view>
+    <text>{{athlete.affiliation}}</text>
+  </view>
+
+  <view wx:if="{{athlete.athleteLevelCertVerified || athlete.isStudent}}" class="credential-card">
+    <view class="credential-title">资质材料</view>
+    <view class="credential-row" wx:if="{{athlete.athleteLevelCertVerified}}">
+      <view>
+        <view class="credential-name">已认证{{athlete.athleteLevelCertLevel || '运动员等级'}}</view>
+        <view class="credential-desc">国家运动员等级证书已通过平台核验</view>
+      </view>
+      <view class="credential-status verified">已认证</view>
+    </view>
+    <view class="credential-row" wx:if="{{athlete.isStudent}}">
+      <view>
+        <view class="credential-name">在校学生身份</view>
+        <view class="credential-desc">{{athlete.studentVerified ? '平台已核验学生证明' : '学生证明已提交，等待平台核验'}}</view>
+      </view>
+      <view class="credential-status {{athlete.studentVerified ? 'verified' : ''}}">{{athlete.studentVerified ? '已认证' : '待核验'}}</view>
+    </view>
+  </view>
+
+  <!-- 数据卡片 -->
+  <view class="stat-row">
+    <view class="stat-box score-clickable" hover-class="score-clickable-hover" bindtap="goScoreDetails">
+      <view class="stat-label">当季积分</view>
+      <view class="stat-value">{{athlete.currentSeasonScore}}</view>
+    </view>
+    <block wx:if="{{athlete.sport === '篮球'}}">
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="points" bindtap="goMatchStats">
+        <view class="stat-label">累积得分</view>
+        <view class="stat-value">{{athlete.totalBasketballPoints || 0}}</view>
+      </view>
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="rebounds" bindtap="goMatchStats">
+        <view class="stat-label">累积篮板</view>
+        <view class="stat-value">{{athlete.totalBasketballRebounds || 0}}</view>
+      </view>
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="assists" bindtap="goMatchStats">
+        <view class="stat-label">累积助攻</view>
+        <view class="stat-value">{{athlete.totalBasketballAssists || 0}}</view>
+      </view>
+    </block>
+    <block wx:elif="{{athlete.sport === '羽毛球'}}">
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="participations" bindtap="goMatchStats">
+        <view class="stat-label">累积参赛</view>
+        <view class="stat-value">{{athlete.eventCount}}</view>
+      </view>
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="wins" bindtap="goMatchStats">
+        <view class="stat-label">正式胜场</view>
+        <view class="stat-value">{{athlete.formalWinCount || 0}}</view>
+      </view>
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="points" bindtap="goMatchStats">
+        <view class="stat-label">累积得分</view>
+        <view class="stat-value">{{athlete.totalBadmintonPoints || 0}}</view>
+      </view>
+      <view class="stat-box">
+        <view class="stat-label">胜率</view>
+        <view class="stat-value">{{athlete.winRateLabel || '0%'}}</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="goals" bindtap="goMatchStats">
+        <view class="stat-label">累积进球</view>
+        <view class="stat-value">{{athlete.totalGoals || 0}}</view>
+      </view>
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="assists" bindtap="goMatchStats">
+        <view class="stat-label">累积助攻</view>
+        <view class="stat-value">{{athlete.totalAssists || 0}}</view>
+      </view>
+      <view class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="participations" bindtap="goMatchStats">
+        <view class="stat-label">累积参赛</view>
+        <view class="stat-value">{{athlete.eventCount}}</view>
+      </view>
+    </block>
+    <view wx:if="{{athlete.sport !== '羽毛球'}}" class="stat-box stat-clickable" hover-class="stat-clickable-hover" data-tab="wins" bindtap="goMatchStats">
+      <view class="stat-label">正式胜场</view>
+      <view class="stat-value">{{athlete.formalWinCount || 0}}</view>
+    </view>
+    <view class="stat-box">
+      <view class="stat-label"><image class="stat-icon" src="/images/icons/tianping.png" mode="aspectFit"/> 信誉</view>
+      <view class="stat-value">{{athlete.reputation}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{athlete.showcaseCards && athlete.showcaseCards.length > 0}}" class="public-showcase-section">
+    <view class="section-header public-showcase-header">
+      <view>
+        <view class="section-title" style="margin:0;">球星卡展柜</view>
+        <view class="public-showcase-caption">已收藏 {{athlete.cardCount}} 张 · 展示 {{athlete.showcaseCards.length}} 张</view>
+      </view>
+    </view>
+    <view class="public-showcase-grid">
+      <view class="public-showcase-card {{item._showBack ? 'is-back' : ''}}" wx:for="{{athlete.showcaseCards}}" wx:key="_id" data-index="{{index}}" bindtap="flipShowcaseCard">
+        <image wx:if="{{item.frontImage || item.coverImage || item.imageUrl}}" class="public-showcase-image" src="{{item._showBack ? item.backImage : (item.frontImage || item.coverImage || item.imageUrl)}}" mode="aspectFit"/>
+        <view wx:else class="public-showcase-placeholder"><text>S</text><text>{{item.title || 'SPORTLIGHT'}}</text></view>
+        <view wx:if="{{index === 0}}" class="public-main-card">主卡</view>
+        <view wx:if="{{item.backImage}}" class="public-showcase-flip">↻</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="soft-business-card">
+    <view class="soft-business-title">商业信息</view>
+    <view class="soft-business-grid">
+      <view>
+        <text>{{athlete.sport === '篮球' ? '单场最高可得' : '平台身价'}}</text>
+        <text wx:if="{{athlete.sport === '篮球' && athlete.levelReviewStatus === 'pending'}}">{{athlete.basketballRecommendedTier || 'D'}}级待验证</text>
+        <text wx:elif="{{athlete.sport === '篮球'}}">¥{{athlete.marketValue || 0}}</text>
+        <text wx:elif="{{athlete.competitionScore >= 300}}">¥{{athlete.marketValue || 0}}</text>
+        <text wx:else>待解锁</text>
+      </view>
+      <view wx:if="{{athlete.sport === '篮球' && athlete.levelReviewStatus !== 'pending'}}">
+        <text>保障出场费</text>
+        <text>¥{{athlete.guaranteedAppearanceFee || 0}}</text>
+      </view>
+      <view wx:if="{{athlete.sport === '篮球' && athlete.levelReviewStatus !== 'pending'}}">
+        <text>表现提成</text>
+        <text>最高 ¥{{athlete.performanceBonus || 0}}</text>
+      </view>
+    </view>
+    <view class="price-hint" wx:if="{{athlete.sport === '篮球' && athlete.levelReviewStatus === 'pending'}}">资料审核通过后即可接取篮球赏金令</view>
+    <view class="price-hint" wx:elif="{{athlete.sport === '篮球' && athlete.sPromotionReviewStatus === 'pending'}}">已达到 S 级积分门槛，正在等待平台审核</view>
+  </view>
+
+  <view class="scout-card" wx:if="{{athlete.scoutReport && athlete.scoutReport.visible}}">
+    <view class="scout-head">
+      <view>
+        <view class="scout-kicker">SPORTLIGHT SCOUT</view>
+        <view class="scout-title">{{athlete.scoutReport.title}}</view>
+      </view>
+      <view class="scout-price" wx:if="{{!athlete.scoutReport.unlocked}}">待解锁</view>
+      <view class="scout-unlocked" wx:else>已解锁</view>
+    </view>
+    <view class="scout-preview-grid">
+      <view class="scout-preview-item" wx:for="{{athlete.scoutReport.preview}}" wx:key="label">
+        <view class="scout-preview-value">{{item.value}}</view>
+        <view class="scout-preview-label">{{item.label}}</view>
+      </view>
+    </view>
+    <block wx:if="{{athlete.scoutReport.unlocked}}">
+      <view class="scout-metric-grid">
+        <view class="scout-metric" wx:for="{{athlete.scoutReport.metrics}}" wx:key="label">
+          <text>{{item.label}}</text>
+          <text>{{item.value}}</text>
+        </view>
+      </view>
+      <view class="scout-section">
+        <view class="scout-section-title">优势判断</view>
+        <view class="scout-point good" wx:for="{{athlete.scoutReport.strengths}}" wx:key="index">{{item}}</view>
+      </view>
+      <view class="scout-section">
+        <view class="scout-section-title">风险提示</view>
+        <view class="scout-point risk" wx:for="{{athlete.scoutReport.risks}}" wx:key="index">{{item}}</view>
+      </view>
+      <view class="scout-suggestion">{{athlete.scoutReport.suggestion}}</view>
+    </block>
+    <block wx:else>
+      <view class="scout-locked-copy">{{athlete.scoutReport.suggestion}}</view>
+      <view class="scout-unlock-btn" bindtap="unlockScoutReport">解锁深度球探报告</view>
+    </block>
+  </view>
+
+  <!-- 段位进度条 -->
+  <view class="progress-wrap" wx:if="{{athlete.nextTier}}">
+    <view class="progress-header">
+      <text>{{athlete.rank}}</text>
+      <text class="progress-pct">{{athlete.progress}}%  →  {{athlete.nextTier}}</text>
+      <text>还差 {{athlete.scoreNeeded}} 分</text>
+    </view>
+    <view class="progress-bg">
+      <view class="progress-fill" style="width: {{athlete.progress}}%;"></view>
+    </view>
+  </view>
+
+  <!-- 生涯数据 -->
+  <view wx:if="{{athlete.careerStats}}">
+    <view class="section-title">生涯数据（{{athlete.careerStats.games}} 场统计）</view>
+    <view wx:if="{{athlete.careerStats.sport === '篮球'}}" class="cs-grid">
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgPts}}</view><view class="cs-lbl">场均得分</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgReb}}</view><view class="cs-lbl">场均篮板</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgAst}}</view><view class="cs-lbl">场均助攻</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgStl}}</view><view class="cs-lbl">场均抢断</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgBlk}}</view><view class="cs-lbl">场均盖帽</view></view>
+    </view>
+    <view wx:if="{{athlete.careerStats.sport === '足球'}}" class="cs-grid">
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.totalGoals}}</view><view class="cs-lbl">总进球</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.totalAssists}}</view><view class="cs-lbl">总助攻</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgGoals}}</view><view class="cs-lbl">场均进球</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgShotsOnTarget}}</view><view class="cs-lbl">场均射正</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgSuccessfulDribbles}}</view><view class="cs-lbl">场均过人</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgThroughBalls}}</view><view class="cs-lbl">场均关键直塞</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgKeyPasses}}</view><view class="cs-lbl">场均关键传球</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgSuccessfulTackles}}</view><view class="cs-lbl">场均抢断</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgSaves}}</view><view class="cs-lbl">场均扑救</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.totalYellowCards}}</view><view class="cs-lbl">累计黄牌</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.totalRedCards}}</view><view class="cs-lbl">累计红牌</view></view>
+    </view>
+    <view wx:if="{{athlete.careerStats.sport === '羽毛球'}}" class="cs-grid">
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgPoints}}</view><view class="cs-lbl">场均得分</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgWinners}}</view><view class="cs-lbl">场均制胜分</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgAces}}</view><view class="cs-lbl">场均发球得分</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgSaves}}</view><view class="cs-lbl">场均救球</view></view>
+      <view class="cs-box"><view class="cs-val">{{athlete.careerStats.avgErrors}}</view><view class="cs-lbl">场均失误</view></view>
+    </view>
+  </view>
+
+  <!-- 期望报价 -->
+  <view class="section-title">期望报价</view>
+  <view class="price-wrap">
+    <view class="price-card match" wx:if="{{athlete.acceptMatch}}">
+      <view class="price-type">⚔️ 参赛单</view>
+      <view class="price-amount">¥{{athlete.matchPrice}}</view>
+      <view class="price-note">起，面议</view>
+    </view>
+  </view>
+  <view class="price-hint">具体金额双方协商，身价仅代表市场估值</view>
+
+  <view class="profile-actions">
+    <block wx:if="{{athlete.viewerType === 'boss' || athlete.viewerType === 'admin'}}">
+      <view wx:if="{{athlete.friendStatus !== 'self'}}" class="profile-action primary" bindtap="goContact">发起沟通</view>
+    </block>
+    <block wx:else>
+      <view wx:if="{{athlete.friendStatus === 'friends'}}" class="profile-action primary" bindtap="goFriendChat">发消息</view>
+      <view wx:elif="{{athlete.friendStatus === 'pending_sent'}}" class="profile-action disabled">好友待通过</view>
+      <view wx:elif="{{athlete.friendStatus === 'pending_received'}}" class="profile-action disabled">待处理申请</view>
+      <view wx:elif="{{athlete.friendStatus !== 'self'}}" class="profile-action primary" bindtap="addFriend">加好友</view>
+    </block>
+    <view class="profile-action danger" bindtap="reportAthlete">举报</view>
+  </view>
+
+  <!-- 标签 -->
+  <view class="tag-row">
+    <view class="tag" wx:if="{{athlete.acceptMatch}}">接参赛</view>
+    <view class="tag" wx:for="{{athlete.tags}}" wx:key="index">{{item}}</view>
+  </view>
+
+  <!-- 荣誉 / 证书 -->
+  <view wx:if="{{athlete.honors.length > 0}}">
+    <view class="section-title">赛事荣誉</view>
+    <view class="honor-tag-row">
+      <view class="honor-tag" wx:for="{{athlete.honors}}" wx:key="index">🏅 {{item}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{athlete.tournamentBadges && athlete.tournamentBadges.length > 0}}">
+    <view class="section-header">
+      <view class="section-title" style="margin:0;">赛事纪念徽章</view>
+      <view wx:if="{{athlete.tournamentBadges.length > 3}}" class="section-action" bindtap="toggleBadges">{{badgeExpanded ? '收起' : '展开全部'}}</view>
+    </view>
+    <view class="badge-grid">
+      <view
+        class="event-badge-card"
+        wx:for="{{athlete.tournamentBadges}}"
+        wx:key="postId"
+        hidden="{{!badgeExpanded && index >= 3}}"
+        data-index="{{index}}"
+        bindtap="openBadgeDetail"
+      >
+        <image class="event-badge-avatar" src="{{item.organizerAvatar || '/images/logo.png'}}" mode="aspectFill"/>
+        <view class="event-badge-name">{{item.eventTitle}}</view>
+        <view class="event-badge-sub">纪念徽章</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 高光时刻 -->
+  <view class="section-title">高光时刻</view>
+  <view class="highlight-wrap" wx:if="{{athlete.highlights.length > 0}}">
+    <view class="highlight-stack">
+      <view
+        class="highlight-card"
+        wx:for="{{highlightStack}}"
+        wx:key="index"
+        style="transform: rotate({{item.rotate}}deg) scale({{item.scale}}); z-index: {{item.zIndex}}; top: {{item.top}}rpx;"
+        bindtap="nextHighlight"
+      >
+        <image class="highlight-img" src="{{item.src}}" mode="aspectFill"/>
+        <view class="highlight-overlay">
+          <view class="highlight-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="dot-row">
+      <view
+        class="dot {{highlightIndex === index ? 'dot-active' : ''}}"
+        wx:for="{{athlete.highlights}}"
+        wx:key="index"
+      ></view>
+    </view>
+  </view>
+  <view class="empty-highlight" wx:else>
+    <text>暂无高光内容</text>
+  </view>
+
+  <!-- 最近动态 -->
+  <view wx:if="{{athlete.recentPosts && athlete.recentPosts.length > 0}}">
+    <view class="section-title">最近动态</view>
+    <view class="recent-posts">
+      <view
+        class="mini-post"
+        wx:for="{{athlete.recentPosts}}"
+        wx:key="_id"
+        bindtap="goPostDetail"
+        data-id="{{item._id}}"
+      >
+        <view class="mini-post-type type-{{item.type}}">{{item.typeLabel}}</view>
+        <view class="mini-post-content">{{item.content}}</view>
+        <view class="mini-post-footer">
+          <text class="mini-post-time">{{item.timeLabel}}</text>
+          <text class="mini-post-likes">♡ {{item.likesCount}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 近期合作 -->
+  <view class="section-title">近期合作</view>
+  <view class="deal-list">
+    <view class="deal-row" wx:for="{{athlete.deals}}" wx:key="index" bindtap="goOrderDetail" data-id="{{item._id}}">
+      <view class="deal-icon {{item.type}}">
+        <image wx:if="{{item.bossLogo}}" class="deal-logo" src="{{item.bossLogo}}" mode="aspectFill"/>
+        <text wx:else>{{item.bossInitial}}</text>
+      </view>
+      <view class="deal-info">
+        <view class="deal-title">{{item.title}}</view>
+        <view class="deal-meta">{{item.typeLabel}} · {{item.date}}</view>
+      </view>
+      <view class="deal-status">已完成</view>
+    </view>
+  </view>
+
+  <!-- 赛事参与 -->
+  <view wx:if="{{athlete.eventHistory && athlete.eventHistory.length > 0}}">
+    <view class="section-title">赛事历史</view>
+    <view class="event-history-list">
+      <view class="event-history-row" wx:for="{{athlete.eventHistory}}" wx:key="index" bindtap="goEventDetail" data-id="{{item.postId}}">
+        <view class="ehist-top">
+          <view class="event-hist-title">🏆 {{item.eventTitle || '赛事'}}</view>
+          <view wx:if="{{item.rank !== null}}" class="event-hist-rank">第 {{item.rank}} 名</view>
+        </view>
+        <view class="ehist-mid">
+          <view class="event-hist-meta">{{item.eventDate}}{{item.sport ? ' · ' + item.sport : ''}}</view>
+          <view wx:if="{{item.notes}}" class="event-hist-notes">{{item.notes}}</view>
+        </view>
+        <view wx:if="{{item.statsStr}}" class="event-hist-statsstr">{{item.statsStr}}</view>
+      </view>
+    </view>
+  </view>
+
+</view>
+
+<view wx:if="{{selectedBadge}}" class="badge-modal-mask" catchtap="closeBadgeDetail"></view>
+<view wx:if="{{selectedBadge}}" class="badge-modal">
+  <scroll-view class="badge-modal-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="badge-modal-head">
+      <image class="badge-modal-avatar" src="{{selectedBadge.organizerAvatar || '/images/logo.png'}}" mode="aspectFill"/>
+      <view class="badge-modal-title-wrap">
+        <view class="badge-modal-title">{{selectedBadge.badgeTitle}}</view>
+        <view class="badge-modal-meta">{{selectedBadge.eventDate}}{{selectedBadge.sport ? ' · ' + selectedBadge.sport : ''}}</view>
+        <view wx:if="{{selectedBadge.rankLabel}}" class="badge-modal-rank">{{selectedBadge.rankLabel}}</view>
+      </view>
+      <view class="badge-modal-close" bindtap="closeBadgeDetail">×</view>
+    </view>
+    <view class="badge-stat-grid">
+      <view class="badge-stat-item" wx:for="{{selectedBadge.stats}}" wx:key="label">
+        <view class="badge-stat-value">{{item.value}}</view>
+        <view class="badge-stat-label">{{item.label}}</view>
+      </view>
+    </view>
+    <view class="badge-modal-foot">该徽章由公开赛赛果与后台登记数据自动生成</view>
+  </scroll-view>
+</view>
+
+<view wx:if="{{proUpgradePanel.show}}" class="pro-upgrade-mask" catchtap="closeProUpgradePanel"></view>
+<view wx:if="{{proUpgradePanel.show}}" class="pro-upgrade-panel" catchtap="noop">
+  <view class="pro-upgrade-head">
+    <view>
+      <view class="pro-kicker">SPORTLIGHT PRO</view>
+      <view class="pro-title">升级主办方沟通额度</view>
+      <view class="pro-subtitle">¥{{proUpgradePanel.price}} / {{proUpgradePanel.durationDays}}天</view>
+    </view>
+    <view class="pro-close" bindtap="closeProUpgradePanel">×</view>
+  </view>
+  <view class="pro-quota-card">
+    <view class="pro-quota-item">
+      <view class="pro-quota-value">{{proUpgradePanel.used}}/{{proUpgradePanel.limit}}</view>
+      <view class="pro-quota-label">今日免费沟通</view>
+    </view>
+    <view class="pro-quota-divider"></view>
+    <view class="pro-quota-item strong">
+      <view class="pro-quota-value">{{proUpgradePanel.proLimit}}次/天</view>
+      <view class="pro-quota-label">Pro 主动沟通</view>
+    </view>
+  </view>
+  <view class="pro-benefit-list">
+    <view class="pro-benefit">
+      <view class="pro-benefit-dot"></view>
+      <view>
+        <view class="pro-benefit-title">更高主动联系额度</view>
+        <view class="pro-benefit-desc">适合赛事招商、临时补强、长期招募时批量筛选球员。</view>
+      </view>
+    </view>
+    <view class="pro-benefit">
+      <view class="pro-benefit-dot"></view>
+      <view>
+        <view class="pro-benefit-title">沟通不影响已建立会话</view>
+        <view class="pro-benefit-desc">已联系过的球员可以继续聊，不重复扣每日额度。</view>
+      </view>
+    </view>
+    <view class="pro-benefit">
+      <view class="pro-benefit-dot"></view>
+      <view>
+        <view class="pro-benefit-title">球探工具优先开放</view>
+        <view class="pro-benefit-desc">后续可优先使用更多球员筛选、数据报告和招募工具。</view>
+      </view>
+    </view>
+  </view>
+  <view class="pro-actions">
+    <view class="pro-action secondary" bindtap="closeProUpgradePanel">稍后再说</view>
+    <view class="pro-action primary" bindtap="handleProUpgrade">立即升级</view>
+  </view>
+</view>
+
+</view>

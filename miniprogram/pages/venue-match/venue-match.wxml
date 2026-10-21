@@ -1,0 +1,85 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading-wrap">加载中...</view>
+
+  <block wx:else>
+    <scroll-view class="page-scroll" scroll-y>
+      <view class="hero" bindtap="previewCover">
+        <image wx:if="{{venue.coverImage}}" class="hero-image" src="{{venue.coverImage}}" mode="aspectFill"/>
+        <view wx:else class="hero-image hero-empty">球馆</view>
+        <view class="hero-mask"></view>
+        <view class="hero-content">
+          <view class="venue-name">{{venue.name || '球馆主页'}}</view>
+          <view class="venue-address">{{venue.address || '地址待完善'}}</view>
+          <view class="tag-row">
+            <view class="tag">{{venue.venueType || '综合球馆'}}</view>
+            <view class="tag">{{venue.openingHours || '营业时间待完善'}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="content">
+        <view class="info-grid">
+          <view class="info-card">
+            <view class="info-value">{{courtRows.length}}</view>
+            <view class="info-label">场地规格</view>
+          </view>
+          <view class="info-card">
+            <view class="info-value">{{venue.sports.length}}</view>
+            <view class="info-label">支持运动</view>
+          </view>
+          <view class="info-card">
+            <view class="info-value">{{venue.city || '--'}}</view>
+            <view class="info-label">所在城市</view>
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">球馆定位</view>
+          <view class="location-card">
+            <view class="location-pin">⌖</view>
+            <view class="location-main" bindtap="openLocation">
+              <view class="location-name">{{venue.locationName || venue.name || '球馆位置'}}</view>
+              <view class="location-address">{{venue.address || '暂无详细地址'}}</view>
+            </view>
+            <view class="location-actions">
+              <view class="location-action ghost" bindtap="openLocation">查看</view>
+              <view class="location-action" bindtap="goMapNavigation">导航</view>
+            </view>
+          </view>
+        </view>
+
+        <view class="section" wx:if="{{venue.galleryImages.length > 0}}">
+          <view class="section-title">环境相册</view>
+          <scroll-view class="gallery-scroll" scroll-x>
+            <image wx:for="{{venue.galleryImages}}" wx:key="index" class="gallery-image" src="{{item}}" mode="aspectFill"/>
+          </scroll-view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">价格与场地</view>
+          <view wx:if="{{courtRows.length === 0}}" class="empty-line">暂无场地价格信息</view>
+          <view class="court-row" wx:for="{{courtRows}}" wx:key="courtType">
+            <view>
+              <view class="court-name">{{item.courtType}}</view>
+              <view class="court-sub">{{item.count}} 块场地</view>
+            </view>
+            <view class="price-box">
+              <view>散客 ¥{{item.casualPricePerPerson || 0}}</view>
+              <view>包场 ¥{{item.privatePricePerHour || 0}}/小时</view>
+            </view>
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">球馆介绍</view>
+          <view class="description">{{venue.description || '球馆暂未填写介绍。'}}</view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="bottom-bar">
+      <view class="booking-btn secondary" bindtap="goVenueSoloGames">去组局</view>
+      <view class="booking-btn" bindtap="goPrivateBooking">去包场</view>
+    </view>
+  </block>
+</view>

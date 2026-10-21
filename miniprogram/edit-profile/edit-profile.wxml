@@ -1,0 +1,65 @@
+<view class="container">
+
+<view class="header">
+  <view class="back-btn" bindtap="goBack">‹</view>
+  <view class="header-title">编辑资料</view>
+  <view class="save-btn" bindtap="saveProfile">保存</view>
+</view>
+
+<view class="section">
+  <view class="photo-wrap" bindtap="changePhoto">
+    <image class="profile-photo" src="{{form.photo}}" mode="aspectFill"/>
+    <view class="photo-edit">📷 更换照片</view>
+  </view>
+</view>
+
+<view class="section">
+  <view class="section-title">基本信息</view>
+
+  <view class="label">姓名</view>
+  <input class="input-box" value="{{form.name}}" bindinput="onInput" data-field="name" placeholder="请输入姓名"/>
+
+  <view class="label">所在城市</view>
+  <picker mode="region" bindchange="onCityChange">
+    <view class="select-box">
+      <text>{{form.city || '选择城市'}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <view class="label">所属院校 / 俱乐部</view>
+  <input class="input-box" value="{{form.affiliation}}" bindinput="onInput" data-field="affiliation" placeholder="请输入院校或俱乐部"/>
+</view>
+
+<view class="section">
+  <view class="section-title">运动信息</view>
+
+  <view class="label">主项运动</view>
+  <picker bindchange="onSportChange" value="{{sportIndex}}" range="{{sports}}">
+    <view class="select-box">
+      <text>{{form.sport || '选择运动项目'}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <view class="label">擅长位置 / 专项</view>
+  <input class="input-box" value="{{form.position}}" bindinput="onInput" data-field="position" placeholder="例：控卫、混双"/>
+
+  <view class="label">接单类型</view>
+  <view class="tag-row">
+    <view class="tag-btn {{form.acceptMatch ? 'active' : ''}}" bindtap="toggleType" data-type="acceptMatch">⚔️ 参赛雇佣</view>
+  </view>
+
+  <view class="label">期望报价</view>
+  <view class="price-row">
+    <view class="price-box" wx:if="{{form.acceptMatch}}">
+      <view class="price-label">⚔️ 参赛单起价</view>
+      <view class="price-input-wrap">
+        <text class="currency">¥</text>
+        <input class="price-input" type="digit" value="{{form.matchPrice}}" bindinput="onInput" data-field="matchPrice" placeholder="500"/>
+      </view>
+    </view>
+  </view>
+</view>
+
+</view>

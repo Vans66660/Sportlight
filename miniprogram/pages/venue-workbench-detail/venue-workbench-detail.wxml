@@ -1,0 +1,211 @@
+<view class="container detail-container">
+  <view wx:if="{{loading}}" class="loading-wrap">加载中...</view>
+
+  <block wx:else>
+    <view class="detail-header">
+      <view class="detail-title">{{pageTitle}}</view>
+      <view class="detail-sub">{{venue.name}}</view>
+    </view>
+
+    <page-guide guide-key="{{guideKey}}" title="{{guideTitle}}" content="{{guideText}}"></page-guide>
+
+    <view class="section" wx:if="{{activePanel === 'dashboard'}}">
+      <view class="section-title">数据仪表盘</view>
+      <view class="section-sub">散客成局指达到最低成局人数的散客球局。这里先用占位数据展示结构，支付和核销接入后会替换成真实经营数据。</view>
+      <view class="dashboard-list">
+        <view class="dashboard-row"><text>场地数量</text><text class="strong">{{courtUnits.length}}</text></view>
+      </view>
+      <view class="chart-card">
+        <view class="chart-head">
+          <view class="subsection-title">经营趋势</view>
+        </view>
+        <view class="range-tabs">
+          <view wx:for="{{rangeTabs}}" wx:key="key" class="range-tab {{activeRange === item.key ? 'active' : ''}}" bindtap="switchRange" data-key="{{item.key}}">{{item.label}}</view>
+        </view>
+        <view class="chart-head chart-head-second">
+          <view class="chart-label">查看指标</view>
+          <view class="chart-tabs">
+            <view wx:for="{{analyticsTabs}}" wx:key="key" class="chart-tab {{activeAnalytics === item.key ? 'active' : ''}}" bindtap="switchAnalytics" data-key="{{item.key}}">{{item.label}}</view>
+          </view>
+        </view>
+        <canvas class="analytics-canvas" canvas-id="analyticsChart"></canvas>
+        <view class="chart-hint">到场时间折线图用于观察每天高峰时段，后续可按小时段细分。</view>
+      </view>
+    </view>
+
+    <view class="section" wx:elif="{{activePanel === 'pricing'}}">
+      <view class="section-title">价格设置</view>
+      <view class="section-sub">每种场地规格分别设置散客价格和包场价格。</view>
+      <view wx:if="{{pricingRules.length === 0}}" class="empty-line">暂无场地规格</view>
+      <view wx:for="{{pricingRules}}" wx:key="courtType" class="pricing-card">
+        <view class="pricing-head"><view class="pricing-title">{{item.courtType}}</view><view class="pricing-count">{{item.count}} 块场</view></view>
+        <view class="price-input-row">
+          <view class="price-input-wrap"><view class="input-label">散客价/人</view><input class="price-input" type="digit" placeholder="0" value="{{item.casualPricePerPerson}}" data-index="{{index}}" data-field="casualPricePerPerson" bindinput="onPricingInput"/></view>
+          <view class="price-input-wrap">
+            <view class="input-label">散客计费</view>
+            <view class="duration-toggle">
+              <view class="duration-option {{item.casualDurationMode === 'unlimited' ? 'active' : ''}}" data-index="{{index}}" data-mode="unlimited" bindtap="setCasualDurationMode">不限时</view>
+              <view class="duration-option {{item.casualDurationMode === 'limited' ? 'active' : ''}}" data-index="{{index}}" data-mode="limited" bindtap="setCasualDurationMode">限时</view>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{item.casualDurationMode === 'limited'}}" class="duration-input-row">
+          <view class="input-label">每人可使用时长（分钟）</view>
+          <input class="price-input" type="number" placeholder="例如：120" value="{{item.casualDurationMinutes}}" data-index="{{index}}" data-field="casualDurationMinutes" bindinput="onPricingInput"/>
+        </view>
+        <view class="price-input-row single">
+          <view class="price-input-wrap"><view class="input-label">包场价/小时</view><input class="price-input" type="digit" placeholder="0" value="{{item.privatePricePerHour}}" data-index="{{index}}" data-field="privatePricePerHour" bindinput="onPricingInput"/></view>
+        </view>
+      </view>
+      <view class="primary-btn" bindtap="savePricing">保存价格</view>
+    </view>
+
+    <view class="section" wx:elif="{{activePanel === 'games'}}">
+      <view class="section-title">球局管理</view>
+      <view class="section-sub">这里会显示已经预约和正在进行的球局，包括包场、散客成局和球队约战。</view>
+      <view class="game-tabs">
+        <view wx:for="{{gameTabs}}" wx:key="key" class="game-tab {{activeGameTab === item.key ? 'active' : ''}}" bindtap="switchGameTab" data-key="{{item.key}}">{{item.label}}</view>
+      </view>
+      <view wx:if="{{activeGameTab === 'finished'}}" class="section-tip">已结束球局仅保留最近 7 天，超过 7 天后只进入后台统计。</view>
+      <block wx:if="{{visibleVenueGames.length === 0}}">
+        <view class="list-card" wx:for="{{placeholderGames}}" wx:key="title"><view class="list-title">{{item.title}}</view><view class="list-meta">{{item.meta}}</view></view>
+        <view class="empty-action" bindtap="goPanel" data-panel="schedule">去设置可约排班</view>
+      </block>
+      <block wx:else>
+        <view class="list-card" wx:for="{{visibleVenueGames}}" wx:key="_id">
+        <view class="list-title">{{item.type}} · {{item.title}}</view>
+        <view class="list-meta">{{item.date}} {{item.time}} · {{item.creatorName}} · {{item.participantCount}}/{{item.maxPlayers}}</view>
+        <view wx:if="{{item.status !== 'finished'}}" class="inline-action" bindtap="completeVenueGame" data-id="{{item._id}}">确认完成</view>
+      </view>
+      </block>
+    </view>
+
+    <view class="section" wx:elif="{{activePanel === 'schedule'}}">
+      <view class="section-title">场地排班</view>
+      <view class="section-sub">这里保存的是每日可用时间模板。用户包场或散客成局后，对应时段会显示为已约，场馆方不可改成可约。</view>
+      <view wx:if="{{scheduleSlots.length === 0}}" class="empty-line">暂无可排班场地</view>
+      <view wx:for="{{scheduleSlots}}" wx:key="id" wx:for-index="courtIndex" class="court-schedule">
+        <view class="court-head"><view class="court-name">{{item.name}}</view><view class="add-slot" bindtap="addSlot" data-court-index="{{courtIndex}}">添加时段</view></view>
+        <view class="slot-grid">
+          <view wx:for="{{item.slots}}" wx:key="slotId" wx:for-index="slotIndex" class="slot-card {{item.status}}">
+            <view class="slot-time-row">
+              <picker mode="time" value="{{item.startTime}}" bindchange="onSlotStartChange" data-court-index="{{courtIndex}}" data-slot-index="{{slotIndex}}"><view class="slot-time">{{item.startTime}}</view></picker>
+              <text class="slot-dash">-</text>
+              <picker mode="time" value="{{item.endTime}}" bindchange="onSlotEndChange" data-court-index="{{courtIndex}}" data-slot-index="{{slotIndex}}"><view class="slot-time">{{item.endTime}}</view></picker>
+            </view>
+            <view class="slot-footer">
+              <view class="slot-status" bindtap="toggleSlot" data-court-index="{{courtIndex}}" data-slot-index="{{slotIndex}}">{{item.statusLabel}}</view>
+              <view wx:if="{{item.status !== 'booked'}}" class="slot-delete" bindtap="removeSlot" data-court-index="{{courtIndex}}" data-slot-index="{{slotIndex}}">删除</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="primary-btn" bindtap="saveSchedule">保存每日排班模板</view>
+    </view>
+
+    <view class="section" wx:elif="{{activePanel === 'homepage'}}">
+      <view class="section-title">球馆主页</view>
+      <view class="home-preview">
+        <view class="home-hero" bindtap="previewCover">
+          <image wx:if="{{venue.coverImage}}" class="home-cover" src="{{venue.coverImage}}" mode="aspectFill"/>
+          <view wx:else class="home-cover empty-cover">主页图</view>
+          <view class="home-hero-mask"></view>
+          <view class="home-hero-content">
+            <view class="home-name">{{venue.name}}</view>
+            <view class="home-meta">{{venue.address}}</view>
+            <view class="home-chip-row"><view class="home-chip">{{venue.venueType || '综合球馆'}}</view><view class="home-chip">{{venue.openingHours || '营业时间未设置'}}</view></view>
+          </view>
+        </view>
+        <view class="home-body">
+          <view class="home-info-grid">
+            <view class="home-info-item"><text>场地规格</text><text>{{pricingRules.length}}</text></view>
+            <view class="home-info-item"><text>场地数量</text><text>{{courtUnits.length}}</text></view>
+            <view class="home-info-item"><text>营业开始</text><text>{{pageDraft.openingStart || '--:--'}}</text></view>
+            <view class="home-info-item"><text>营业结束</text><text>{{pageDraft.openingEnd || '--:--'}}</text></view>
+          </view>
+          <view class="home-public-section">
+            <view class="home-section-title">球馆定位</view>
+            <view class="home-location-card" bindtap="openVenueLocation">
+              <view class="location-pin">⌖</view>
+              <view class="location-text">
+                <view class="location-name">{{venue.locationName || venue.name || '球馆位置'}}</view>
+                <view class="location-address">{{venue.address || '暂无详细地址'}}</view>
+              </view>
+              <view class="location-action">查看</view>
+            </view>
+          </view>
+          <view class="home-public-section" wx:if="{{pageDraft.galleryImages.length > 0}}">
+            <view class="home-section-title">环境相册</view>
+            <view class="home-gallery"><image wx:for="{{pageDraft.galleryImages}}" wx:key="index" class="home-thumb" src="{{item}}" mode="aspectFill"/></view>
+          </view>
+          <view class="home-public-section">
+            <view class="home-section-title">价格展示</view>
+            <view class="home-price-row" wx:for="{{pricingRules}}" wx:key="courtType"><text>{{item.courtType}}</text><text>散客 ¥{{item.casualPricePerPerson || 0}} / 包场 ¥{{item.privatePricePerHour || 0}}/小时</text></view>
+          </view>
+          <view class="home-public-section">
+            <view class="home-section-title">场地说明</view>
+            <view class="home-court-row" wx:for="{{pricingRules}}" wx:key="courtType"><text>{{item.courtType}}</text><text>{{item.count}} 块可运营场地</text></view>
+          </view>
+          <view class="home-public-section">
+            <view class="home-section-title">球馆介绍</view>
+            <view class="home-description">{{pageDraft.description || '暂无介绍，建议补充球馆环境、适合人群、服务方向和约场风格。'}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="label">营业时间</view>
+      <view class="time-row">
+        <picker mode="time" value="{{pageDraft.openingStart}}" bindchange="onOpeningStartChange"><view class="time-picker">{{pageDraft.openingStart || '开始时间'}}</view></picker>
+        <view class="time-separator">至</view>
+        <picker mode="time" value="{{pageDraft.openingEnd}}" bindchange="onOpeningEndChange"><view class="time-picker">{{pageDraft.openingEnd || '结束时间'}}</view></picker>
+      </view>
+      <view class="label">主页介绍</view>
+      <textarea class="textarea-box" maxlength="300" value="{{pageDraft.description}}" placeholder="介绍你的球馆环境、服务方向和约场风格..." data-field="description" bindinput="onPageDraftInput"/>
+      <view class="label gallery-edit-label">主页相册（最多9张）</view>
+      <view class="gallery-edit-grid">
+        <view class="gallery-edit-item" wx:for="{{pageDraft.galleryImages}}" wx:key="index">
+          <image class="gallery-edit-image" src="{{item}}" mode="aspectFill"/>
+          <view class="gallery-remove" bindtap="removeHomepageGallery" data-index="{{index}}">×</view>
+        </view>
+        <view wx:if="{{pageDraft.galleryImages.length < 9}}" class="gallery-add-card" bindtap="uploadHomepageGallery">
+          <view class="gallery-add-plus">＋</view>
+          <view class="gallery-add-text">上传</view>
+        </view>
+      </view>
+      <view class="primary-btn" bindtap="saveHomepage">保存主页信息</view>
+    </view>
+
+    <view class="section" wx:else>
+      <view class="section-title">订单/结算</view>
+      <view class="section-sub">这里展示散客订单、包场订单和当前结算估算。</view>
+      <view class="settlement-rule-card">
+        <view>
+          <view class="settlement-rule-title">结算规则</view>
+          <view class="settlement-rule-desc">订单完成结算时按当前合作规则计算。</view>
+        </view>
+        <view class="settlement-rule-rate">{{platformFeeRate}}%</view>
+      </view>
+      <view class="settlement-rule-card">
+        <view><view class="settlement-rule-title">总收入</view><view class="settlement-rule-desc">{{settlementSummary.orderCount}} 笔有效订单</view></view>
+        <view class="settlement-rule-rate">¥{{settlementSummary.gross}}</view>
+      </view>
+      <view class="settlement-rule-card">
+        <view><view class="settlement-rule-title">预计可结算</view><view class="settlement-rule-desc">扣除平台服务费后的估算</view></view>
+        <view class="settlement-rule-rate">¥{{settlementSummary.venueReceivable}}</view>
+      </view>
+      <block wx:if="{{settlementOrders.length === 0}}">
+        <view class="list-card" wx:for="{{placeholderOrders}}" wx:key="title"><view class="list-title">{{item.title}}</view><view class="list-meta">{{item.meta}}</view></view>
+        <view class="empty-action" bindtap="goPanel" data-panel="games">查看球局管理</view>
+      </block>
+      <block wx:else>
+        <view class="list-card" wx:for="{{settlementOrders}}" wx:key="_id">
+          <view class="list-title">{{item.title}} · {{item.statusLabel}}</view>
+          <view class="list-meta">{{item.date}} {{item.time}} · {{item.participantCount}}人 · 收入 ¥{{item.gross}} · 可结算 ¥{{item.venueReceivable}}</view>
+        </view>
+      </block>
+      <view class="refund-card">
+        <view class="subsection-title">退款申请</view>
+        <view class="list-card inner" wx:for="{{refundRequests}}" wx:key="title"><view class="list-title">{{item.title}}</view><view class="list-meta">{{item.meta}}</view></view>
+      </view>
+    </view>
+  </block>
+</view>

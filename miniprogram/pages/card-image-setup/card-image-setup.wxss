@@ -1,0 +1,73 @@
+page { background: #f3f5f7; }
+.setup-page { min-height: 100vh; padding: 38rpx 28rpx calc(60rpx + env(safe-area-inset-bottom)); color: #172235; }
+.setup-head { padding: 10rpx 6rpx 30rpx; }
+.setup-kicker { color: #ff641e; font-size: 18rpx; font-weight: 900; letter-spacing: 5rpx; }
+.setup-title { margin-top: 10rpx; font-size: 43rpx; font-weight: 900; }
+.setup-desc { margin-top: 14rpx; color: #74808e; font-size: 23rpx; line-height: 1.65; }
+.portrait-switcher { margin:0 0 24rpx; padding:22rpx; border-radius:20rpx; background:#fff; box-shadow:0 8rpx 24rpx rgba(23,34,53,.06); }
+.switcher-head { display:flex; align-items:center; justify-content:space-between; }
+.switcher-title { font-size:25rpx; font-weight:900; }
+.switcher-count { margin-left:10rpx; color:#a0a7af; font-size:20rpx; }
+.switcher-quota { color:#ff641e; font-size:19rpx; font-weight:800; }
+.switcher-row { display:flex; gap:14rpx; margin-top:18rpx; }
+.switcher-slot { width:112rpx; height:142rpx; overflow:hidden; border:2rpx solid #e3e6e9; border-radius:14rpx; background:#f3f5f7; }
+.switcher-slot.active { border-color:#ff641e; box-shadow:0 0 0 4rpx rgba(255,100,30,.12); }
+.switcher-slot image { width:100%; height:100%; }
+.switcher-slot.add { display:flex; align-items:center; justify-content:center; color:#ff641e; border-style:dashed; font-size:42rpx; }
+.active-btn { height:70rpx; margin-top:17rpx; display:flex; align-items:center; justify-content:center; border:0; border-radius:16rpx; color:#ff641e; background:#fff1e9; font-size:22rpx; font-weight:800; }
+.active-btn::after { border:0; }
+.portrait-actions { display: flex; gap: 14rpx; margin-top: 17rpx; }
+.portrait-actions .active-btn { flex: 1; margin-top: 0; }
+.delete-portrait-btn { height: 70rpx; display: flex; align-items: center; justify-content: center; border: 1rpx solid #f1c9c1; border-radius: 16rpx; color: #c84b37; background: #fff; font-size: 22rpx; font-weight: 750; }
+.delete-portrait-btn::after { border: 0; }
+.mode-title { margin: 4rpx 0 16rpx; font-size: 25rpx; font-weight: 800; }
+.mode-row { display: flex; gap: 16rpx; }
+.mode-card { flex: 1; padding: 20rpx 16rpx; border: 2rpx solid transparent; border-radius: 20rpx; background: #fff; box-shadow: 0 8rpx 24rpx rgba(23,34,53,.06); }
+.mode-card.active { border-color: #ff641e; box-shadow: 0 9rpx 28rpx rgba(255,100,30,.14); }
+.mode-figure { position: relative; height: 115rpx; overflow: hidden; border-radius: 13rpx; background: #f4f5f6; }
+.mode-figure view { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 50% 50% 18% 18%; background: #ff7332; }
+.mode-figure.half view { top: 22rpx; width: 74rpx; height: 116rpx; }
+.mode-figure.full view { top: 11rpx; width: 39rpx; height: 102rpx; border-radius: 45% 45% 15% 15%; }
+.mode-name { margin-top: 13rpx; font-size: 26rpx; font-weight: 800; }
+.mode-note { margin-top: 5rpx; color: #89929d; font-size: 19rpx; }
+.preview-card { margin-top: 24rpx; padding: 16rpx; border-radius: 25rpx; background: #fff; box-shadow: 0 12rpx 35rpx rgba(23,34,53,.08); }
+.preview-toolbar { min-height: 70rpx; display: flex; align-items: center; justify-content: space-between; padding: 2rpx 5rpx 15rpx; }
+.preview-title { font-size: 24rpx; font-weight: 900; }
+.preview-note { margin-top: 4rpx; color: #89929d; font-size: 19rpx; }
+.reset-btn { padding: 12rpx 17rpx; border-radius: 14rpx; color: #ff641e; background: #fff2eb; font-size: 20rpx; font-weight: 800; }
+.card-stage { position: relative; width: 100%; aspect-ratio: 63 / 88; overflow: hidden; border-radius: 18rpx; background: #eef1f4; touch-action: none; }
+.card-template { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; display: block; }
+.player-viewport { position: absolute; z-index: 2; overflow: hidden; pointer-events: none; }
+.player-layer { position: absolute; transform-origin: 50% 50%; will-change: transform; }
+.cutout-image { width: 100%; height: 100%; display: block; }
+.safe-guide { position: absolute; z-index: 3; box-sizing: border-box; pointer-events: none; border: 2rpx dashed rgba(23,34,53,.26); border-radius: 22rpx; }
+.preview-empty { position: absolute; z-index: 2; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #89929d; font-size: 23rpx; background: rgba(255,255,255,.54); }
+.preview-plus { color: #ff641e; font-size: 64rpx; font-weight: 300; }
+.processing-mask { position: absolute; z-index: 5; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18rpx; color: #fff; background: rgba(23,34,53,.72); font-size: 23rpx; }
+.spinner { width: 52rpx; height: 52rpx; border: 5rpx solid rgba(255,255,255,.3); border-top-color: #ff641e; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.layout-controls { margin-top: 18rpx; padding: 22rpx 24rpx; border-radius: 20rpx; background: #fff; box-shadow: 0 8rpx 24rpx rgba(23,34,53,.055); }
+.refine-entry { display: flex; align-items: center; justify-content: space-between; margin: -4rpx -4rpx 22rpx; padding: 18rpx 20rpx; border-radius: 17rpx; color: #fff; background: linear-gradient(135deg,#172235,#25344c); }
+.refine-title { font-size: 24rpx; font-weight: 900; }
+.refine-note { margin-top: 6rpx; color: rgba(255,255,255,.67); font-size: 19rpx; }
+.refine-arrow { color: #ff641e; font-size: 42rpx; font-weight: 300; }
+.control-row { display: flex; align-items: center; gap: 20rpx; }
+.control-title { font-size: 23rpx; font-weight: 800; }
+.control-note { margin-top: 3rpx; color: #ff641e; font-size: 19rpx; font-weight: 800; }
+.scale-slider { min-width: 0; flex: 1; margin: 0; }
+.layout-hint { margin-top: 13rpx; color: #7d8793; font-size: 20rpx; line-height: 1.55; }
+.photo-tips { margin: 24rpx 4rpx; padding: 22rpx 24rpx; border-radius: 18rpx; color: #7a8490; background: #fff; font-size: 21rpx; line-height: 1.8; }
+.tips-title { margin-bottom: 4rpx; color: #172235; font-size: 23rpx; font-weight: 800; }
+.upload-btn, .finish-btn { height: 92rpx; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 22rpx; font-size: 27rpx; font-weight: 800; }
+.upload-btn { color: #fff; background: #ff641e; }
+.upload-btn::after, .finish-btn::after { border: 0; }
+.finish-btn { margin-top: 16rpx; color: #172235; background: #fff; border: 1rpx solid #dce1e6; }
+.portrait-resize-canvas {
+  position: fixed;
+  left: -10px;
+  top: -10px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}

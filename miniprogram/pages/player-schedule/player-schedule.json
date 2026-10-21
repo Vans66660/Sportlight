@@ -1,0 +1,10 @@
+{
+  "navigationBarBackgroundColor": "#111111",
+  "navigationBarTextStyle": "white",
+  "navigationBarTitleText": "我的日程",
+  "backgroundColor": "#0D0F10",
+  "backgroundColorTop": "#0D0F10",
+  "backgroundColorBottom": "#0D0F10",
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
+}

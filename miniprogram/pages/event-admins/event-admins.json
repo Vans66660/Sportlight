@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "协作管理员",
+  "navigationBarBackgroundColor": "#0F0F0F",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "page-guide": "/components/page-guide/index"
+  }
+}

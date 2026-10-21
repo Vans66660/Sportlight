@@ -1,0 +1,29 @@
+page { background: #0F0F0F; }
+.container { min-height: 100vh; padding: 28rpx; box-sizing: border-box; color: #FFFFFF; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; gap: 18rpx; margin-bottom: 18rpx; }
+.title { font-size: 42rpx; font-weight: 900; }
+.sub { margin-top: 8rpx; color: #777777; font-size: 24rpx; line-height: 1.45; }
+.score-box { flex-shrink: 0; min-width: 146rpx; background: #1A1A1A; border: 1rpx solid #2A2A2A; border-radius: 14rpx; padding: 14rpx; text-align: center; box-sizing: border-box; }
+.score-label { color: #777777; font-size: 20rpx; }
+.score-value { color: #FF6B1A; font-size: 32rpx; font-weight: 900; margin-top: 4rpx; }
+.summary { color: #777777; font-size: 24rpx; margin-bottom: 24rpx; }
+.empty { text-align: center; color: #777777; font-size: 28rpx; margin-top: 240rpx; }
+.empty-link { color: #FF6B1A; margin-top: 20rpx; }
+.game-list { display: flex; flex-direction: column; gap: 18rpx; padding-bottom: calc(80rpx + env(safe-area-inset-bottom)); }
+.game-card { background: #1A1A1A; border: 1rpx solid #2A2A2A; border-radius: 16rpx; padding: 20rpx; display: flex; gap: 18rpx; box-sizing: border-box; }
+.match-score { width: 92rpx; height: 92rpx; border-radius: 14rpx; background: rgba(255,107,26,.14); border: 1rpx solid rgba(255,107,26,.28); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+.match-num { color: #FF6B1A; font-size: 34rpx; font-weight: 900; line-height: 1; }
+.match-label { color: #FFB083; font-size: 20rpx; margin-top: 6rpx; }
+.game-main { flex: 1; min-width: 0; }
+.game-head { display: flex; justify-content: space-between; align-items: center; gap: 14rpx; }
+.creator-wrap { display: flex; align-items: center; gap: 12rpx; min-width: 0; }
+.avatar { width: 48rpx; height: 48rpx; border-radius: 50%; background: #242424; flex-shrink: 0; }
+.empty-avatar { display: flex; align-items: center; justify-content: center; color: #FF6B1A; font-weight: 800; font-size: 22rpx; }
+.creator { font-size: 28rpx; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.distance { color: #FF8A3D; font-size: 23rpx; flex-shrink: 0; }
+.reason { display: inline-block; margin-top: 12rpx; padding: 8rpx 12rpx; border-radius: 10rpx; background: rgba(255,107,26,.12); color: #FFB083; font-size: 22rpx; }
+.score-line, .time-line, .venue-line { color: #888888; font-size: 23rpx; margin-top: 10rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.people-line { margin-top: 12rpx; font-size: 25rpx; font-weight: 800; }
+.people-line.formed { color: #FF6B1A; }
+.people-line.waiting { color: #4FC17B; }
+.people-line text { font-weight: 500; }

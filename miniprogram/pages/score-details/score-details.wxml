@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="page-title">近五次积分变化</view>
+  <view class="page-sub">只展示处理后的比赛胜负与个人表现分，隐藏段位、强度、位置和时间系数。</view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{logs.length === 0}}" class="empty">暂无积分记录</view>
+
+  <view wx:else class="log-list">
+    <view class="log-card" wx:for="{{logs}}" wx:key="_id">
+      <view class="log-head">
+        <view>
+          <view class="log-title">{{item.matchTitle || item.eventTitle}}</view>
+          <view class="log-meta">{{item.eventTitle}} · {{item.sport}} · {{item.resultText}}{{item.matchTime ? ' · ' + item.matchTime : ''}}</view>
+        </view>
+        <view class="delta {{item.delta >= 0 ? 'plus' : 'minus'}}">{{item.deltaText}}</view>
+      </view>
+      <view class="score-row">
+        <view class="score-box">
+          <view class="score-label">比赛胜负</view>
+          <view class="score-value {{item.resultScore >= 0 ? 'plus' : 'minus'}}">{{item.resultScore >= 0 ? '+' : ''}}{{item.resultScore}}</view>
+        </view>
+        <view class="score-box">
+          <view class="score-label">个人表现</view>
+          <view class="score-value {{item.personalScore >= 0 ? 'plus' : 'minus'}}">{{item.personalScore >= 0 ? '+' : ''}}{{item.personalScore}}</view>
+        </view>
+      </view>
+      <view wx:if="{{item.capped}}" class="cap-note">
+        原始合计 {{item.rawTotalText}}，受单场积分上限影响，实际入账 {{item.deltaText}}
+      </view>
+    </view>
+  </view>
+</view>

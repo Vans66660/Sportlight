@@ -1,0 +1,9 @@
+{
+  "name": "promoteByPhone",
+  "version": "1.0.0",
+  "description": "临时云函数：按手机号升级用户为 admin",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

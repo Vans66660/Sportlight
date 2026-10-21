@@ -1,0 +1,131 @@
+<view class="container">
+
+<view class="header">
+  <view class="header-title" bindtap="onRefresh">动态</view>
+  <view class="header-actions">
+    <view class="publish-plus" bindtap="goPublishPost">＋</view>
+    <view class="notif-bell" bindtap="goNotifications">
+      <image class="bell-icon" src="/images/icons/message.png" mode="aspectFit"/>
+      <view wx:if="{{notifUnread > 0}}" class="notif-red-dot"></view>
+    </view>
+  </view>
+</view>
+
+<scroll-view class="feed-scroll" scroll-y enable-back-to-top refresher-enabled refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh">
+
+  <view class="empty-wrap" wx:if="{{posts.length === 0 && !loading}}">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">还没有动态，快来发第一条吧！</view>
+  </view>
+
+  <view wx:for="{{posts}}" wx:key="_id" class="post-item">
+
+    <!-- 普通动态 -->
+    <block wx:if="{{item.postType !== 'event'}}">
+      <view class="post-row">
+        <view class="post-left" catchtap="goAuthorProfile" data-openid="{{item.openid}}" data-type="{{item.authorType}}">
+          <image class="post-avatar" src="{{item.authorPhotoUrl}}" mode="aspectFill"/>
+        </view>
+        <view class="post-right" bindtap="goPostDetail" data-id="{{item._id}}">
+          <view class="post-name-row">
+            <view class="post-name-time" catchtap="goAuthorProfile" data-openid="{{item.openid}}" data-type="{{item.authorType}}">
+              <text class="post-name">{{item.authorName}}</text>
+              <text class="post-dot">·</text>
+              <text class="post-time">{{item.timeLabel}}</text>
+              <text wx:if="{{item.visibility !== 'public'}}" class="post-time"> · {{item.visibilityLabel}}</text>
+            </view>
+            <view wx:if="{{item.isAuthor}}" class="post-more" catchtap="deletePost" data-id="{{item._id}}" data-index="{{index}}">···</view>
+          </view>
+          <view class="post-content" wx:if="{{item.content}}">{{item.content}}</view>
+          <view class="post-images img-count-{{item.imageUrls.length}}" wx:if="{{item.imageUrls.length > 0}}">
+            <image
+              class="post-img"
+              wx:for="{{item.imageUrls}}"
+              wx:for-item="img"
+              wx:key="index"
+              src="{{img}}"
+              mode="aspectFill"
+              catchtap="previewImage"
+              data-src="{{img}}"
+              data-all="{{item.imageUrls}}"
+            />
+          </view>
+          <view class="post-actions">
+            <view class="action-btn like-btn {{item.liked ? 'liked' : ''}}" catchtap="likePost" data-id="{{item._id}}" data-index="{{index}}">
+              <text class="like-icon">{{item.liked ? '❤️' : '🤍'}}</text>
+              <text class="action-count">{{item.likesCount}}</text>
+            </view>
+            <view class="action-btn">
+              <image class="action-icon-img" src="/images/icons/comment.png" mode="aspectFit" />
+              <text class="action-count">{{item.commentCount || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 赛事卡片 -->
+    <block wx:else>
+      <view class="post-row">
+        <view class="post-left" catchtap="goAuthorProfile" data-openid="{{item.openid}}" data-type="{{item.authorType}}">
+          <image class="post-avatar" src="{{item.authorPhotoUrl}}" mode="aspectFill"/>
+        </view>
+        <view class="post-right" bindtap="goPostDetail" data-id="{{item._id}}">
+          <view class="post-name-row">
+            <view class="post-name-time" catchtap="goAuthorProfile" data-openid="{{item.openid}}" data-type="{{item.authorType}}">
+              <text class="post-name">{{item.authorName}}</text>
+              <text class="post-dot">·</text>
+              <text class="post-time">{{item.timeLabel}}</text>
+            </view>
+            <view wx:if="{{item.isAuthor}}" class="post-more" catchtap="deletePost" data-id="{{item._id}}" data-index="{{index}}">···</view>
+          </view>
+          <view class="event-tag-row">
+            <view class="event-status-tag status-{{item.eventStatus}}">
+              <text class="tag-dot">●</text> {{item.eventStatus === 'full' ? '名额已满' : '招募中'}}
+            </view>
+            <view class="event-sport-tag" wx:if="{{item.sport}}">{{item.sport}}</view>
+          </view>
+          <view class="post-content" wx:if="{{item.content}}">{{item.content}}</view>
+          <view class="event-quick-info">
+            <text wx:if="{{item.eventDate}}" class="event-info-chip">📅 {{item.eventDate}}</text>
+            <text wx:if="{{item.eventLocation}}" class="event-info-chip">📍 {{item.eventLocation}}</text>
+          </view>
+          <view class="post-images img-count-1" wx:if="{{item.banner}}">
+            <image class="post-img" src="{{item.banner}}" mode="aspectFill"/>
+          </view>
+          <view class="post-actions">
+            <view class="action-btn like-btn {{item.liked ? 'liked' : ''}}" catchtap="likePost" data-id="{{item._id}}" data-index="{{index}}">
+              <text class="like-icon">{{item.liked ? '❤️' : '🤍'}}</text>
+              <text class="action-count">{{item.likesCount}}</text>
+            </view>
+            <view class="action-btn">
+              <image class="action-icon-img" src="/images/icons/comment.png" mode="aspectFit" />
+              <text class="action-count">{{item.commentCount || 0}}</text>
+            </view>
+            <view wx:if="{{item.isAuthor}}" class="event-author-actions">
+              <view class="mini-reg-btn outline-btn" catchtap="goViewRegistrants" data-id="{{item._id}}">
+                查看报名
+                <text wx:if="{{item.pendingCount > 0}}" class="pending-badge">{{item.pendingCount}}</text>
+              </view>
+              <view wx:if="{{item.eventStatus === 'closed'}}" class="mini-reg-btn reg-done">平台成绩已录入 ✓</view>
+              <view wx:else class="mini-reg-btn reg-pending">等待平台录入成绩</view>
+            </view>
+            <view wx:else
+              class="mini-reg-btn {{item.isRegistered ? 'reg-done' : item.isPending ? 'reg-pending' : item.eventStatus === 'full' || item.eventStatus === 'closed' ? 'reg-closed' : 'reg-open'}}"
+              catchtap="registerEvent" data-id="{{item._id}}" data-index="{{index}}">
+              {{item.isRegistered ? '已报名 ✓' : item.isPending ? '审核中' : item.eventStatus === 'full' || item.eventStatus === 'closed' ? '已截止' : '立即报名'}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="post-divider"></view>
+  </view>
+
+  <view class="loading-tip" wx:if="{{loading}}">加载中...</view>
+  <view class="no-more-tip" wx:if="{{!hasMore && posts.length > 0}}">没有更多了</view>
+
+</scroll-view>
+
+</view>

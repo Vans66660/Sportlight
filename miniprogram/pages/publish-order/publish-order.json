@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "page-guide": "/components/page-guide/index"
+  }
+}

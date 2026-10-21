@@ -1,0 +1,184 @@
+page {
+  background: #0F0F0F;
+}
+
+.container {
+  min-height: 100vh;
+  padding: 48rpx 32rpx;
+  box-sizing: border-box;
+  background: #0F0F0F;
+}
+
+.page-title {
+  color: #FFFFFF;
+  font-size: 42rpx;
+  font-weight: 900;
+}
+
+.page-sub {
+  margin-top: 12rpx;
+  color: #777777;
+  font-size: 24rpx;
+  line-height: 1.55;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12rpx;
+  margin-top: 28rpx;
+}
+
+.summary-card {
+  min-width: 0;
+  background: #1A1A1A;
+  border: 1rpx solid #292929;
+  border-radius: 16rpx;
+  padding: 18rpx 8rpx;
+  text-align: center;
+}
+
+.summary-label {
+  display: block;
+  color: #777777;
+  font-size: 21rpx;
+}
+
+.summary-value {
+  display: block;
+  margin-top: 8rpx;
+  color: #FFFFFF;
+  font-size: 34rpx;
+  font-weight: 900;
+}
+
+.tab-scroll {
+  margin-top: 26rpx;
+  white-space: nowrap;
+}
+
+.stat-tab {
+  display: inline-block;
+  height: 58rpx;
+  line-height: 58rpx;
+  padding: 0 28rpx;
+  margin-right: 12rpx;
+  color: #8A8A8A;
+  background: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 14rpx;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.stat-tab.active {
+  color: #111111;
+  background: #FF8A2A;
+  border-color: #FF8A2A;
+}
+
+.empty {
+  color: #777777;
+  text-align: center;
+  padding-top: 150rpx;
+  font-size: 28rpx;
+}
+
+.match-list {
+  margin-top: 26rpx;
+}
+
+.match-card {
+  background: #1A1A1A;
+  border: 1rpx solid #292929;
+  border-radius: 18rpx;
+  padding: 22rpx;
+  margin-bottom: 18rpx;
+}
+
+.match-card:active {
+  border-color: rgba(255, 138, 42, 0.45);
+  background: rgba(255, 138, 42, 0.08);
+}
+
+.match-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16rpx;
+  align-items: flex-start;
+}
+
+.match-title {
+  color: #FFFFFF;
+  font-size: 29rpx;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.match-meta,
+.team-line {
+  margin-top: 8rpx;
+  color: #777777;
+  font-size: 23rpx;
+  line-height: 1.45;
+}
+
+.result-pill {
+  flex-shrink: 0;
+  min-width: 54rpx;
+  text-align: center;
+  border-radius: 12rpx;
+  padding: 6rpx 12rpx;
+  font-size: 22rpx;
+  font-weight: 900;
+}
+
+.result-win { color: #FF8A2A; background: rgba(255, 138, 42, 0.14); }
+.result-draw { color: #D7D7D7; background: rgba(255, 255, 255, 0.08); }
+.result-loss { color: #65C18C; background: rgba(101, 193, 140, 0.12); }
+
+.stat-line {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10rpx;
+  margin-top: 18rpx;
+}
+
+.mini-stat {
+  min-width: 0;
+  background: #111111;
+  border-radius: 12rpx;
+  padding: 12rpx 6rpx;
+  text-align: center;
+}
+
+.mini-stat text:first-child {
+  display: block;
+  color: #777777;
+  font-size: 20rpx;
+}
+
+.mini-stat text:last-child {
+  display: block;
+  margin-top: 5rpx;
+  color: #FFFFFF;
+  font-size: 27rpx;
+  font-weight: 900;
+}
+
+.score-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-top: 16rpx;
+  color: #8A8A8A;
+  font-size: 22rpx;
+}
+
+.plus {
+  color: #FF8A2A;
+}
+
+.minus {
+  color: #65C18C;
+}

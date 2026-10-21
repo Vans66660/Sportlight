@@ -1,0 +1,50 @@
+<view class="page" wx:if="{{team}}">
+  <view class="team-card">
+    <image wx:if="{{team.logo}}" class="logo" src="{{team.logo}}" mode="aspectFill"/>
+    <view wx:else class="logo text">{{team.logoText || '队'}}</view>
+    <view class="team-main">
+      <view class="team-name">{{team.name}}</view>
+      <view class="team-meta">{{team.sport}} · {{team.members.length}}人</view>
+    </view>
+    <view class="edit-btn" bindtap="editTeam">编辑资料</view>
+  </view>
+
+  <view class="section-title">入队审核</view>
+  <view wx:if="{{requests.length === 0}}" class="empty">暂无待审核申请</view>
+  <view wx:for="{{requests}}" wx:key="_id" class="request-card">
+    <view class="request-head" bindtap="goAthlete" data-openid="{{item.applicantOpenid}}">
+      <image wx:if="{{item.applicantAvatar}}" class="avatar" src="{{item.applicantAvatar}}" mode="aspectFill"/>
+      <view wx:else class="avatar text">{{item.applicantName ? item.applicantName[0] : '申'}}</view>
+      <view class="request-main">
+        <view class="request-name">{{item.applicantName}}</view>
+        <view class="request-meta">积分 {{item.applicantScore || 0}}</view>
+      </view>
+    </view>
+    <view class="reason">{{item.reason || '未填写申请理由'}}</view>
+    <view class="actions">
+      <view class="btn ghost" data-id="{{item._id}}" data-action="reject" bindtap="review">拒绝</view>
+      <view class="btn primary" data-id="{{item._id}}" data-action="approve" bindtap="review">通过</view>
+    </view>
+  </view>
+
+  <view class="section-head">
+    <view class="section-title">成员管理</view>
+    <view class="section-actions">
+      <button class="invite-member-btn share" open-type="share">分享链接</button>
+      <view class="invite-member-btn" bindtap="inviteMember">搜索邀请</view>
+    </view>
+  </view>
+  <view wx:for="{{team.members}}" wx:key="openid" class="member-row">
+    <image wx:if="{{item.avatar}}" class="avatar" src="{{item.avatar}}" mode="aspectFill"/>
+    <view wx:else class="avatar text">{{item.name ? item.name[0] : '队'}}</view>
+    <view class="request-main">
+      <view class="request-name">{{item.name}}</view>
+      <view class="request-meta">{{item.role === 'captain' ? '队长' : '队员'}}<text wx:if="{{item.position}}"> · {{item.position}}</text> · 积分 {{item.score || 0}}</view>
+    </view>
+    <view wx:if="{{item.role !== 'captain'}}" class="member-actions">
+      <view class="transfer" data-openid="{{item.openid}}" data-name="{{item.name}}" bindtap="transferCaptain">转让队长</view>
+      <view class="remove" data-openid="{{item.openid}}" data-name="{{item.name}}" bindtap="removeMember">移除</view>
+    </view>
+  </view>
+</view>
+<view wx:else class="loading">加载中...</view>

@@ -1,0 +1,60 @@
+<view class="container">
+
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">‹</view>
+    <view class="header-title">我的动态</view>
+    <view class="header-right"></view>
+  </view>
+
+  <page-guide guide-key="boss-my-posts" title="发布管理 · 你该在这里做什么" content="赛事：进入详情审核报名、安排赛程和结算赛果；合作需求：查看报名者、沟通并确认合作。"></page-guide>
+
+  <scroll-view class="list-scroll" scroll-y enhanced show-scrollbar="{{false}}" bindscrolltolower="onReachBottom">
+
+    <view wx:if="{{!loading && posts.length === 0}}" class="empty-wrap">
+      <view class="empty-icon">📝</view>
+      <view class="empty-text">还没有发布任何动态</view>
+      <view class="empty-hint">去动态 tab 发一条吧</view>
+      <view class="empty-action" bindtap="goPublish">去发布</view>
+    </view>
+
+    <view wx:else>
+      <view
+        class="post-card"
+        wx:for="{{posts}}"
+        wx:key="_id"
+        bindtap="goDetail"
+        data-id="{{item._id}}"
+      >
+        <view class="card-top">
+          <view class="post-type type-{{item.type}}">{{item.typeLabel}}</view>
+          <view
+            class="delete-btn"
+            catchtap="deletePost"
+            data-id="{{item._id}}"
+            data-index="{{index}}"
+          >×</view>
+        </view>
+        <view class="post-content">{{item.content}}</view>
+        <view wx:if="{{item.images && item.images.length > 0}}" class="post-images img-count-{{item.images.length > 3 ? 3 : item.images.length}}">
+          <image
+            wx:for="{{item.images}}"
+            wx:for-item="img"
+            wx:key="*this"
+            class="post-img"
+            src="{{img}}"
+            mode="aspectFill"
+          />
+        </view>
+        <view class="card-footer">
+          <text class="post-time">{{item.timeLabel}}</text>
+          <text class="post-likes">♡ {{item.likesCount}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+      <view wx:elif="{{!hasMore && posts.length > 0}}" class="no-more-tip">没有更多了</view>
+    </view>
+
+  </scroll-view>
+
+</view>

@@ -1,0 +1,8 @@
+<view wx:if="{{visible && content}}" class="page-guide">
+  <view class="guide-icon">i</view>
+  <view class="guide-copy">
+    <view class="guide-title">{{title}}</view>
+    <view class="guide-content">{{content}}</view>
+  </view>
+  <view class="guide-dismiss" bindtap="dismiss">我知道了</view>
+</view>

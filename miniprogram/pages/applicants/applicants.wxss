@@ -1,0 +1,186 @@
+.container {
+  min-height: 100vh;
+  background-color: #0F0F0F;
+}
+
+.header {
+  background-color: #111111;
+  padding: 20rpx 28rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.back-btn {
+  font-size: 60rpx;
+  color: #FF6B1A;
+  line-height: 1;
+  width: 60rpx;
+}
+
+.header-title {
+  flex: 1;
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.header-count {
+  font-size: 24rpx;
+  color: #FF6B1A;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 28rpx 10rpx;
+}
+
+.section-title {
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.section-count {
+  color: #FF6B1A;
+  font-size: 24rpx;
+}
+
+.section-title.muted,
+.section-count.muted {
+  color: #777777;
+}
+
+.cancelled-section {
+  margin-top: 24rpx;
+}
+
+.athlete-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx 28rpx;
+  border-bottom: 1rpx solid #1A1A1A;
+}
+
+.athlete-row.cancelled {
+  opacity: 0.72;
+}
+
+.athlete-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.athlete-photo {
+  width: 100rpx;
+  height: 130rpx;
+  border-radius: 16rpx;
+  background-color: #1A1A1A;
+  flex-shrink: 0;
+}
+
+.athlete-info { flex: 1; }
+
+.athlete-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.athlete-name {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.rank-badge {
+  font-size: 20rpx;
+  font-weight: 500;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+
+
+.rank-D { color: #FF8C47; background-color: #2A1800; }
+.rank-C { color: #5BA8D4; background-color: #0A1E2A; }
+.rank-B { color: #3DBB8A; background-color: #0A2A1A; }
+.rank-A { color: #7B7BDD; background-color: #0A0A20; }
+.rank-S { color: #D85A30; background-color: #2A1008; }
+
+.athlete-meta {
+  font-size: 24rpx;
+  color: #666666;
+  margin-bottom: 6rpx;
+}
+
+.athlete-affil {
+  font-size: 22rpx;
+  color: #444444;
+}
+
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+.select-btn {
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 500;
+  min-width: 144rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 16rpx;
+  text-align: center;
+}
+
+.reject-btn {
+  min-width: 144rpx;
+  padding: 14rpx 20rpx;
+  border-radius: 16rpx;
+  color: #CCCCCC;
+  font-size: 24rpx;
+  text-align: center;
+  background-color: #1B1B1B;
+  box-shadow: inset 0 0 0 1rpx #333333;
+}
+
+.cancelled-badge {
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  color: #777777;
+  font-size: 20rpx;
+  background-color: #1C1C1C;
+}
+
+.empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon { font-size: 80rpx; margin-bottom: 24rpx; }
+.empty-text { font-size: 30rpx; color: #FFFFFF; margin-bottom: 12rpx; }
+.empty-hint { font-size: 26rpx; color: #555555; }
+
+.rep-badge {
+  font-size: 20rpx;
+  font-weight: 500;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.rep-badge.rep-great { color: #3DBB8A; background-color: #0A2A1A; }
+.rep-badge.rep-good  { color: #FFB700; background-color: #2A2000; }
+.rep-badge.rep-ok    { color: #FF8C47; background-color: #2A1800; }
+.rep-badge.rep-bad   { color: #A32D2D; background-color: #2A1010; }

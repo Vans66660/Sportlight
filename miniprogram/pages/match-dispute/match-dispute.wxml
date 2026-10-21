@@ -1,0 +1,40 @@
+<view class="container">
+
+<view class="header">
+  <view class="back-btn" bindtap="goBack">‹</view>
+  <view class="header-title">数据反馈</view>
+  <view class="header-right"></view>
+</view>
+
+<view class="section">
+  <view class="section-title">{{postTitle}}</view>
+
+  <view class="label">选择有异议的比赛</view>
+  <view class="empty-hint" wx:if="{{!loading && matches.length === 0}}">暂无已完成的比赛</view>
+
+  <view
+    class="match-card {{selectedMatch === index ? 'selected' : ''}}"
+    wx:for="{{matches}}"
+    wx:key="matchId"
+    bindtap="selectMatch"
+    data-index="{{index}}"
+  >
+    <view class="match-label">{{item.label}}</view>
+  </view>
+
+  <view class="label" wx:if="{{selectedMatch !== null}}">反馈原因</view>
+  <textarea
+    wx:if="{{selectedMatch !== null}}"
+    class="textarea-box"
+    placeholder="请描述数据哪里有问题，例如：我的得分应该是12分而不是8分"
+    bindinput="onReasonInput"
+    value="{{reason}}"
+    maxlength="500"
+  />
+
+  <view class="submit-btn {{selectedMatch !== null && reason ? 'active' : 'disabled'}}" bindtap="submit">
+    {{submitting ? '提交中...' : '提交反馈'}}
+  </view>
+</view>
+
+</view>

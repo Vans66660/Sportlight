@@ -1,0 +1,9 @@
+{
+  "name": "adminWipeDatabase",
+  "version": "1.0.0",
+  "description": "管理员核按钮：清空全部数据库集合",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~3.0.1"
+  }
+}

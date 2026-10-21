@@ -1,0 +1,57 @@
+<view class="container" wx:if="{{authorized}}">
+  <view class="warning-box">
+    <view class="warning-icon">⚠️</view>
+    <view class="warning-title">危险操作</view>
+    <view class="warning-text">此操作将清空全部数据库，所有用户、订单、帖子、比赛数据将被永久删除，不可恢复。</view>
+  </view>
+
+  <view class="step-box">
+    <view class="step-title">执行步骤：</view>
+    <view class="step-item">1. 输入管理员密钥后升级管理员（仅首次操作）</view>
+    <view class="step-item">2. 输入确认短语：清空Sportlight全部数据</view>
+    <view class="step-item">3. 再点击「执行清空」按钮</view>
+  </view>
+
+  <view class="form-box">
+    <view class="field-label">管理员升级密钥</view>
+    <input class="input-box" password value="{{adminKey}}" data-field="adminKey" bindinput="onInput" placeholder="云函数环境变量 ADMIN_BOOTSTRAP_KEY"/>
+  </view>
+  <button class="btn-admin" type="primary" bindtap="promoteAdmin">升级管理员</button>
+
+  <view class="form-box">
+    <view class="field-label">清空确认短语</view>
+    <input class="input-box" value="{{wipePhrase}}" data-field="wipePhrase" bindinput="onInput" placeholder="请输入：清空Sportlight全部数据"/>
+  </view>
+  <button class="btn-wipe" type="warn" bindtap="onWipe">执行清空</button>
+  <button class="btn-back" bindtap="goBack">返回</button>
+
+  <view wx:if="{{result}}" class="result-box">
+    <view class="result-title">执行结果：</view>
+    <view class="result-content">{{result}}</view>
+  </view>
+</view>
+
+<view class="container checking" wx:elif="{{checking}}">
+  <view class="checking-title">正在校验管理员权限...</view>
+  <view class="checking-text">请稍候</view>
+</view>
+
+<view class="container" wx:elif="{{canBootstrap}}">
+  <view class="warning-box">
+    <view class="warning-icon">🔐</view>
+    <view class="warning-title">管理员初始化</view>
+    <view class="warning-text">当前账号还不是管理员。输入管理员密钥后，将直接创建/升级为管理员并进入清理界面。</view>
+  </view>
+
+  <view class="form-box">
+    <view class="field-label">管理员升级密钥</view>
+    <input class="input-box" password value="{{adminKey}}" data-field="adminKey" bindinput="onInput" placeholder="请输入 ADMIN_BOOTSTRAP_KEY"/>
+  </view>
+  <button class="btn-admin" type="primary" bindtap="promoteAdmin">进入管理员界面</button>
+  <button class="btn-back" bindtap="goBack">返回</button>
+</view>
+
+<view class="container checking" wx:else>
+  <view class="checking-title">正在返回登录页...</view>
+  <view class="checking-text">当前微信账号不是管理员</view>
+</view>

@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="header">
+    <view class="header-title">约场</view>
+  </view>
+
+  <scroll-view class="match-scroll" scroll-y>
+    <view class="entry-list">
+      <view class="entry-card map-card" bindtap="goCourtMap">
+        <view class="entry-copy">
+          <view class="entry-title">附近球局</view>
+          <view class="entry-sub">查看附近球场和正在约的球局</view>
+        </view>
+        <view class="map-preview-wrap">
+          <map
+            class="map-preview"
+            latitude="{{latitude}}"
+            longitude="{{longitude}}"
+            markers="{{previewMarkers}}"
+            scale="15"
+            show-location
+            enable-scroll="{{false}}"
+            enable-zoom="{{false}}"
+            enable-rotate="{{false}}"
+            enable-overlooking="{{false}}"
+          />
+          <view class="map-mask">打开地图</view>
+        </view>
+      </view>
+
+      <view class="entry-card match-card recommend-card" bindtap="goMatchedSoloGames">
+        <view class="entry-title">匹配球局</view>
+        <view class="entry-sub">根据球员数据推荐适合你的球局</view>
+      </view>
+
+      <view class="entry-card match-card solo-card" bindtap="goSoloGames">
+        <view class="entry-title">散客组局</view>
+        <view class="entry-sub">个人发起或加入临时球局</view>
+      </view>
+
+      <view class="entry-card match-card team-card" bindtap="goTeamMatch">
+        <view class="entry-title">球队约战</view>
+        <view class="entry-sub">球队之间约比赛、找对手</view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

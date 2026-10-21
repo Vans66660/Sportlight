@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="title">球队约战</view>
+  <view wx:if="{{!hasTeam}}" class="banner">
+    <view class="banner-title">您暂时还没有加入一个球队</view>
+    <view class="banner-sub">加入或创建球队后才可以进行球队约战</view>
+  </view>
+
+  <view class="entry-card mine" bindtap="goMyTeams">
+    <view class="entry-title">我的球队</view>
+    <view class="entry-sub">查看我所在的球队、创建球队和管理审核</view>
+  </view>
+  <view class="entry-card square" bindtap="goSquare">
+    <view class="entry-title">球队广场</view>
+    <view class="entry-sub">浏览附近和公开招募中的球队</view>
+  </view>
+  <view class="entry-card challenge" bindtap="goChallengePlaza">
+    <view class="entry-title">约战广场</view>
+    <view class="entry-sub">查看公开约战请求，队长可发起或应战</view>
+  </view>
+</view>

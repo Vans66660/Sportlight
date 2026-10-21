@@ -1,0 +1,327 @@
+<view class="container">
+
+<!-- 顶部 -->
+<view class="header">
+  <view class="logo-text">Sport<text class="logo-dot">●</text>light</view>
+  <view class="header-right">
+    <view class="activity-entry" bindtap="goActivity">活动</view>
+  </view>
+</view>
+
+<!-- 老板首页：首屏运营引导 -->
+<view wx:if="{{userType === 'boss' && bossHomeGuide.visible}}" class="boss-home-guide">
+  <view class="boss-home-guide-top">
+    <view>
+      <view class="boss-home-guide-kicker">主办方快速开始</view>
+      <view class="boss-home-guide-title">{{bossHomeGuide.completedCount === bossHomeGuide.totalCount ? '运营基础已准备就绪' : '先完成这三步，再开始运营'}}</view>
+    </view>
+    <view class="boss-home-guide-progress">{{bossHomeGuide.completedCount}}/{{bossHomeGuide.totalCount}}</view>
+  </view>
+  <view class="boss-home-guide-steps">
+    <view class="boss-home-guide-step {{item.done ? 'done' : ''}}" wx:for="{{bossHomeGuide.steps}}" wx:key="key" bindtap="goBossHomeGuide" data-step="{{item.key}}">
+      <view class="boss-home-guide-dot">{{item.done ? '✓' : index + 1}}</view>
+      <view>{{item.label}}</view>
+    </view>
+  </view>
+  <view wx:if="{{bossHomeGuide.next}}" class="boss-home-guide-cta" bindtap="goBossHomeGuide" data-step="{{bossHomeGuide.next.key}}">
+    <text>下一步：{{bossHomeGuide.next.actionLabel}}</text><text>›</text>
+  </view>
+</view>
+
+<!-- 搜索框（仅老板端） -->
+<view class="search-wrap player-search-wrap" wx:if="{{userType === 'boss'}}">
+  <view class="search-box">
+    <image class="search-icon" src="/images/icons/search.png" mode="aspectFit" />
+    <input class="search-input" placeholder="搜索运动项目、城市、院校..." bindinput="onSearch" value="{{keyword}}"/>
+  </view>
+</view>
+
+<!-- 筛选标签（主办方端） -->
+<view class="event-filter-groups player-filter-groups" wx:if="{{userType === 'boss'}}">
+  <view class="filter-group" wx:for="{{bossFilterGroups}}" wx:key="key">
+    <view class="filter-group-label">{{item.label}}</view>
+    <view class="filter-group-row">
+      <block wx:for="{{item.filters}}" wx:for-item="chip" wx:key="index">
+        <view
+          wx:if="{{chip !== '敬请期待'}}"
+          class="filter-chip {{bossFilters[item.key] === chip ? 'active' : ''}}"
+          bindtap="setFilter"
+          data-group="{{item.key}}"
+          data-filter="{{chip}}"
+        >{{chip}}</view>
+        <text wx:else class="filter-hint">{{chip}}</text>
+      </block>
+    </view>
+  </view>
+</view>
+
+<!-- tab切换（球员端） -->
+<view class="battle-control" wx:if="{{userType !== 'boss'}}">
+  <view class="battle-tabs">
+    <view class="battle-tab {{activeTab === 'events' ? 'active' : ''}}" bindtap="switchTab" data-tab="events">
+      <text class="battle-tab-title">公开赛</text>
+    </view>
+    <view class="battle-tab {{activeTab === 'orders' ? 'active' : ''}}" bindtap="switchTab" data-tab="orders">
+      <text class="battle-tab-title">赏金令</text>
+    </view>
+  </view>
+  <view class="battle-caption">{{activeTab === 'events' ? '报名官方赛事，积累公开赛战力' : '接取参赛雇佣，完成后获得赏金'}}</view>
+</view>
+
+<!-- 赏金令搜索（球员端） -->
+<view class="search-wrap event-search-wrap player-search-wrap" wx:if="{{userType !== 'boss' && activeTab === 'orders'}}">
+  <view class="search-box">
+    <image class="search-icon" src="/images/icons/search.png" mode="aspectFit" />
+    <input class="search-input" placeholder="搜索招募、地点、球队" bindinput="onOrderSearch" value="{{orderKeyword}}" confirm-type="search"/>
+    <view class="search-clear" wx:if="{{orderKeyword}}" bindtap="clearOrderSearch">×</view>
+  </view>
+</view>
+
+<!-- 赏金令分组筛选（球员端） -->
+<view class="event-filter-groups player-filter-groups" wx:if="{{userType !== 'boss' && activeTab === 'orders'}}">
+  <view class="filter-group" wx:for="{{orderFilterGroups}}" wx:key="key">
+    <view class="filter-group-label">{{item.label}}</view>
+    <view class="filter-group-row">
+      <block wx:for="{{item.filters}}" wx:for-item="chip" wx:key="index">
+        <view
+          wx:if="{{chip !== '敬请期待'}}"
+          class="filter-chip {{orderFilters[item.key] === chip ? 'active' : ''}}"
+          bindtap="setFilter"
+          data-group="{{item.key}}"
+          data-filter="{{chip}}"
+        >{{chip}}</view>
+        <text wx:else class="filter-hint">{{chip}}</text>
+      </block>
+    </view>
+  </view>
+</view>
+
+<!-- 公开赛搜索（球员端） -->
+<view class="search-wrap event-search-wrap player-search-wrap" wx:if="{{userType !== 'boss' && activeTab === 'events'}}">
+  <view class="search-box">
+    <image class="search-icon" src="/images/icons/search.png" mode="aspectFit" />
+    <input class="search-input" placeholder="搜索赛事、地点、球场" bindinput="onEventSearch" value="{{eventKeyword}}" confirm-type="search"/>
+    <view class="search-clear" wx:if="{{eventKeyword}}" bindtap="clearEventSearch">×</view>
+  </view>
+</view>
+
+<!-- 公开赛分组筛选（球员端） -->
+<view class="event-filter-groups player-filter-groups" wx:if="{{userType !== 'boss' && activeTab === 'events'}}">
+  <view class="filter-group" wx:for="{{eventFilterGroups}}" wx:key="key">
+    <view class="filter-group-label">{{item.label}}</view>
+    <view class="filter-group-row">
+      <block wx:for="{{item.filters}}" wx:for-item="chip" wx:key="index">
+        <view
+          wx:if="{{chip !== '敬请期待'}}"
+          class="filter-chip {{eventFiltersState[item.key] === chip ? 'active' : ''}}"
+          bindtap="setEventFilter"
+          data-group="{{item.key}}"
+          data-filter="{{chip}}"
+        >{{chip}}</view>
+        <text wx:else class="filter-hint">{{chip}}</text>
+      </block>
+    </view>
+  </view>
+  <view class="deadline-range" wx:if="{{eventFiltersState.time === '自定义'}}">
+    <picker mode="date" value="{{customDeadlineStart}}" bindchange="onCustomDeadlineStartChange">
+      <view class="deadline-picker {{customDeadlineStart ? '' : 'placeholder'}}">{{customDeadlineStart || '开始日期'}}</view>
+    </picker>
+    <text class="deadline-sep">至</text>
+    <picker mode="date" value="{{customDeadlineEnd}}" start="{{customDeadlineStart}}" bindchange="onCustomDeadlineEndChange">
+      <view class="deadline-picker {{customDeadlineEnd ? '' : 'placeholder'}}">{{customDeadlineEnd || '结束日期'}}</view>
+    </picker>
+  </view>
+</view>
+
+<!-- 运动员列表（老板端） -->
+<view class="list-scroll" wx:if="{{userType === 'boss'}}">
+  <view class="athlete-grid">
+    <view
+      class="athlete-card"
+      wx:for="{{athletes}}"
+      wx:key="_id"
+      bindtap="goAthleteProfile"
+      data-id="{{item._id}}"
+    >
+      <image class="athlete-photo" src="{{item.photo}}" mode="aspectFill"/>
+      <view class="card-overlay">
+        <view class="athlete-name">{{item.name}}</view>
+        <view class="athlete-location">
+          <text>{{item.sport}}</text>
+          <text wx:if="{{item.sport && item.city}}"> · </text>
+          <text>{{item.city}}</text>
+        </view>
+        <view class="type-tags">
+          <view class="type-tag match" wx:if="{{item.acceptMatch}}">⚔️ 参赛</view>
+        </view>
+        <view class="card-bottom">
+          <view>
+            <view class="avg-label">身价</view>
+            <view class="avg-price" wx:if="{{item.competitionScore >= 300}}">¥{{item.marketValue}}</view>
+            <view class="lock-pill" wx:else><image class="lock-icon" src="/images/icons/lock.png" mode="aspectFit"/> 待解锁</view>
+          </view>
+          <view class="badges-col">
+            <view class="rank-badge rank-{{item.rankStatusClass || item.rankBase || item.rank}}">{{item.rankLabel || (item.rank + '级')}}</view>
+            <view class="rep-badge rep-{{item.reputationLevel}}"><image class="rep-icon" src="/images/icons/tianping.png" mode="aspectFit"/> {{item.reputation}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 公开赛列表（球员端） -->
+<view class="list-scroll" wx:if="{{activeTab === 'events' && userType !== 'boss'}}">
+  <view class="event-list">
+
+    <view class="empty-wrap" wx:if="{{visibleEvents.length === 0 && !eventsLoading}}">
+      <view class="empty-icon">🏆</view>
+      <view class="empty-text">{{hasEventQuery ? '没有找到相关赛事' : '暂无公开赛，稍后再来看看'}}</view>
+      <view class="empty-clear" wx:if="{{hasEventQuery}}" bindtap="clearEventFilters">清空筛选</view>
+    </view>
+
+    <view wx:for="{{visibleEvents}}" wx:key="_id" class="ec-wrap">
+
+      <!-- 有横幅/图：沉浸大卡 -->
+      <view wx:if="{{item.banner || (item.images && item.images.length > 0)}}" class="ec-img" bindtap="goEventDetail" data-id="{{item._id}}">
+        <image class="ec-img-bg" src="{{item.banner || item.images[0]}}" mode="aspectFill"/>
+        <view class="ec-img-overlay">
+          <view class="ec-top-row">
+            <view class="ec-status status-{{item.eventStatus}}">
+              <text class="ec-status-dot">●</text>{{item.statusLabel}}
+            </view>
+            <view wx:if="{{item.platformCertified}}" class="ec-certified">S 官方认证赛事</view>
+          </view>
+          <view class="ec-bottom">
+            <view class="ec-title">{{item.title || item.content}}</view>
+            <view class="ec-author" catchtap="goAuthorProfile" data-openid="{{item.openid}}" data-type="{{item.authorType}}">{{item.authorName}}</view>
+            <view class="ec-meta-row">
+              <view wx:if="{{item.eventDate}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/calendar.png" mode="aspectFit"/><text> {{item.eventDate}}</text></view>
+              <text wx:if="{{item.eventDate && item.eventLocation}}"> · </text>
+              <view wx:if="{{item.eventLocation}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/location.png" mode="aspectFit"/><text> {{item.eventLocation}}</text></view>
+            </view>
+            <view class="ec-spots-row" wx:if="{{item.maxTeams > 0}}">
+              <text class="ec-spots-label">👥 {{item.registeredTeams || 0}}/{{item.maxTeams}} 队已报名</text>
+            </view>
+            <view class="ec-footer">
+              <view wx:if="{{item.prizes && item.prizes.length > 0}}" class="ec-top-prize">
+                <image wx:if="{{item.prizes[0].label === '冠军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-gold.png" mode="aspectFit"/>
+                <image wx:elif="{{item.prizes[0].label === '亚军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-silver.png" mode="aspectFit"/>
+                <image wx:elif="{{item.prizes[0].label === '季军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-bronze.png" mode="aspectFit"/>
+                <text wx:else class="ec-prize-medal-sm">{{item.prizes[0].medal}}</text>
+                <text class="ec-prize-name-sm">{{item.prizes[0].label}}</text>
+                <text class="ec-prize-amount-sm">¥{{item.prizes[0].amount}}</text>
+              </view>
+              <view wx:elif="{{item.prizeInfo}}" class="ec-top-prize">
+                <text class="ec-prize-legacy-sm">🏅 {{item.prizeInfo}}</text>
+              </view>
+              <view wx:else class="ec-top-prize-placeholder"></view>
+              <view class="ec-my-status {{item.isRegistered ? 'my-registered' : item.isPending || item.isAssembling || item.isSoloPending ? 'my-pending' : ''}}">
+                {{item.isRegistered ? '已报名 ✓' : item.isPending ? '审核中 …' : item.isAssembling ? '组队中 …' : item.isSoloPending ? '散客池中 …' : ''}}
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 无横幅：运动主题色排版卡 -->
+      <view wx:else class="ec-text ec-sport-{{item.colorClass}}" bindtap="goEventDetail" data-id="{{item._id}}">
+        <view class="ec-text-head">
+          <text class="ec-sport-icon">{{item.sport || '🏆'}}</text>
+          <view class="ec-text-head-badges">
+            <view wx:if="{{item.platformCertified}}" class="ec-certified">S 官方认证赛事</view>
+            <view class="ec-status status-{{item.eventStatus}}">
+              <text class="ec-status-dot">●</text>{{item.statusLabel}}
+            </view>
+          </view>
+        </view>
+        <view class="ec-title ec-title-dark">{{item.title || item.content}}</view>
+        <view class="ec-meta-row ec-meta-dark">
+          <view wx:if="{{item.eventDate}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/calendar.png" mode="aspectFit"/><text> {{item.eventDate}}</text></view>
+          <text wx:if="{{item.eventDate && item.eventLocation}}"> · </text>
+          <view wx:if="{{item.eventLocation}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/location.png" mode="aspectFit"/><text> {{item.eventLocation}}</text></view>
+        </view>
+        <view class="ec-spots-row" wx:if="{{item.maxTeams > 0}}">
+          <text class="ec-spots-label ec-spots-label-dark">👥 {{item.registeredTeams || 0}}/{{item.maxTeams}} 队已报名</text>
+        </view>
+        <view class="ec-footer ec-footer-text">
+          <view catchtap="goAuthorProfile" data-openid="{{item.openid}}" data-type="{{item.authorType}}" class="ec-author-text">{{item.authorName}}</view>
+          <view wx:if="{{item.prizes && item.prizes.length > 0}}" class="ec-top-prize">
+            <image wx:if="{{item.prizes[0].label === '冠军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-gold.png" mode="aspectFit"/>
+            <image wx:elif="{{item.prizes[0].label === '亚军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-silver.png" mode="aspectFit"/>
+            <image wx:elif="{{item.prizes[0].label === '季军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-bronze.png" mode="aspectFit"/>
+            <text wx:else class="ec-prize-medal-sm">{{item.prizes[0].medal}}</text>
+            <text class="ec-prize-amount-sm">¥{{item.prizes[0].amount}}</text>
+          </view>
+          <view wx:elif="{{item.prizeInfo}}" class="ec-top-prize">
+            <text class="ec-prize-legacy-sm">🏅 {{item.prizeInfo}}</text>
+          </view>
+          <view class="ec-my-status {{item.isRegistered ? 'my-registered' : item.isPending || item.isAssembling || item.isSoloPending ? 'my-pending' : ''}}">
+            {{item.isRegistered ? '已报名 ✓' : item.isPending ? '审核中 …' : item.isAssembling ? '组队中 …' : item.isSoloPending ? '散客池中 …' : ''}}
+          </view>
+        </view>
+      </view>
+
+    </view>
+
+    <view class="loading-tip" wx:if="{{eventsLoading}}">加载中...</view>
+    <view class="no-more-tip" wx:if="{{!eventsHasMore && visibleEvents.length > 0}}">没有更多了</view>
+  </view>
+</view>
+
+<!-- 需求列表（球员端） -->
+<view class="list-scroll" wx:if="{{activeTab === 'orders' && userType !== 'boss'}}">
+  <view class="order-list">
+    <view class="empty-wrap" wx:if="{{orders.length === 0}}">
+      <view class="empty-icon">🏆</view>
+      <view class="empty-text">{{hasOrderQuery ? '没有找到相关赏金令' : '暂无赏金令，稍后再来看看'}}</view>
+      <view class="empty-clear" wx:if="{{hasOrderQuery}}" bindtap="clearOrderFilters">清空筛选</view>
+    </view>
+
+    <view class="ocv" wx:for="{{orders}}" wx:key="_id">
+
+      <!-- 头部：老板 + 类型 -->
+      <view class="ocv-header" bindtap="goOrderDetail" data-id="{{item._id}}">
+        <view class="ocv-boss-row">
+          <image wx:if="{{item.bossLogo}}" class="ocv-boss-logo" src="{{item.bossLogo}}" mode="aspectFill"/>
+          <view wx:else class="ocv-boss-initial">{{item.bossName ? item.bossName[0] : '?'}}</view>
+          <text class="ocv-boss-name">{{item.bossName}}</text>
+        </view>
+        <view class="ocv-type-badge match">
+          ⚔️ 参赛
+        </view>
+      </view>
+
+      <!-- 标题 -->
+      <view class="ocv-title" bindtap="goOrderDetail" data-id="{{item._id}}">{{item.title}}</view>
+
+      <!-- 地点 + 日期 -->
+      <view class="ocv-meta" bindtap="goOrderDetail" data-id="{{item._id}}">
+        <view wx:if="{{item.city}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/location.png" mode="aspectFit"/><text> {{item.city}}</text></view>
+        <text wx:if="{{item.city && (item.dateRange || item.date)}}"> · </text>
+        <view wx:if="{{item.dateRange || item.date}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/calendar.png" mode="aspectFit"/><text> {{item.dateRange || item.date}}</text></view>
+      </view>
+
+      <view wx:if="{{item.skillTags}}" class="ocv-meta" bindtap="goOrderDetail" data-id="{{item._id}}">
+        <text>球员需求：{{item.skillTags}}</text>
+      </view>
+
+      <!-- 底部：赏金 + 详情 -->
+      <view class="ocv-footer">
+        <view class="ocv-price-wrap" bindtap="goOrderDetail" data-id="{{item._id}}">
+          <text class="ocv-price-label">赏金</text>
+          <text class="ocv-price">¥{{item.price}}</text>
+        </view>
+        <view
+          class="ocv-detail-btn status-{{item.applicationStatus || 'none'}}"
+          bindtap="goOrderDetail"
+          data-id="{{item._id}}"
+        >{{item.applicationStatusText || '查看详情'}}</view>
+      </view>
+
+    </view>
+  </view>
+</view>
+
+
+</view>

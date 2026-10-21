@@ -1,0 +1,141 @@
+{
+  "pages": [
+    "pages/market/market",
+    "pages/login/login",
+    "pages/register-athlete/register-athlete",
+    "pages/register-boss/register-boss",
+    "pages/register-venue/register-venue",
+    "pages/venue-manage/venue-manage",
+    "pages/venue-workbench-detail/venue-workbench-detail",
+    "pages/feed/feed",
+    "pages/match/match",
+    "pages/court-map/court-map",
+    "pages/venue-match/venue-match",
+    "pages/solo-games/solo-games",
+    "pages/matched-solo-games/matched-solo-games",
+    "pages/score-details/score-details",
+    "pages/player-match-stats/player-match-stats",
+    "pages/card-pack/card-pack",
+    "pages/card-detail/card-detail",
+    "pages/card-showcase/card-showcase",
+    "pages/card-image-setup/card-image-setup",
+    "pages/card-cutout-editor/card-cutout-editor",
+    "pages/card-generator/card-generator",
+    "pages/shared-card/shared-card",
+    "pages/solo-game-create/solo-game-create",
+    "pages/solo-game-detail/solo-game-detail",
+    "pages/venue-select/venue-select",
+    "pages/my-teams/my-teams",
+    "pages/team-edit/team-edit",
+    "pages/team-home/team-home",
+    "pages/team-manage/team-manage",
+    "pages/friend-search/friend-search",
+    "pages/team-square/team-square",
+    "pages/team-match/team-match",
+    "pages/team-challenges/team-challenges",
+    "pages/team-challenge-create/team-challenge-create",
+    "pages/team-challenge-detail/team-challenge-detail",
+    "pages/match-placeholder/match-placeholder",
+    "pages/activity/activity",
+    "pages/athlete-profile/athlete-profile",
+    "pages/order-detail/order-detail",
+    "pages/my-orders/my-orders",
+    "pages/messages/messages",
+    "pages/profile/profile",
+    "pages/account-settings/account-settings",
+    "pages/legal/legal",
+    "pages/edit-profile/edit-profile",
+    "pages/applicants/applicants",
+    "pages/chat/chat",
+    "pages/publish-order/publish-order",
+    "pages/publish-post/publish-post",
+    "pages/publish-event/publish-event",
+    "pages/boss-profile/boss-profile",
+    "pages/edit-boss-profile/edit-boss-profile",
+    "pages/event-results/event-results",
+    "pages/event-schedule/event-schedule",
+    "pages/open-tournament/open-tournament",
+    "pages/event-registrants/event-registrants",
+    "pages/event-admins/event-admins",
+    "pages/player-schedule/player-schedule",
+    "pages/notifications/notifications",
+    "pages/post-detail/post-detail",
+    "pages/event-registration/event-registration",
+    "pages/my-posts/my-posts",
+    "pages/match-dispute/match-dispute",
+    "pages/join-team/join-team",
+    "pages/agreement/agreement",
+    "pages/privacy/privacy",
+    "pages/debug-wipe/debug-wipe",
+    "pages/verify-identity/verify-identity"
+  ],
+  "subPackages": [
+    {
+      "root": "pages/admin-hub",
+      "pages": [
+        "admin-hub"
+      ]
+    }
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#111111",
+    "navigationBarTitleText": "Sportlight",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0F0F0F",
+    "backgroundColorTop": "#0F0F0F",
+    "backgroundColorBottom": "#0F0F0F"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于展示你附近的球场和球局"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseLocation"
+  ],
+  "tabBar": {
+    "custom": true,
+    "color": "#555555",
+    "selectedColor": "#FF6B1A",
+    "backgroundColor": "#111111",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/market/market",
+        "text": "战役",
+        "iconPath": "images/icons/battle.png",
+        "selectedIconPath": "images/icons/battle-active.png"
+      },
+      {
+        "pagePath": "pages/feed/feed",
+        "text": "动态",
+        "iconPath": "images/icons/home.png",
+        "selectedIconPath": "images/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/match/match",
+        "text": "约场",
+        "iconPath": "images/icons/VS.png",
+        "selectedIconPath": "images/icons/VS.png"
+      },
+      {
+        "pagePath": "pages/my-orders/my-orders",
+        "text": "消息",
+        "iconPath": "images/icons/chat.png",
+        "selectedIconPath": "images/icons/chat.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/icons/usercenter.png",
+        "selectedIconPath": "images/icons/usercenter-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "lazyCodeLoading": "requiredComponents"
+}

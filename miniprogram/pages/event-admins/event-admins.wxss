@@ -1,0 +1,27 @@
+page { background: #0F0F0F; }
+.page { min-height: 100vh; padding: 28rpx; box-sizing: border-box; color: #FFFFFF; }
+.panel { background: #1A1A1A; border: 1rpx solid #2A2A2A; border-radius: 20rpx; padding: 24rpx; }
+.panel-title { font-size: 34rpx; font-weight: 900; }
+.panel-desc { color: #777777; font-size: 24rpx; line-height: 1.5; margin-top: 8rpx; }
+.search-row { display: flex; align-items: center; gap: 12rpx; margin-top: 22rpx; }
+.search-input { flex: 1; height: 76rpx; border-radius: 14rpx; background: #111111; border: 1rpx solid #2A2A2A; color: #FFFFFF; padding: 0 18rpx; box-sizing: border-box; font-size: 26rpx; }
+.placeholder { color: #666666; }
+.search-btn { width: 118rpx; height: 76rpx; line-height: 76rpx; border-radius: 14rpx; background: #FF6B1A; text-align: center; font-size: 26rpx; font-weight: 800; }
+.role-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14rpx; margin-top: 18rpx; }
+.role-card { border-radius: 16rpx; background: #111111; border: 1rpx solid #292929; padding: 18rpx; min-height: 118rpx; box-sizing: border-box; }
+.role-card.active { border-color: #FF6B1A; background: rgba(255, 107, 26, 0.1); }
+.role-name { color: #FFFFFF; font-size: 26rpx; font-weight: 800; }
+.role-desc { color: #777777; font-size: 21rpx; line-height: 1.35; margin-top: 8rpx; }
+.section-title { color: #FFFFFF; font-size: 28rpx; font-weight: 900; margin: 34rpx 4rpx 16rpx; }
+.empty { color: #777777; text-align: center; font-size: 26rpx; margin: 56rpx 0; }
+.empty.small { margin: 28rpx 0; }
+.user-card, .admin-card { display: flex; align-items: center; gap: 16rpx; padding: 20rpx; margin-bottom: 14rpx; border-radius: 18rpx; background: #1A1A1A; border: 1rpx solid #2A2A2A; }
+.avatar { width: 78rpx; height: 78rpx; border-radius: 50%; flex-shrink: 0; background: #282828; }
+.avatar.text { display: flex; align-items: center; justify-content: center; color: #FF6B1A; font-weight: 900; font-size: 30rpx; }
+.user-info, .admin-main { flex: 1; min-width: 0; }
+.name, .admin-name { color: #FFFFFF; font-size: 28rpx; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meta { color: #777777; font-size: 22rpx; margin-top: 8rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.action { width: 112rpx; height: 62rpx; line-height: 62rpx; text-align: center; border-radius: 14rpx; font-size: 24rpx; font-weight: 800; flex-shrink: 0; }
+.action.primary { background: #FF6B1A; color: #FFFFFF; }
+.action.disabled { background: #242424; color: #666666; }
+.action.danger { background: rgba(229, 57, 53, 0.14); color: #FF7B76; }

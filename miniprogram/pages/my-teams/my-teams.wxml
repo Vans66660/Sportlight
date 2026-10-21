@@ -1,0 +1,41 @@
+<view class="page">
+  <view class="head">
+    <view>
+      <view class="title">我的球队</view>
+      <view class="sub">最多加入3支球队，只能担任1支球队队长</view>
+    </view>
+    <view class="head-btn" bindtap="createTeam">创建球队</view>
+  </view>
+
+  <view class="section-title">我管理的球队</view>
+  <view wx:if="{{leaderTeams.length === 0}}" class="empty-card">
+    <view class="empty-title">你还没有创建球队</view>
+    <view class="empty-sub">创建后即可发起球队约战</view>
+  </view>
+  <view wx:for="{{leaderTeams}}" wx:key="_id" class="team-card" bindtap="goTeam" data-id="{{item._id}}">
+    <image wx:if="{{item.logo}}" class="logo" src="{{item.logo}}" mode="aspectFill"/>
+    <view wx:else class="logo text">{{item.logoText}}</view>
+    <view class="team-main">
+      <view class="team-name">{{item.name}}</view>
+      <view class="team-meta">{{item.sport}} · {{item.memberCount}}人 · 平均{{item.averageScore}}</view>
+    </view>
+    <view class="manage-btn" catchtap="goManage" data-id="{{item._id}}">管理</view>
+  </view>
+
+  <view class="section-title">我加入的球队</view>
+  <view wx:if="{{joinedTeams.length === 0}}" class="empty-card" bindtap="goSquare">
+    <view class="empty-title">暂未加入其他球队</view>
+    <view class="empty-sub">去球队广场看看</view>
+  </view>
+  <view wx:for="{{joinedTeams}}" wx:key="_id" class="team-card" bindtap="goTeam" data-id="{{item._id}}">
+    <image wx:if="{{item.logo}}" class="logo" src="{{item.logo}}" mode="aspectFill"/>
+    <view wx:else class="logo text">{{item.logoText}}</view>
+    <view class="team-main">
+      <view class="team-name">{{item.name}}</view>
+      <view class="team-meta">{{item.sport}} · {{item.memberCount}}人 · 平均{{item.averageScore}}</view>
+    </view>
+    <view class="arrow">›</view>
+  </view>
+
+  <view class="bottom-btn" bindtap="goSquare">球队广场</view>
+</view>

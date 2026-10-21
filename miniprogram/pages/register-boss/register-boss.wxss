@@ -1,0 +1,581 @@
+.container {
+  min-height: 100vh;
+  background-color: #0F0F0F;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.header {
+  background-color: #111111;
+  padding: 20rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.back {
+  font-size: 48rpx;
+  color: #FF6B1A;
+  line-height: 1;
+  padding: 10rpx;
+}
+
+.step-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.step-dot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background-color: #1A1A1A;
+  color: #555;
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-dot.active { background-color: #FF6B1A; color: #fff; }
+.step-dot.done { background-color: #2A2A2A; color: #FF8C47; }
+
+.step-line {
+  flex: 1;
+  height: 4rpx;
+  background-color: #2A2A2A;
+}
+
+.step-line.done { background-color: rgba(255,107,26,0.4); }
+
+.step-content { padding: 40rpx 40rpx 0; }
+
+.step-title {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 8rpx;
+}
+
+.step-sub {
+  font-size: 26rpx;
+  color: #555;
+  margin-bottom: 28rpx;
+}
+
+.label {
+  font-size: 24rpx;
+  color: #555;
+  margin-bottom: 12rpx;
+  margin-top: 24rpx;
+}
+
+.input-box {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 0 28rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 28rpx;
+  color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 4rpx;
+}
+
+.textarea-box {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  font-size: 26rpx;
+  color: #fff;
+  width: 100%;
+  height: 180rpx;
+  box-sizing: border-box;
+  margin-bottom: 4rpx;
+  line-height: 1.5;
+}
+
+.textarea-box.focus { border-color: rgba(255, 107, 26, .72); }
+
+.readonly-field {
+  width: 100%;
+  min-height: 88rpx;
+  background-color: #161616;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 18rpx 28rpx;
+  margin-bottom: 12rpx;
+  box-sizing: border-box;
+}
+
+.readonly-label {
+  font-size: 22rpx;
+  color: #777777;
+  margin-bottom: 6rpx;
+}
+
+.readonly-value {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  line-height: 1.4;
+}
+
+.required { color: #FF6B1A; }
+
+.select-box {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  font-size: 28rpx;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4rpx;
+}
+
+.select-box .placeholder { color: #444; }
+
+.arrow { color: #444; }
+
+/* Logo上传 */
+.logo-upload {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 32rpx;
+  background-color: #1A1A1A;
+  border: 3rpx dashed #2A2A2A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8rpx;
+  overflow: hidden;
+}
+
+.logo-upload.has-logo { border-color: #FF6B1A; border-style: solid; }
+.logo-preview { width: 100%; height: 100%; }
+.logo-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
+.logo-icon { font-size: 48rpx; color: #444; }
+.logo-hint { font-size: 22rpx; color: #555; }
+
+/* 手机绑定 */
+.phone-box {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.phone-box.verified { border-color: rgba(255,107,26,0.3); }
+
+.phone-left { font-size: 28rpx; color: #fff; }
+.phone-placeholder { color: #444; }
+
+.bind-btn {
+  font-size: 24rpx;
+  color: #FF6B1A;
+  border: 1rpx solid rgba(255,107,26,0.3);
+  border-radius: 12rpx;
+  padding: 10rpx 24rpx;
+  background-color: rgba(255,107,26,0.08);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.bind-btn::after { border: none; }
+
+.verified-badge { font-size: 24rpx; color: #FF6B1A; }
+
+.phone-hint { font-size: 22rpx; color: #444; margin-bottom: 24rpx; }
+
+/* 身份类型 */
+.identity-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-bottom: 4rpx;
+}
+
+.identity-card {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.identity-card.active {
+  border-color: #FF6B1A;
+  background-color: rgba(255,107,26,0.06);
+}
+
+.identity-emoji { font-size: 44rpx; flex-shrink: 0; }
+.identity-type-name { font-size: 30rpx; color: #FFFFFF; font-weight: 500; }
+.identity-type-desc { font-size: 22rpx; color: #666; margin-top: 4rpx; }
+
+/* 标签 */
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 4rpx;
+}
+
+.tag-btn {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 40rpx;
+  padding: 12rpx 28rpx;
+  font-size: 26rpx;
+  color: #888;
+}
+
+.tag-btn.active {
+  background-color: rgba(255,107,26,0.15);
+  border-color: #FF6B1A;
+  color: #FF6B1A;
+}
+
+/* 认证卡片 */
+.verify-card {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.verify-card.done { border-color: #1a3a20; background-color: #0d1a0e; }
+
+.verify-left { display: flex; align-items: center; gap: 16rpx; }
+
+.verify-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.verify-icon.phone { background-color: rgba(91,168,212,0.1); }
+
+.verify-name { font-size: 28rpx; font-weight: 500; color: #fff; margin-bottom: 4rpx; }
+.verify-desc { font-size: 22rpx; color: #555; }
+
+.done-badge { font-size: 22rpx; color: #3DBB8A; }
+
+.verify-btn {
+  font-size: 24rpx;
+  color: #FF6B1A;
+  border: 1rpx solid rgba(255,107,26,0.3);
+  border-radius: 12rpx;
+  padding: 10rpx 24rpx;
+  background-color: rgba(255,107,26,0.08);
+}
+
+.phone-verify-btn {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.phone-verify-btn::after {
+  border: none;
+}
+
+.verify-hint {
+  font-size: 22rpx;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 28rpx;
+}
+
+/* 完成页 */
+.complete-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80rpx;
+}
+
+.complete-icon {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background-color: rgba(255,107,26,0.15);
+  border: 4rpx solid #FF6B1A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+  margin-bottom: 32rpx;
+}
+
+.complete-title { font-size: 44rpx; font-weight: 500; color: #fff; margin-bottom: 12rpx; }
+.complete-sub { font-size: 28rpx; color: #888; margin-bottom: 40rpx; }
+
+.complete-card {
+  background-color: #1A1A1A;
+  border-radius: 24rpx;
+  padding: 28rpx 32rpx;
+  width: 100%;
+  margin-bottom: 32rpx;
+}
+
+.complete-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #2A2A2A;
+}
+
+.complete-label { font-size: 26rpx; color: #555; }
+.complete-value { font-size: 26rpx; color: #fff; }
+.complete-value.green { color: #3DBB8A; }
+
+/* 按钮 */
+.btn-next {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.btn-next.active { background-color: #FF6B1A; color: #fff; }
+.btn-next.disabled { background-color: #1A1A1A; color: #444; }
+
+.btn-prev {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #1A1A1A;
+  color: #666;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  font-size: 32rpx;
+  text-align: center;
+  margin-bottom: 16rpx;
+}
+
+.btn-secondary {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #1A1A1A;
+  color: #888;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  font-size: 32rpx;
+  text-align: center;
+  margin-top: 16rpx;
+}
+
+/* ===== Step 3 模块卡片 ===== */
+.module-card {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-bottom: 20rpx;
+}
+
+.module-num {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background-color: #FF6B1A;
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.module-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #fff;
+}
+
+.module-hint {
+  font-size: 22rpx;
+  color: #555;
+  line-height: 1.6;
+  margin-top: 12rpx;
+}
+
+.label-sub {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+  margin-top: 8rpx;
+}
+
+/* 微信支付图标 */
+.verify-icon.wxpay {
+  background-color: rgba(7,193,96,0.1);
+}
+
+/* 收款详情 */
+.receive-detail {
+  margin-top: 12rpx;
+}
+
+.identity-info-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 营业执照上传 + OCR ===== */
+.license-upload {
+  width: 100%;
+  height: 320rpx;
+  border-radius: 20rpx;
+  background-color: #111;
+  border: 2rpx dashed #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.license-upload.small {
+  height: 200rpx;
+}
+
+.license-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.license-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.license-icon { font-size: 56rpx; }
+
+.license-hint {
+  font-size: 26rpx;
+  color: #888;
+}
+
+.license-sub {
+  font-size: 22rpx;
+  color: #555;
+}
+
+.ocr-status {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #FF6B1A;
+}
+
+.ocr-retry {
+  color: #888;
+  text-decoration: underline;
+}
+
+.ocr-failed {
+  color: #FF5A5F;
+  text-decoration: underline;
+}
+
+.ocr-result {
+  margin-top: 12rpx;
+  padding: 16rpx;
+  border-radius: 12rpx;
+  background-color: rgba(255, 107, 26, 0.08);
+  border: 1rpx solid rgba(255, 107, 26, 0.2);
+  color: #CCCCCC;
+  font-size: 22rpx;
+  line-height: 1.7;
+}
+
+/* ===== 俱乐部类型卡片 ===== */
+.club-type-row {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.club-type-card {
+  background-color: #111;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.club-type-card.active {
+  border-color: #FF6B1A;
+  background-color: rgba(255,107,26,0.06);
+}
+
+.club-type-emoji {
+  font-size: 44rpx;
+  flex-shrink: 0;
+}
+
+.club-type-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.club-type-label {
+  font-size: 28rpx;
+  color: #fff;
+  font-weight: 500;
+}
+
+.club-type-desc {
+  font-size: 22rpx;
+  color: #666;
+  margin-top: 4rpx;
+}
+
+/* 俱乐部 Logo */
+.logo-upload.club-logo {
+  margin: 0;
+}
+
+.audit-hint {
+  margin-top: 18rpx;
+  padding-bottom: 12rpx;
+  text-align: center;
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: #666666;
+}

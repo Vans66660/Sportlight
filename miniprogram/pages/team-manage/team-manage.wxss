@@ -1,0 +1,28 @@
+page { background: #0F0F0F; }
+.page { min-height: 100vh; padding: 28rpx; box-sizing: border-box; color: #FFFFFF; }
+.team-card, .request-card, .member-row, .empty { background: #1A1A1A; border: 1rpx solid #2A2A2A; border-radius: 16rpx; padding: 20rpx; margin-bottom: 14rpx; box-sizing: border-box; }
+.team-card, .request-head, .member-row { display: flex; align-items: center; gap: 16rpx; }
+.logo { width: 82rpx; height: 82rpx; border-radius: 50%; background: #242424; flex-shrink: 0; }
+.logo.text, .avatar.text { display: flex; align-items: center; justify-content: center; color: #FF6B1A; font-weight: 800; }
+.team-main, .request-main { flex: 1; min-width: 0; }
+.team-name, .request-name { font-size: 29rpx; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.team-meta, .request-meta, .reason, .empty { color: #777777; font-size: 23rpx; margin-top: 8rpx; }
+.edit-btn, .btn, .remove, .transfer { border-radius: 12rpx; font-size: 24rpx; font-weight: 700; }
+.edit-btn { padding: 14rpx 18rpx; background: rgba(255,107,26,.14); color: #FF8A3D; }
+.section-title { margin: 32rpx 0 16rpx; color: #777777; font-size: 22rpx; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin: 32rpx 0 16rpx; }
+.section-head .section-title { margin: 0; }
+.section-actions { display: flex; align-items: center; gap: 10rpx; }
+.invite-member-btn { padding: 12rpx 18rpx; border-radius: 12rpx; background: #FF6B1A; color: #FFFFFF; font-size: 24rpx; font-weight: 800; }
+.invite-member-btn.share { margin: 0; line-height: 1.2; background: rgba(255,107,26,.14); color: #FF8A3D; }
+.invite-member-btn.share::after { border: none; }
+.avatar { width: 66rpx; height: 66rpx; border-radius: 50%; background: #242424; flex-shrink: 0; }
+.reason { line-height: 1.5; }
+.actions { display: flex; gap: 12rpx; margin-top: 18rpx; }
+.btn { flex: 1; height: 74rpx; line-height: 74rpx; text-align: center; }
+.primary { background: #FF6B1A; color: #FFFFFF; }
+.ghost { background: #242424; color: #888888; }
+.member-actions { display: flex; align-items: center; gap: 10rpx; flex-shrink: 0; }
+.transfer { padding: 12rpx 16rpx; color: #FFFFFF; background: rgba(255,107,26,.86); }
+.remove { padding: 12rpx 18rpx; color: #FF8A3D; background: rgba(255,107,26,.12); }
+.loading { min-height: 100vh; display: flex; align-items: center; justify-content: center; color: #777777; background: #0F0F0F; }

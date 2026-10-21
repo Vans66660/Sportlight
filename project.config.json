@@ -1,0 +1,207 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
+  "cloudbaseEnv": "cloud1-d1gc37qacf1fd1eee",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": false,
+    "compileHotReLoad": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "enableEngineNative": false,
+    "useIsolateContext": true,
+    "useCompilerModule": true,
+    "userConfirmedUseCompilerModuleSwitch": false,
+    "userConfirmedBundleSwitch": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "compileWorklet": false,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": true,
+    "swc": false,
+    "disableSWC": true
+  },
+  "appid": "wxe030eaf6a9059fca",
+  "projectname": "sportlight",
+  "libVersion": "3.15.2",
+  "compileType": "miniprogram",
+  "srcMiniprogramRoot": "miniprogram/",
+  "packOptions": {
+    "ignore": [
+      {
+        "value": "miniprogram/pages/example",
+        "type": "folder"
+      },
+      {
+        "value": "pages/example",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/pages/index",
+        "type": "folder"
+      },
+      {
+        "value": "pages/index",
+        "type": "folder"
+      },
+      {
+        "value": "cloudfunctions/quickstartFunctions",
+        "type": "folder"
+      },
+      {
+        "value": ".pem",
+        "type": "suffix"
+      },
+      {
+        "value": ".DS_Store",
+        "type": "suffix"
+      },
+      {
+        "value": "miniprogram/images/ai_example1.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/ai_example2.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/create_cbr.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/create_cbrf.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/create_env.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/database.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/database_add.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/default-goods-image.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/env-select.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/function_deploy.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/scf-enter.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/cloud_dev.png",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/copy.svg",
+        "type": "file"
+      },
+      {
+        "value": "miniprogram/images/arrow.svg",
+        "type": "file"
+      },
+      {
+        "value": "images/ai_example1.png",
+        "type": "file"
+      },
+      {
+        "value": "images/ai_example2.png",
+        "type": "file"
+      },
+      {
+        "value": "images/create_cbr.png",
+        "type": "file"
+      },
+      {
+        "value": "images/create_cbrf.png",
+        "type": "file"
+      },
+      {
+        "value": "images/create_env.png",
+        "type": "file"
+      },
+      {
+        "value": "images/database.png",
+        "type": "file"
+      },
+      {
+        "value": "images/database_add.png",
+        "type": "file"
+      },
+      {
+        "value": "images/default-goods-image.png",
+        "type": "file"
+      },
+      {
+        "value": "images/env-select.png",
+        "type": "file"
+      },
+      {
+        "value": "images/function_deploy.png",
+        "type": "file"
+      },
+      {
+        "value": "images/scf-enter.png",
+        "type": "file"
+      },
+      {
+        "value": "images/cloud_dev.png",
+        "type": "file"
+      },
+      {
+        "value": "images/copy.svg",
+        "type": "file"
+      },
+      {
+        "value": "images/arrow.svg",
+        "type": "file"
+      }
+    ],
+    "include": []
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "simulatorPluginLibVersion": {
+    "wxext14566970e7e9f62": "2.27.3"
+  },
+  "projectArchitecture": "multiPlatform"
+}

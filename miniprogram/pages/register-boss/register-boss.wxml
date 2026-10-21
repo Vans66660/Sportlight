@@ -1,0 +1,332 @@
+<view class="container">
+
+<!-- 顶部进度条 -->
+<view class="header">
+  <view class="back" bindtap="goBack">‹</view>
+  <view class="step-bar">
+    <view class="step-dot {{step === 1 ? 'active' : ''}} {{step > 1 ? 'done' : ''}}">
+      <text wx:if="{{step > 1}}">✓</text><text wx:else>1</text>
+    </view>
+    <view class="step-line {{step > 1 ? 'done' : ''}}"></view>
+    <view class="step-dot {{step === 2 ? 'active' : ''}} {{step > 2 ? 'done' : ''}}">
+      <text wx:if="{{step > 2}}">✓</text><text wx:else>2</text>
+    </view>
+    <view class="step-line {{step > 2 ? 'done' : ''}}"></view>
+    <view class="step-dot {{step === 3 ? 'active' : ''}} {{step > 3 ? 'done' : ''}}">
+      <text wx:if="{{step > 3}}">✓</text><text wx:else>3</text>
+    </view>
+  </view>
+</view>
+
+<!-- ==================== Step 1: 三个必填信息 ==================== -->
+<view wx:if="{{step === 1}}" class="step-content">
+  <view class="step-title">主办方入驻</view>
+  <view class="step-sub">请填写以下三项信息</view>
+
+  <view class="label">头像 / Logo <text class="required">*</text></view>
+  <view class="logo-upload {{form.logo ? 'has-logo' : ''}}" bindtap="uploadLogo">
+    <image wx:if="{{form.logo}}" src="{{form.logo}}" class="logo-preview" mode="aspectFill"/>
+    <view wx:else class="logo-placeholder">
+      <text class="logo-icon">+</text><text class="logo-hint">上传Logo</text>
+    </view>
+  </view>
+
+  <view class="label">运营者手机号 <text class="required">*</text></view>
+  <view class="phone-box {{form.phoneVerified ? 'verified' : ''}}">
+    <view class="phone-left">
+      <text wx:if="{{form.phoneVerified}}">{{form.phone}}</text>
+      <text wx:else class="phone-placeholder">点击右侧按钮完成验证</text>
+    </view>
+    <button wx:if="{{!form.phoneVerified}}" class="bind-btn" open-type="getPhoneNumber" bindgetphonenumber="bindPhone">手机号快捷验证</button>
+    <view wx:else class="verified-badge">✓ 已绑定</view>
+  </view>
+  <view class="phone-hint">支持境内/境外手机号，用于身份验证</view>
+
+  <view class="label">所在城市 <text class="required">*</text></view>
+  <picker mode="region" bindchange="onCityChange" value="{{regionValue}}">
+    <view class="select-box">
+      <text class="{{form.city ? '' : 'placeholder'}}">{{form.city || '请选择城市'}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <view class="label">详细介绍</view>
+  <textarea
+    class="textarea-box {{descriptionFocused ? 'focus' : ''}}"
+    placeholder="介绍你的俱乐部/企业/你自己的身份，让其他人了解你的背景，需求方向和合作风格..."
+    maxlength="300"
+    bindinput="onInput"
+    bindfocus="onDescriptionFocus"
+    bindblur="onDescriptionBlur"
+    adjust-position="true"
+    cursor-spacing="180"
+    show-confirm-bar="false"
+    data-field="description"
+    value="{{form.description}}"
+  />
+
+  <view class="btn-next {{canNext1 ? 'active' : 'disabled'}}" bindtap="nextStep">下一步</view>
+  <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+</view>
+
+<!-- ==================== Step 2: 身份类型选择 ==================== -->
+<view wx:if="{{step === 2}}" class="step-content">
+  <view class="step-title">选择身份类型</view>
+  <view class="step-sub">根据你的实际情况选择主体类型</view>
+
+  <view class="identity-row">
+    <view class="identity-card {{form.bossType === item.key ? 'active' : ''}}"
+      wx:for="{{bossTypes}}" wx:key="key" bindtap="setBossType" data-type="{{item.key}}">
+      <view class="identity-emoji">{{item.emoji}}</view>
+      <view class="identity-info-col">
+        <view class="identity-type-name">{{item.label}}</view>
+        <view class="identity-type-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="btn-next {{canNext2 ? 'active' : 'disabled'}}" bindtap="nextStep">下一步</view>
+  <view class="btn-prev" bindtap="prevStep">上一步</view>
+  <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+</view>
+
+<!-- ==================== Step 3: 分支 ==================== -->
+
+<!-- 3A: 个人主体 -->
+<view wx:if="{{step === 3 && form.bossType === 'personal'}}" class="step-content">
+  <view class="step-title">个人主体资料</view>
+  <view class="step-sub">完善展示信息后即可完成注册</view>
+
+  <view class="module-card">
+    <view class="module-header"><view class="module-num">1</view><view class="module-title">基础称呼</view></view>
+    <input class="input-box" placeholder="例：李总、张教练" bindinput="onInput" data-field="displayName" value="{{form.displayName}}"/>
+    <view class="module-hint">用于平台展示</view>
+  </view>
+
+  <view class="module-card" wx:if="{{false}}">
+    <view class="module-header"><view class="module-num">2</view><view class="module-title">实名验证</view></view>
+    <input class="input-box" placeholder="真实姓名" bindinput="onInput" data-field="realName" value="{{form.realName}}"/>
+    <input class="input-box" type="idcard" placeholder="身份证号码" bindinput="onInput" data-field="idCard" value="{{form.idCard}}" maxlength="18"/>
+    <view class="module-hint">根据《网络安全法》要求，信息经加密后仅用于实名核验</view>
+  </view>
+
+  <view class="module-card" wx:if="{{false}}">
+    <view class="module-header"><view class="module-num">3</view><view class="module-title">合规承兑</view></view>
+    <view class="label-sub">收款方式</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.receiveMethod === 'wechat' ? 'active' : ''}}" bindtap="setReceiveMethod" data-method="wechat">微信收款</view>
+    </view>
+    <view wx:if="{{form.receiveMethod === 'wechat'}}" class="receive-detail">
+      <view class="verify-card done">
+        <view class="verify-left"><view class="verify-icon wxpay">💳</view>
+          <view class="verify-info"><view class="verify-name">微信支付实名</view><view class="verify-desc">{{form.realName || '待填写实名'}}</view></view>
+        </view>
+        <button wx:if="{{!form.wxpayBound}}" class="bind-btn" open-type="getPhoneNumber" bindgetphonenumber="bindWxPay">确认绑定</button>
+        <view wx:else class="verified-badge">✓ 已绑定</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="btn-next {{canNext3 ? 'active' : 'disabled'}}" bindtap="finish">完成注册</view>
+  <view class="btn-prev" bindtap="prevStep">上一步</view>
+  <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+</view>
+
+<!-- 3B: 企业主体 -->
+<view wx:if="{{step === 3 && form.bossType === 'company'}}" class="step-content">
+  <view class="step-title">企业认证</view>
+  <view class="step-sub">请提供真实的企业资质信息</view>
+
+  <!-- 企业名称 -->
+  <view class="module-card">
+    <view class="module-header"><view class="module-num">1</view><view class="module-title">企业名称</view></view>
+    <input class="input-box" placeholder="请与营业执照上的名称完全一致" bindinput="onInput" data-field="companyName" value="{{form.companyName}}"/>
+    <view class="module-hint">须与营业执照上的企业名称完全一致</view>
+  </view>
+
+  <!-- 社会信用代码 -->
+  <view class="module-card">
+    <view class="module-header"><view class="module-num">2</view><view class="module-title">统一社会信用代码</view></view>
+    <input class="input-box" type="text" placeholder="18位社会信用代码" bindinput="onInput" data-field="creditCode" value="{{form.creditCode}}" maxlength="18"/>
+    <view class="module-hint">18位字母数字组合，可在营业执照上找到</view>
+  </view>
+
+  <!-- 执照资质 + OCR -->
+  <view class="module-card">
+    <view class="module-header"><view class="module-num">3</view><view class="module-title">执照资质</view></view>
+    <view class="license-upload" bindtap="uploadLicense">
+      <image wx:if="{{form.license}}" src="{{form.license}}" class="license-preview" mode="aspectFit"/>
+      <view wx:else class="license-placeholder">
+        <text class="license-icon">📄</text>
+        <text class="license-hint">上传营业执照原件全景照片</text>
+        <text class="license-sub">支持自动识别</text>
+      </view>
+    </view>
+    <view wx:if="{{form.license}}" class="ocr-status">
+      <text wx:if="{{ocrRunning}}">⏳ 正在识别...</text>
+      <text wx:elif="{{ocrStatus === 'success'}}">✓ OCR识别完成</text>
+      <text wx:elif="{{ocrStatus === 'failed'}}" class="ocr-failed" bindtap="uploadLicense">未识别到营业执照，点击重新上传</text>
+      <text wx:else class="ocr-retry" bindtap="uploadLicense">点击重新上传</text>
+    </view>
+    <view wx:if="{{form.ocrCompanyName || form.ocrCreditCode}}" class="ocr-result">
+      <view wx:if="{{form.ocrCompanyName}}">识别名称：{{form.ocrCompanyName}}</view>
+      <view wx:if="{{form.ocrCreditCode}}">识别代码：{{form.ocrCreditCode}}</view>
+      <view wx:if="{{form.ocrLegalPerson}}">识别法人：{{form.ocrLegalPerson}}</view>
+    </view>
+  </view>
+
+  <!-- 法人/经办人 -->
+  <view class="module-card" wx:if="{{false}}">
+    <view class="module-header"><view class="module-num">4</view><view class="module-title">法人/经办人</view></view>
+    <view class="label-sub">身份选择</view>
+    <view class="tag-row">
+      <view class="tag-btn {{form.legalType === 'legal' ? 'active' : ''}}" bindtap="setLegalType" data-type="legal">我是法人</view>
+      <view class="tag-btn {{form.legalType === 'agent' ? 'active' : ''}}" bindtap="setLegalType" data-type="agent">我是经办人</view>
+    </view>
+    <view wx:if="{{form.legalType === 'legal'}}">
+      <view class="readonly-field">
+        <view class="readonly-label">法人姓名</view>
+        <view class="readonly-value">{{form.ocrLegalPerson || form.legalName || '请先上传并识别营业执照'}}</view>
+      </view>
+      <input class="input-box" type="idcard" placeholder="法人身份证号" bindinput="onInput" data-field="legalIdCard" value="{{form.legalIdCard}}" maxlength="18"/>
+    </view>
+    <view wx:if="{{form.legalType === 'agent'}}">
+      <input class="input-box" placeholder="经办人姓名" bindinput="onInput" data-field="agentName" value="{{form.agentName}}"/>
+      <input class="input-box" type="idcard" placeholder="经办人身份证号" bindinput="onInput" data-field="agentIdCard" value="{{form.agentIdCard}}" maxlength="18"/>
+      <view class="label-sub" style="margin-top:16rpx;">授权委托书</view>
+      <view class="license-upload small" bindtap="uploadAuthLetter">
+        <image wx:if="{{form.authLetter}}" src="{{form.authLetter}}" class="license-preview" mode="aspectFit"/>
+        <view wx:else class="license-placeholder">
+          <text class="license-icon">📝</text><text class="license-hint">上传授权委托书</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="btn-next {{canNext3 ? 'active' : 'disabled'}}" bindtap="finish">完成注册</view>
+  <view class="btn-prev" bindtap="prevStep">上一步</view>
+  <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+</view>
+
+<!-- 3C: 俱乐部主体 -->
+<view wx:if="{{step === 3 && form.bossType === 'club'}}" class="step-content">
+  <view class="step-title">俱乐部认证</view>
+  <view class="step-sub">请提供俱乐部相关信息</view>
+
+  <!-- 1. 俱乐部名称 -->
+  <view class="module-card">
+    <view class="module-header"><view class="module-num">1</view><view class="module-title">俱乐部名称</view></view>
+    <input class="input-box" placeholder="例：成都蓉城FC、东莞民间某俱乐部" bindinput="onInput" data-field="displayName" value="{{form.displayName}}"/>
+    <view class="module-hint">你的俱乐部对外展示名称</view>
+  </view>
+
+  <!-- 2. 俱乐部类型 -->
+  <view class="module-card">
+    <view class="module-header"><view class="module-num">2</view><view class="module-title">俱乐部类型</view></view>
+    <view class="club-type-row">
+      <view class="club-type-card {{form.clubType === 'registered' ? 'active' : ''}}" bindtap="setClubType" data-type="registered">
+        <view class="club-type-emoji">📋</view>
+        <view class="club-type-text">
+          <view class="club-type-label">民办非企业 / 工商注册俱乐部</view>
+          <view class="club-type-desc">持有营业执照或民办非企业登记证书</view>
+        </view>
+      </view>
+      <view class="club-type-card {{form.clubType === 'grassroots' ? 'active' : ''}}" bindtap="setClubType" data-type="grassroots">
+        <view class="club-type-emoji">⚡</view>
+        <view class="club-type-text">
+          <view class="club-type-label">非注册草根俱乐部 / 战队</view>
+          <view class="club-type-desc">无注册资质，民间自发组织</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分支A：已注册 → 营业执照 -->
+  <view wx:if="{{form.clubType === 'registered'}}" class="module-card">
+    <view class="module-header"><view class="module-num">3</view><view class="module-title">执照资质</view></view>
+    <view class="license-upload" bindtap="uploadLicense">
+      <image wx:if="{{form.license}}" src="{{form.license}}" class="license-preview" mode="aspectFit"/>
+      <view wx:else class="license-placeholder">
+        <text class="license-icon">📄</text>
+        <text class="license-hint">上传营业执照或登记证书</text>
+        <text class="license-sub">支持自动识别</text>
+      </view>
+    </view>
+    <view wx:if="{{form.license}}" class="ocr-status">
+      <text wx:if="{{ocrRunning}}">⏳ 正在识别...</text>
+      <text wx:elif="{{ocrStatus === 'success'}}">✓ OCR识别完成</text>
+      <text wx:elif="{{ocrStatus === 'failed'}}" class="ocr-failed" bindtap="uploadLicense">未识别到营业执照，点击重新上传</text>
+      <text wx:else class="ocr-retry" bindtap="uploadLicense">点击重新上传</text>
+    </view>
+    <view wx:if="{{form.ocrCompanyName || form.ocrCreditCode}}" class="ocr-result">
+      <view wx:if="{{form.ocrCompanyName}}">识别名称：{{form.ocrCompanyName}}</view>
+      <view wx:if="{{form.ocrCreditCode}}">识别代码：{{form.ocrCreditCode}}</view>
+      <view wx:if="{{form.ocrLegalPerson}}">识别法人：{{form.ocrLegalPerson}}</view>
+    </view>
+  </view>
+
+  <!-- 分支B：草根 → 首席财务负责人 -->
+  <view wx:if="{{false && form.clubType === 'grassroots'}}" class="module-card">
+    <view class="module-header"><view class="module-num">3</view><view class="module-title">首席财务负责人 / 主理人</view></view>
+    <view class="module-hint" style="margin-bottom:16rpx;">指定一名成员作为财务负责人，需完成个人实名绑定</view>
+    <input class="input-box" placeholder="负责人姓名" bindinput="onInput" data-field="realName" value="{{form.realName}}"/>
+    <input class="input-box" type="idcard" placeholder="负责人身份证号" bindinput="onInput" data-field="idCard" value="{{form.idCard}}" maxlength="18"/>
+    <view class="module-hint">该负责人将作为俱乐部资金往来的法定责任人</view>
+  </view>
+
+  <!-- 4. 俱乐部Logo -->
+  <view class="module-card">
+    <view class="module-header"><view class="module-num">4</view><view class="module-title">俱乐部Logo</view></view>
+    <view class="logo-upload club-logo {{form.clubLogo ? 'has-logo' : ''}}" bindtap="uploadClubLogo">
+      <image wx:if="{{form.clubLogo}}" src="{{form.clubLogo}}" class="logo-preview" mode="aspectFill"/>
+      <view wx:else class="logo-placeholder">
+        <text class="logo-icon">+</text>
+        <text class="logo-hint">上传Logo</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="btn-next {{canNext3 ? 'active' : 'disabled'}}" bindtap="finish">完成注册</view>
+  <view class="btn-prev" bindtap="prevStep">上一步</view>
+  <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+</view>
+
+<!-- ==================== 完成页 ==================== -->
+<view wx:if="{{step === 4}}" class="step-content complete-wrap">
+  <view class="complete-icon">💼</view>
+  <view class="complete-title">入驻成功！</view>
+  <view class="complete-sub">你的{{bossTypeLabel}}账号已就绪</view>
+
+  <view class="complete-card">
+    <view class="complete-row">
+      <text class="complete-label">称呼</text>
+      <text class="complete-value">{{form.displayName || form.companyName || '—'}}</text>
+    </view>
+    <view class="complete-row" wx:if="{{form.bossType === 'company'}}">
+      <text class="complete-label">信用代码</text>
+      <text class="complete-value">{{form.creditCode}}</text>
+    </view>
+    <view class="complete-row">
+      <text class="complete-label">身份类型</text>
+      <text class="complete-value">{{bossTypeLabel}}</text>
+    </view>
+    <view class="complete-row">
+      <text class="complete-label">手机号</text>
+      <text class="complete-value green">✓ 已验证</text>
+    </view>
+    <view class="complete-row" wx:if="{{false}}">
+      <text class="complete-label">实名认证</text>
+      <text class="complete-value green">✓ 已提交</text>
+    </view>
+    <view class="complete-row" style="border:none;">
+      <text class="complete-label">收款方式</text>
+      <text class="complete-value green">✓ 已绑定</text>
+    </view>
+  </view>
+
+  <view class="btn-next active" bindtap="goMarket">进入主页 →</view>
+  <view class="btn-secondary" bindtap="goPublish">发布一个需求</view>
+  <view class="audit-hint">本次注册的所有信息需要审核，请如实填写</view>
+</view>
+
+</view>

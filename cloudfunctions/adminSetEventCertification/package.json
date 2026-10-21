@@ -1,0 +1,10 @@
+{
+  "name": "adminSetEventCertification",
+  "version": "1.0.0",
+  "description": "Admin controls Sportlight event certification",
+  "main": "index.js",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "~3.0.4"
+  }
+}

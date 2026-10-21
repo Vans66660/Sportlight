@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "球馆管理",
+  "usingComponents": {
+    "page-guide": "/components/page-guide/index"
+  }
+}

@@ -1,0 +1,287 @@
+<view class="container">
+  <page-guide guide-key="boss-event-registrants" title="报名管理" content="散客报名池可由主办方统一分配；球队报名由队长维护参赛名单，审核时请核对人数和信息。"></page-guide>
+
+  <view class="event-info" wx:if="{{postInfo}}">
+    <text class="event-title">{{postInfo.title || '赛事'}}</text>
+    <text wx:if="{{postInfo.content}}" class="event-desc">{{postInfo.content}}</text>
+    <view wx:if="{{postInfo.eventDate}}" class="icon-text-pair">
+      <image class="cal-icon-sm" src="/images/icons/calendar.png" mode="aspectFit"/>
+      <text class="event-date"> {{postInfo.eventDate}}</text>
+    </view>
+    <view class="event-meta-row">
+      <view wx:if="{{postInfo.teamSize}}" class="event-meta-tag">{{postInfo.teamSizeLabel || postInfo.teamSize + '人制'}} · 每队{{postInfo.teamSize}}人</view>
+      <view class="event-meta-tag">成队下限 {{postInfo.minTeamSize}} 人</view>
+      <view class="event-meta-tag">{{postInfo.maxTeamMembers ? '队伍上限 ' + postInfo.maxTeamMembers + ' 人' : '队伍人数无上限'}}</view>
+      <view wx:if="{{postInfo.entryFee > 0}}" class="event-meta-tag fee-tag">报名费 ¥{{postInfo.entryFee}}</view>
+    </view>
+  </view>
+
+  <view class="test-actions" wx:if="{{postInfo.canApprove}}">
+    <view class="test-action-btn" bindtap="seedVirtualTeams">添加机器人队伍</view>
+    <view class="test-action-hint">{{seedHint}}</view>
+  </view>
+
+  <!-- 散客报名池 -->
+  <view class="section" wx:if="{{postInfo.registrationMode !== 'team'}}">
+    <view class="section-header">
+      <text class="section-title">散客报名池</text>
+      <text class="section-count">{{solo.length}} 人</text>
+    </view>
+
+    <view class="empty-tip" wx:if="{{!loading && solo.length === 0}}">暂无散客报名</view>
+
+    <view class="person-card" wx:for="{{solo}}" wx:key="_id">
+      <block wx:for="{{item.members}}" wx:for-item="m" wx:key="index">
+        <block wx:if="{{m.openid}}">
+          <image wx:if="{{m.photoUrl}}" class="person-avatar" src="{{m.photoUrl}}" mode="aspectFill" catchtap="goAthleteProfile" data-openid="{{m.openid}}"/>
+          <view wx:else class="person-avatar member-avatar-placeholder" catchtap="goAthleteProfile" data-openid="{{m.openid}}">{{m.name ? m.name[0] : '?'}}</view>
+          <view class="person-info">
+            <view class="person-name">{{m.name || '未知球员'}}</view>
+            <view class="person-meta">等待队长邀请</view>
+          </view>
+          <view
+            wx:if="{{postInfo.isCaptain || postInfo.canManage}}"
+            class="action-btn approve-btn"
+            catchtap="openAssign"
+            data-id="{{item._id}}"
+            data-name="{{m.name || '未知球员'}}"
+          >{{postInfo.canManage ? '分配' : '邀请'}}</view>
+        </block>
+      </block>
+    </view>
+  </view>
+
+  <!-- 待审核 -->
+  <view class="section" wx:if="{{postInfo.canManage || pending.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">{{postInfo.canManage ? '待审核' : '我的队伍'}}</text>
+      <text class="section-count">{{pending.length}} 支队</text>
+      <view wx:if="{{postInfo.canApprove && pending.length > 0}}" class="batch-approve" bindtap="approveEligibleBatch">批量通过达标队伍</view>
+    </view>
+
+    <view wx:if="{{postInfo.canApprove && pending.length > 0}}" class="audit-summary">通过前请核对人数、队员确认状态及线下收款；批量操作仅处理人数达到成队下限的队伍。</view>
+
+    <view class="empty-tip" wx:if="{{!loading && pending.length === 0}}">暂无待审核报名</view>
+
+    <view class="team-card" wx:for="{{pending}}" wx:key="_id" bindtap="openTeamDetail" data-status="pending" data-index="{{index}}">
+      <view class="team-card-header">
+        <view class="team-title-line">
+          <view class="team-source-tag {{item.isRegularTeam ? 'regular' : 'temp'}}">{{item.sourceLabel}}</view>
+          <view class="team-name">{{item.teamName}}</view>
+        </view>
+        <view class="team-count">{{item.memberCount}}人</view>
+      </view>
+      <view class="team-members">
+        <view class="member-row" wx:for="{{item.members}}" wx:for-item="m" wx:key="index">
+          <block wx:if="{{m.openid}}">
+            <image wx:if="{{m.photoUrl}}" class="member-avatar" src="{{m.photoUrl}}" mode="aspectFill" catchtap="goAthleteProfile" data-openid="{{m.openid}}"/>
+            <view wx:else class="member-avatar member-avatar-placeholder" catchtap="goAthleteProfile" data-openid="{{m.openid}}">{{m.name ? m.name[0] : '?'}}</view>
+            <text class="member-name">{{m.name || '未知'}}</text>
+            <text wx:if="{{m.role === 'captain'}}" class="member-status-tag tag-captain">队长</text>
+            <text wx:elif="{{m.confirmed}}" class="member-status-tag tag-confirmed">✓</text>
+            <text wx:elif="{{m.declined}}" class="member-status-tag tag-declined">拒</text>
+            <text wx:else class="member-status-tag tag-pending">待</text>
+          </block>
+          <block wx:else>
+            <view class="member-avatar member-avatar-empty"></view>
+            <text class="member-name member-name-empty">（空缺）</text>
+          </block>
+        </view>
+      </view>
+      <view class="action-btns" wx:if="{{postInfo.canApprove}}">
+        <view class="action-btn reject-btn" catchtap="reject" data-id="{{item._id}}" data-teamname="{{item.teamName}}">拒绝</view>
+        <view class="action-btn approve-btn" catchtap="approve" data-id="{{item._id}}" data-teamname="{{item.teamName}}">通过</view>
+      </view>
+      <view wx:else class="team-hint">已提交给主办方审核，请等待审核结果</view>
+      <view class="team-card-tip">点击卡片查看队伍详情</view>
+    </view>
+  </view>
+
+  <!-- 已确认 -->
+  <view class="section" wx:if="{{postInfo.canManage || confirmed.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">{{postInfo.canManage ? '已确认' : '我的队伍'}}</text>
+      <text class="section-count">{{confirmed.length}} 支队</text>
+    </view>
+
+    <view class="empty-tip" wx:if="{{!loading && confirmed.length === 0}}">暂无已确认报名</view>
+
+    <view class="team-card confirmed-team" wx:for="{{confirmed}}" wx:key="_id" bindtap="openTeamDetail" data-status="confirmed" data-index="{{index}}">
+      <view class="team-card-header">
+        <view class="team-title-line">
+          <view class="team-source-tag {{item.isRegularTeam ? 'regular' : 'temp'}}">{{item.sourceLabel}}</view>
+          <view class="team-name">{{item.teamName}}</view>
+        </view>
+        <view class="{{item.paymentStatus === 'paid' ? 'pay-badge paid' : item.paymentStatus === 'free' ? 'pay-badge free' : 'pay-badge paid'}}">
+          {{item.paymentStatus === 'paid' ? '平台已收 ✓' : item.paymentStatus === 'free' ? '免费 ✓' : '主办方自收'}}
+        </view>
+      </view>
+      <view class="team-members">
+        <view class="member-row" wx:for="{{item.members}}" wx:for-item="m" wx:key="index">
+          <block wx:if="{{m.openid}}">
+            <image wx:if="{{m.photoUrl}}" class="member-avatar" src="{{m.photoUrl}}" mode="aspectFill" catchtap="goAthleteProfile" data-openid="{{m.openid}}"/>
+            <view wx:else class="member-avatar member-avatar-placeholder" catchtap="goAthleteProfile" data-openid="{{m.openid}}">{{m.name ? m.name[0] : '?'}}</view>
+            <text class="member-name">{{m.name || '未知'}}</text>
+          </block>
+        </view>
+      </view>
+      <view class="team-card-tip">点击卡片查看队伍详情</view>
+    </view>
+  </view>
+
+  <!-- 组队中 -->
+  <view class="section" wx:if="{{assembling.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">{{postInfo.canManage ? '组队中' : '我的队伍'}}</text>
+      <text class="section-count">{{assembling.length}} 支队</text>
+    </view>
+    <view class="team-card assembling-team" wx:for="{{assembling}}" wx:key="_id" bindtap="openTeamDetail" data-status="assembling" data-index="{{index}}">
+      <view class="team-card-header">
+        <view class="team-title-line">
+          <view class="team-source-tag {{item.isRegularTeam ? 'regular' : 'temp'}}">{{item.sourceLabel}}</view>
+          <view class="team-name">{{item.teamName}}</view>
+        </view>
+        <view class="assembling-badge">{{item.confirmedCount}}/{{postInfo.minTeamSize}} 人</view>
+      </view>
+      <view class="team-members">
+        <view class="member-row" wx:for="{{item.members}}" wx:for-item="m" wx:key="index">
+          <block wx:if="{{m.openid}}">
+            <image wx:if="{{m.photoUrl}}" class="member-avatar" src="{{m.photoUrl}}" mode="aspectFill" catchtap="goAthleteProfile" data-openid="{{m.openid}}"/>
+            <view wx:else class="member-avatar member-avatar-placeholder" catchtap="goAthleteProfile" data-openid="{{m.openid}}">{{m.name ? m.name[0] : '?'}}</view>
+            <text class="member-name">{{m.name || '未知'}}</text>
+            <text wx:if="{{m.role === 'captain'}}" class="member-status-tag tag-captain">队长</text>
+            <text wx:elif="{{m.confirmed}}" class="member-status-tag tag-confirmed">✓</text>
+            <text wx:elif="{{m.declined}}" class="member-status-tag tag-declined">拒</text>
+            <text wx:else class="member-status-tag tag-pending">待</text>
+          </block>
+          <block wx:else>
+            <view class="member-avatar member-avatar-empty"></view>
+            <text class="member-name member-name-empty">（空缺）</text>
+          </block>
+        </view>
+      </view>
+      <view wx:if="{{(postInfo.isCaptain || postInfo.canApprove) && item.confirmedCount >= postInfo.minTeamSize}}" class="action-btns">
+        <view
+          class="action-btn approve-btn"
+          catchtap="submitTeam"
+          data-id="{{item._id}}"
+          data-count="{{item.confirmedCount}}"
+          data-min="{{postInfo.minTeamSize}}"
+        >{{postInfo.isCaptain ? '提交审核' : '代提交审核'}}</view>
+      </view>
+      <view wx:if="{{(postInfo.isCaptain || postInfo.canApprove) && item.confirmedCount < postInfo.minTeamSize}}" class="team-hint">人数不足，达到 {{postInfo.minTeamSize}} 人后才能提交审核</view>
+      <view class="team-card-tip">点击卡片查看队伍详情</view>
+    </view>
+  </view>
+
+  <view class="management-actions" wx:if="{{postInfo.canManage && confirmed.length > 0}}">
+    <view class="secondary-action" bindtap="generateSchedule">生成赛程</view>
+    <view class="secondary-action" bindtap="goEventSchedule">查看赛程</view>
+  </view>
+
+  <view class="enter-results-btn" wx:if="{{postInfo.canRecord && confirmed.length > 0}}" bindtap="goEnterResults">平台录入成绩</view>
+  <view class="record-tip" wx:elif="{{postInfo.canManage && confirmed.length > 0}}">赛果与积分由 Sportlight 平台统一录入</view>
+
+</view>
+
+<view wx:if="{{detailModal.show}}" class="detail-mask" catchtap="closeTeamDetail"></view>
+<view wx:if="{{detailModal.show}}" class="detail-sheet">
+  <view class="detail-handle"></view>
+  <view class="detail-header">
+    <view>
+      <view class="detail-title">{{detailModal.team.teamName}}</view>
+      <view class="detail-sub">
+        {{detailModal.status === 'pending' ? '待审核' : detailModal.status === 'confirmed' ? '已确认' : '组队中'}}
+        · {{detailModal.team.confirmedCount || detailModal.team.memberCount || 0}}/{{postInfo.minTeamSize}} 人
+      </view>
+    </view>
+    <view
+      wx:if="{{detailModal.status === 'confirmed'}}"
+      class="{{detailModal.team.paymentStatus === 'paid' ? 'pay-badge paid' : detailModal.team.paymentStatus === 'free' ? 'pay-badge free' : 'pay-badge paid'}}"
+    >
+      {{detailModal.team.paymentStatus === 'paid' ? '平台已收' : detailModal.team.paymentStatus === 'free' ? '免费' : '主办方自收'}}
+    </view>
+  </view>
+
+  <scroll-view class="detail-member-list" scroll-y>
+    <view class="detail-member-row" wx:for="{{detailModal.team.members}}" wx:for-item="m" wx:key="index">
+      <block wx:if="{{m.openid}}">
+        <image wx:if="{{m.photoUrl}}" class="detail-avatar" src="{{m.photoUrl}}" mode="aspectFill" catchtap="goAthleteProfile" data-openid="{{m.openid}}"/>
+        <view wx:else class="detail-avatar detail-avatar-placeholder" catchtap="goAthleteProfile" data-openid="{{m.openid}}">{{m.name ? m.name[0] : '?'}}</view>
+        <view class="detail-member-main">
+          <view class="detail-member-name">{{m.name || '未知球员'}}</view>
+          <view class="detail-member-role">{{m.role === 'captain' ? '队长' : m.confirmed ? '已确认' : '待确认'}}</view>
+        </view>
+        <view wx:if="{{m.role === 'captain'}}" class="member-status-tag tag-captain">队长</view>
+        <view wx:elif="{{m.confirmed}}" class="member-status-tag tag-confirmed">✓</view>
+        <view wx:else class="member-status-tag tag-pending">待</view>
+      </block>
+      <block wx:else>
+        <view class="detail-avatar member-avatar-empty"></view>
+        <view class="detail-member-main">
+          <view class="detail-member-name empty-slot">空缺</view>
+          <view class="detail-member-role">可继续邀请</view>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{postInfo.canApprove && detailModal.status === 'pending'}}" class="detail-actions">
+    <view class="detail-action reject" catchtap="rejectDetail">拒绝报名</view>
+    <view class="detail-action approve" catchtap="approveDetail">通过报名</view>
+  </view>
+  <view wx:else class="detail-close" catchtap="closeTeamDetail">关闭</view>
+</view>
+
+<view wx:if="{{rejectModal.show}}" class="reject-mask" catchtap="closeRejectModal"></view>
+<view wx:if="{{rejectModal.show}}" class="reject-sheet" catchtap="noop">
+  <view class="reject-handle"></view>
+  <view class="reject-title">拒绝报名</view>
+  <view class="reject-sub">请选择「{{rejectModal.teamName}}」未通过的原因，队长和队员会收到通知。</view>
+  <view class="reject-reason-grid">
+    <view
+      class="reject-reason-option {{rejectModal.selectedType === item.type ? 'active' : ''}}"
+      wx:for="{{rejectModal.reasons}}"
+      wx:key="type"
+      data-type="{{item.type}}"
+      data-label="{{item.label}}"
+      catchtap="selectRejectReason"
+    >{{item.label}}</view>
+  </view>
+  <textarea
+    wx:if="{{rejectModal.selectedType === 'other'}}"
+    class="reject-textarea"
+    maxlength="120"
+    placeholder="请输入具体拒绝原因"
+    value="{{rejectModal.customReason}}"
+    bindinput="onRejectCustomInput"
+  />
+  <view class="reject-actions">
+    <view class="reject-cancel" catchtap="closeRejectModal">取消</view>
+    <view class="reject-confirm" catchtap="confirmReject">确认拒绝</view>
+  </view>
+</view>
+
+<view wx:if="{{assignModal.show}}" class="assign-mask" catchtap="closeAssign"></view>
+<view wx:if="{{assignModal.show}}" class="assign-sheet">
+  <view class="assign-handle"></view>
+  <view class="assign-title">{{assignModal.directAssign ? '分配' : '邀请'}}「{{assignModal.soloName}}」加入队伍</view>
+  <view class="assign-sub">{{assignModal.directAssign ? '后台直接分配，球员无需二次确认；可分配到组队中、审核中或已通过队伍。' : '对方同意后才会加入；提交审核后不能继续邀请。'}}</view>
+  <scroll-view class="assign-list" scroll-y>
+    <view
+      class="assign-team"
+      wx:for="{{assignModal.teams}}"
+      wx:key="_id"
+      catchtap="assignToTeam"
+      data-teamid="{{item._id}}"
+      data-teamname="{{item.teamName}}"
+    >
+      <view class="assign-team-main">
+        <view class="assign-team-name">{{item.teamName}}</view>
+        <view class="assign-team-meta">{{item.occupiedCount}}/{{postInfo.maxTeamMembers || '不限'}} 人 · 已确认 {{item.confirmedCount}}</view>
+      </view>
+      <view class="assign-team-action">{{assignModal.directAssign ? '分配' : '邀请'}}</view>
+    </view>
+  </scroll-view>
+  <view class="assign-cancel" catchtap="closeAssign">取消</view>
+</view>

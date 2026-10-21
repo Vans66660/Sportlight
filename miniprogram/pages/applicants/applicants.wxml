@@ -1,0 +1,60 @@
+<view class="container">
+
+<view class="header">
+  <view class="back-btn" bindtap="goBack">‹</view>
+  <view class="header-title">报名列表</view>
+  <view class="header-count">{{applicants.length}}人报名</view>
+</view>
+
+<view wx:if="{{applicants.length > 0}}">
+  <view class="section-head">
+    <view class="section-title">待审核</view>
+    <view class="section-count">{{applicants.length}}人</view>
+  </view>
+  <view class="athlete-row" wx:for="{{applicants}}" wx:key="openid">
+    <view class="athlete-left" bindtap="goAthleteProfile" data-openid="{{item.openid}}">
+      <image class="athlete-photo" src="{{item.photo}}" mode="aspectFill"/>
+      <view class="athlete-info">
+        <view class="athlete-name-row">
+          <view class="athlete-name">{{item.name}}</view>
+          <view class="rank-badge rank-{{item.rank}}">{{item.rank}}级</view>
+          <view class="rep-badge rep-{{item.reputationLevel}}">🛡 {{item.reputation}}</view>
+        </view>
+        <view class="athlete-meta">{{item.sport}} · {{item.city}}</view>
+        <view class="athlete-affil">{{item.affiliation}}</view>
+      </view>
+    </view>
+    <view class="action-stack">
+      <view class="select-btn" catchtap="selectAthlete" data-openid="{{item.openid}}" data-name="{{item.name}}">确认合作</view>
+      <view class="reject-btn" catchtap="rejectApplicant" data-openid="{{item.openid}}" data-name="{{item.name}}">拒绝</view>
+    </view>
+  </view>
+</view>
+
+<view class="cancelled-section" wx:if="{{rejectedApplicants.length > 0}}">
+  <view class="section-head">
+    <view class="section-title muted">已取消</view>
+    <view class="section-count muted">{{rejectedApplicants.length}}人</view>
+  </view>
+  <view class="athlete-row cancelled" wx:for="{{rejectedApplicants}}" wx:key="openid">
+    <view class="athlete-left" bindtap="goAthleteProfile" data-openid="{{item.openid}}">
+      <image class="athlete-photo" src="{{item.photo}}" mode="aspectFill"/>
+      <view class="athlete-info">
+        <view class="athlete-name-row">
+          <view class="athlete-name">{{item.name}}</view>
+          <view class="cancelled-badge">已取消</view>
+        </view>
+        <view class="athlete-meta">{{item.sport}} · {{item.city}}</view>
+        <view class="athlete-affil">{{item.affiliation}}</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="empty-wrap" wx:if="{{applicants.length === 0 && rejectedApplicants.length === 0}}">
+  <view class="empty-icon">📋</view>
+  <view class="empty-text">暂无人报名</view>
+  <view class="empty-hint">等待运动员报名中...</view>
+</view>
+
+</view>

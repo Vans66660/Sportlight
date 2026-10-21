@@ -1,0 +1,140 @@
+page {
+  background: #0F0F0F;
+}
+
+.container {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 24rpx 28rpx calc(80rpx + env(safe-area-inset-bottom));
+  background: #0F0F0F;
+}
+
+.section-title {
+  font-size: 22rpx;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 2rpx;
+  margin: 28rpx 0 16rpx;
+}
+
+.status-card,
+.menu-card {
+  background: #1A1A1A;
+  border: 1rpx solid #242424;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.status-row,
+.menu-item {
+  min-height: 96rpx;
+  box-sizing: border-box;
+  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tappable-row {
+  opacity: 1;
+}
+
+.status-action {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.phone-bind-btn {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.phone-bind-btn::after {
+  border: 0;
+}
+
+.phone-bind-text {
+  min-width: 108rpx;
+  height: 48rpx;
+  padding: 0 18rpx;
+  border-radius: 24rpx;
+  background: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 48rpx;
+  text-align: center;
+}
+
+.status-label {
+  font-size: 26rpx;
+  color: #888888;
+}
+
+.status-value {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.status-value.green {
+  color: #3DBB8A;
+}
+
+.status-value.gray {
+  color: #666666;
+}
+
+.menu-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  min-width: 0;
+}
+
+.menu-icon {
+  width: 48rpx;
+  flex-shrink: 0;
+  color: #888888;
+  font-size: 34rpx;
+  text-align: center;
+}
+
+.menu-icon-img { width: 40rpx; height: 40rpx; flex-shrink: 0; }
+
+.menu-icon.switch-icon {
+  color: #FFB36A;
+}
+
+.menu-icon.logout-icon {
+  color: #E54545;
+}
+
+.menu-text {
+  color: #FFFFFF;
+  font-size: 28rpx;
+}
+
+.menu-text.logout-text {
+  color: #E54545;
+}
+
+.menu-arrow {
+  color: #444444;
+  font-size: 36rpx;
+  margin-left: 16rpx;
+}
+
+.divider {
+  height: 1rpx;
+  background: #242424;
+  margin-left: 88rpx;
+}

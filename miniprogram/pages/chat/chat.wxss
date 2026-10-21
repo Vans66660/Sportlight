@@ -1,0 +1,326 @@
+.container {
+  height: 100vh;
+  background-color: #0F0F0F;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #111111;
+  padding: 20rpx 28rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex-shrink: 0;
+}
+
+.back-btn {
+  font-size: 60rpx;
+  color: #FF6B1A;
+  line-height: 1;
+  width: 60rpx;
+}
+
+.header-title {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 订单信息卡 */
+.order-card {
+  background-color: #111111;
+  border-bottom: 1rpx solid #1E1E1E;
+  padding: 20rpx 28rpx;
+  flex-shrink: 0;
+}
+
+.order-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.order-card-type {
+  font-size: 22rpx;
+  font-weight: 500;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+}
+
+.order-card-type.match {
+  background-color: #1A2A1A;
+  color: #3DBB8A;
+}
+
+.order-card-type.ad {
+  background-color: #1A1A2A;
+  color: #5BA8D4;
+}
+
+.order-card-price {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #FF6B1A;
+}
+
+.order-card-title {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  font-weight: 500;
+  margin-bottom: 14rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-card-parties {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.party {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.party-role {
+  font-size: 20rpx;
+  color: #555555;
+  background-color: #1E1E1E;
+  padding: 4rpx 10rpx;
+  border-radius: 6rpx;
+  flex-shrink: 0;
+}
+
+.party-name {
+  font-size: 24rpx;
+  color: #CCCCCC;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.party-arrow {
+  font-size: 22rpx;
+  color: #333333;
+  flex-shrink: 0;
+}
+
+/* 对方消息发件人名字 */
+.sender-name {
+  font-size: 20rpx;
+  color: #555555;
+  margin-bottom: 6rpx;
+  padding: 0 4rpx;
+}
+
+.msg-list {
+  flex: 1;
+  height: 0;
+  overflow: hidden;
+}
+
+.msg-wrap {
+  padding: 20rpx 28rpx calc(130rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.msg-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.msg-row.mine {
+  justify-content: flex-end;
+}
+
+.avatar-wrap {
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: block;
+}
+
+.avatar-placeholder {
+  background-color: #2A2A2A;
+  color: #AAAAAA;
+  font-size: 24rpx;
+  font-weight: 500;
+  text-align: center;
+  line-height: 72rpx;
+}
+
+.bubble-col {
+  display: flex;
+  flex-direction: column;
+  max-width: 65%;
+}
+
+.bubble-col.mine { align-items: flex-end; }
+.bubble-col.theirs { align-items: flex-start; }
+
+.bubble {
+  max-width: 100%;
+  padding: 18rpx 24rpx;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.bubble.mine {
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+  border-bottom-right-radius: 6rpx;
+}
+
+.bubble.pending {
+  opacity: 0.5;
+}
+
+.bubble.theirs {
+  background-color: #1E1E1E;
+  color: #FFFFFF;
+  border-bottom-left-radius: 6rpx;
+}
+
+.msg-time {
+  font-size: 20rpx;
+  color: #444444;
+  margin-top: 6rpx;
+  padding: 0 4rpx;
+}
+
+.input-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #111111;
+  padding: 16rpx 28rpx calc(20rpx + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+  border-top: 1rpx solid #1E1E1E;
+}
+
+.msg-input {
+  flex: 1;
+  background-color: #1E1E1E;
+  border-radius: 40rpx;
+  padding: 18rpx 28rpx;
+  font-size: 28rpx;
+  color: #FFFFFF;
+}
+
+.send-btn {
+  font-size: 26rpx;
+  font-weight: 500;
+  padding: 18rpx 28rpx;
+  border-radius: 40rpx;
+  background-color: #2A2A2A;
+  color: #555555;
+  flex-shrink: 0;
+}
+
+.send-btn.active {
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+}
+
+/* 订单卡片消息 */
+.order-card-msg {
+  background-color: #1E1E1E;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  max-width: 480rpx;
+}
+
+.ocm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+}
+
+.ocm-type-badge {
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+}
+
+.ocm-type-badge.match { background-color: #0d2010; color: #3DBB8A; }
+.ocm-type-badge.ad    { background-color: #0d1020; color: #5BA8D4; }
+
+.ocm-price {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #FF6B1A;
+}
+
+.ocm-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+}
+
+.ocm-meta {
+  font-size: 22rpx;
+  color: #555555;
+}
+
+.ocm-divider {
+  height: 1rpx;
+  background-color: #2A2A2A;
+  margin: 16rpx 0;
+}
+
+.ocm-tip {
+  font-size: 24rpx;
+  color: #AAAAAA;
+  line-height: 1.6;
+}
+
+.ocm-link {
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  color: #FF6B1A;
+  text-align: right;
+}
+
+/* 系统消息 */
+.system-msg-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 4rpx 40rpx;
+}
+
+.system-bubble {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #666666;
+  font-size: 22rpx;
+  line-height: 1.6;
+  padding: 10rpx 24rpx;
+  border-radius: 20rpx;
+  text-align: center;
+  max-width: 520rpx;
+}

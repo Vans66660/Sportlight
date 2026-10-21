@@ -1,0 +1,112 @@
+<view class="editor-page">
+  <view class="editor-head">
+    <view>
+      <view class="editor-title">精修人物边缘</view>
+      <view class="editor-desc">用画笔处理头发、手指、球衣和球鞋边缘</view>
+    </view>
+    <view
+      wx:if="{{ready}}"
+      class="compare-btn {{showOriginal ? 'active' : ''}}"
+      bindtouchstart="showOriginal"
+      bindtouchend="hideOriginal"
+      bindtouchcancel="hideOriginal"
+    >按住看原图</view>
+  </view>
+
+  <scroll-view
+    class="canvas-scroll"
+    scroll-x="{{tool === 'move'}}"
+    scroll-y="{{tool === 'move'}}"
+    enhanced
+    show-scrollbar="{{false}}"
+    enable-flex
+  >
+    <view class="canvas-shell">
+      <view class="checkerboard" style="width: {{canvasWidthPercent}}%;">
+        <canvas
+          type="2d"
+          id="editorCanvas"
+          class="editor-canvas"
+          style="height: {{canvasDisplayHeight}}px;"
+          bindtouchstart="startStroke"
+          bindtouchmove="moveStroke"
+          bindtouchend="endStroke"
+          bindtouchcancel="endStroke"
+        ></canvas>
+        <image
+          wx:if="{{showOriginal && originalTempPath}}"
+          class="original-overlay"
+          style="height: {{canvasDisplayHeight}}px;"
+          src="{{originalTempPath}}"
+          mode="aspectFill"
+        />
+        <view wx:if="{{loading}}" class="loading-mask">
+          <view class="spinner"></view>
+          <text>正在准备精修画布…</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="magnifier-wrap {{magnifierVisible ? 'visible' : ''}}">
+    <canvas type="2d" id="magnifierCanvas" class="magnifier-canvas"></canvas>
+    <view class="magnifier-label">{{tool === 'restore' ? '恢复范围' : '擦除范围'}}</view>
+  </view>
+
+  <view class="editor-panel">
+    <view class="mode-row">
+      <view class="tool-btn {{tool === 'move' ? 'active' : ''}}" data-tool="move" bindtap="selectTool">
+        <view class="move-icon">↔</view>
+        <text>移动画布</text>
+      </view>
+      <view class="tool-btn {{tool === 'erase' ? 'active' : ''}}" data-tool="erase" bindtap="selectTool">
+        <view class="tool-dot erase"></view>
+        <text>擦除</text>
+      </view>
+      <view class="tool-btn {{tool === 'restore' ? 'active' : ''}}" data-tool="restore" bindtap="selectTool">
+        <view class="tool-dot restore"></view>
+        <text>恢复</text>
+      </view>
+    </view>
+
+    <view class="zoom-row">
+      <view class="zoom-label">画布缩放</view>
+      <slider
+        class="zoom-slider"
+        min="1"
+        max="3"
+        step="0.25"
+        value="{{zoom}}"
+        activeColor="#FF641E"
+        backgroundColor="#DDE2E7"
+        block-color="#FF641E"
+        block-size="20"
+        bindchanging="changeZoom"
+        bindchange="changeZoom"
+      />
+      <view class="zoom-value">{{zoomPercent}}%</view>
+    </view>
+
+    <view class="brush-row">
+      <view class="brush-label">画笔</view>
+      <view
+        wx:for="{{brushes}}"
+        wx:key="size"
+        class="brush-option {{brushSize === item.size ? 'active' : ''}}"
+        data-size="{{item.size}}"
+        bindtap="selectBrush"
+      >
+        <view class="brush-preview" style="width: {{item.preview}}rpx; height: {{item.preview}}rpx;"></view>
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+
+    <view class="history-row">
+      <view class="history-btn {{canUndo ? '' : 'disabled'}}" bindtap="undo">撤销</view>
+      <view class="history-btn {{canRedo ? '' : 'disabled'}}" bindtap="redo">重做</view>
+      <view class="history-btn danger" bindtap="resetToAuto">恢复自动抠图</view>
+    </view>
+
+    <button class="save-btn" loading="{{saving}}" disabled="{{!ready || saving}}" bindtap="saveCutout">完成精修</button>
+  </view>
+</view>

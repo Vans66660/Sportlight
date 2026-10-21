@@ -1,0 +1,351 @@
+<view class="container">
+
+<!-- 顶部 -->
+<view class="header">
+  <view class="back-btn" bindtap="goBack">‹</view>
+  <view class="header-title">订单详情</view>
+  <view class="header-right"></view>
+</view>
+
+<!-- 状态卡片 -->
+<view class="status-card">
+  <view class="status-icon">{{statusIcon}}</view>
+  <view class="status-text">{{order.statusLabel}}</view>
+  <view class="status-hint">{{statusHint}}</view>
+</view>
+
+<!-- 订单信息 -->
+<view class="section">
+  <view class="section-title">订单信息</view>
+  <view class="info-card">
+    <view class="info-row">
+      <view class="info-label">订单类型</view>
+      <view class="info-value">
+        <view class="type-tag {{order.type}}">
+          ⚔️ 参赛雇佣
+        </view>
+      </view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">标题</view>
+      <view class="info-value">{{order.title}}</view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">开始日期</view>
+      <view class="info-value">{{order.startDate || order.date}}</view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">截止日期</view>
+      <view class="info-value">{{order.endDate || order.date}}</view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">地点</view>
+      <view class="info-value">{{order.location}}</view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">等级要求</view>
+      <view class="info-value">{{order.rankReq}}</view>
+    </view>
+    <view class="info-row" wx:if="{{order.playerRequirements && order.playerRequirements.length > 0}}">
+      <view class="info-label">球员需求</view>
+      <view class="info-value">
+        <view class="need-tags">
+          <text class="need-tag" wx:for="{{order.playerRequirements}}" wx:key="position">{{item.position}} {{item.count}}人</text>
+        </view>
+      </view>
+    </view>
+    <view class="info-row" wx:if="{{order.remark}}">
+      <view class="info-label">备注</view>
+      <view class="info-value">{{order.remark}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 宣传图片 -->
+<view class="section" wx:if="{{order.promoImages && order.promoImages.length > 0}}">
+  <view class="section-title">宣传图片</view>
+  <scroll-view class="promo-scroll" scroll-x>
+    <view class="promo-row">
+      <image
+        wx:for="{{order.promoImages}}"
+        wx:key="index"
+        class="promo-img"
+        src="{{item}}"
+        mode="aspectFill"
+        bindtap="previewPromoImage"
+        data-index="{{index}}"
+      />
+    </view>
+  </scroll-view>
+</view>
+
+<!-- 报酬信息 -->
+<view class="section">
+  <view class="section-title">报酬信息</view>
+  <view class="price-card">
+    <view class="price-main">
+      <view class="price-label">订单报酬</view>
+      <view class="price-amount">¥{{order.price}}</view>
+    </view>
+    <view class="price-divider"></view>
+    <view class="price-row">
+      <text class="price-item-label">老板支付</text>
+      <text class="price-item-value">¥{{order.price}}</text>
+    </view>
+    <view class="escrow-hint">
+      <image class="escrow-lock-icon" src="/images/icons/lock.png" mode="aspectFit" /><text>{{order.status === 'locked' || order.status === 'settling' || order.status === 'done' ? ' 报酬已托管，完成后自动打款' : ' 锁单时报酬进入平台托管'}}</text>
+    </view>
+    <view wx:if="{{order.exceptionSettlementStatus}}" class="exception-settlement-card {{order.exceptionSettlementStatus}}">
+      <view class="exception-settlement-title">{{order.exceptionSettlementStatus === 'disputed' ? '异常结算申诉处理中' : '异常退场结算方案'}}</view>
+      <view class="exception-settlement-desc">{{order.exceptionSettlementLabel}} · 拟结算 ¥{{order.exceptionSettlementPayout}}</view>
+      <view wx:if="{{order.exceptionSettlementStatus === 'disputed'}}" class="exception-settlement-desc">款项已冻结，平台将在 5 个工作日内介入处理。{{order.exceptionSettlementAppealDeadline ? '处理期限：' + order.exceptionSettlementAppealDeadline : ''}}</view>
+      <view wx:elif="{{order.canConfirmExceptionSettlement}}" class="exception-settlement-actions">
+        <view class="exception-dispute-btn" bindtap="disputeExceptionSettlement">提出异议</view>
+        <view class="exception-confirm-btn" bindtap="confirmExceptionSettlement">确认结算</view>
+      </view>
+    </view>
+    <view wx:if="{{!isBoss && order.canConfirmPayout}}" class="payout-confirm-card">
+      <view class="payout-confirm-title">待确认收款</view>
+      <view class="payout-confirm-desc">平台已发起 ¥{{order.athleteGet}} 打款，点击进入微信官方页面确认后到账。{{order.payoutAutoConfirmRemainText ? '若未操作，将在' + order.payoutAutoConfirmRemainText + '后自动确认。' : ''}}</view>
+      <view class="payout-confirm-btn" bindtap="confirmPayout">确认收款</view>
+    </view>
+    <view wx:if="{{isBoss && order.payoutStatus === 'wait_user_confirm'}}" class="payout-confirm-card">
+      <view class="payout-confirm-title">等待球员确认收款</view>
+      <view class="payout-confirm-desc">平台已发起 ¥{{order.athleteGet}} 打款，球员确认后到账。{{order.payoutAutoConfirmRemainText ? '若球员未操作，将在' + order.payoutAutoConfirmRemainText + '后自动确认。' : ''}}</view>
+    </view>
+    <view wx:if="{{!isBoss && order.canRefreshPayout}}" class="payout-confirm-card">
+      <view class="payout-confirm-title">打款处理中</view>
+      <view class="payout-confirm-desc">平台已发起 ¥{{order.athleteGet}} 打款，微信正在处理，请稍后刷新状态。</view>
+      <view class="payout-confirm-btn" bindtap="refreshPayoutStatus">刷新状态</view>
+    </view>
+    <view wx:if="{{order.payoutStatus === 'failed'}}" class="payout-confirm-card">
+      <view class="payout-confirm-title">打款失败</view>
+      <view class="payout-confirm-desc">{{order.payoutFailReason || '微信商家转账暂未成功，请联系平台处理。'}}</view>
+      <view wx:if="{{isBoss && order.canRetryPayout}}" class="payout-confirm-btn" bindtap="retryPayout">重新发起打款</view>
+    </view>
+  </view>
+</view>
+
+<!-- 报名入口 -->
+<view class="section" wx:if="{{order._id && !isBoss && (order.status === 'open' || (order.applicationStatus && order.applicationStatus !== 'none'))}}">
+  <view class="section-title">报名</view>
+  <view class="apply-card status-{{order.applicationStatus || 'none'}}">
+    <view class="apply-copy">
+      <view class="apply-title">{{order.applicationTitle}}</view>
+      <view class="apply-desc">
+        {{order.applicationDesc}}
+      </view>
+    </view>
+    <view
+      class="detail-apply-btn status-{{order.applicationStatus || 'none'}}"
+      catchtap="applyOrder"
+    >{{order.applicationStatusText || '立即报名'}}</view>
+  </view>
+</view>
+
+<!-- 双方信息 -->
+<view class="section">
+  <view class="section-title">双方信息</view>
+  <view class="party-card">
+    <view class="party-row" catchtap="goBossProfile">
+      <view class="party-avatar boss">
+        <image wx:if="{{order.bossPhoto}}" class="party-avatar-img" src="{{order.bossPhoto}}" mode="aspectFill"/>
+        <text wx:else>{{order.bossName[0]}}</text>
+      </view>
+      <view class="party-info">
+        <view class="party-name">{{order.bossName}}</view>
+        <view class="party-role">发布方</view>
+      </view>
+      <view class="party-verified">✓ 已认证</view>
+    </view>
+    <view class="party-divider"></view>
+    <view class="party-row" catchtap="goAthleteProfile">
+      <view class="party-avatar athlete">
+        <image wx:if="{{order.athletePhoto}}" class="party-avatar-img" src="{{order.athletePhoto}}" mode="aspectFill"/>
+        <text wx:else>{{order.athleteName[0]}}</text>
+      </view>
+      <view class="party-info">
+        <view class="party-name">{{order.athleteName}}</view>
+        <view class="party-role">运动员 · {{order.athleteRank}}级</view>
+      </view>
+      <view class="party-rating">⭐ {{order.athleteRating}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 订单流程 -->
+<view class="section">
+  <view class="section-title">订单进度</view>
+  <view class="timeline">
+    <view class="timeline-item {{order.step >= 1 ? 'done' : ''}}">
+      <view class="tl-dot {{order.step >= 1 ? 'done' : ''}}"></view>
+      <view class="tl-line {{order.step > 1 ? 'done' : ''}}"></view>
+      <view class="tl-content">
+        <view class="tl-title">发布订单</view>
+        <view class="tl-time">{{order.createdAt}}</view>
+      </view>
+    </view>
+    <view class="timeline-item {{order.step >= 2 ? 'done' : ''}}">
+      <view class="tl-dot {{order.step >= 2 ? 'done' : ''}}"></view>
+      <view class="tl-line {{order.step > 2 ? 'done' : ''}}"></view>
+      <view class="tl-content">
+        <view class="tl-title">运动员接单</view>
+        <view class="tl-time">{{order.step >= 2 ? order.acceptedAt : '等待中'}}</view>
+      </view>
+    </view>
+    <view class="timeline-item {{order.step >= 3 ? 'done' : ''}}">
+      <view class="tl-dot {{order.step >= 3 ? 'done' : ''}}"></view>
+      <view class="tl-line {{order.step > 3 ? 'done' : ''}}"></view>
+      <view class="tl-content">
+        <view class="tl-title">确认锁单 · 报酬托管</view>
+        <view class="tl-time">{{order.step >= 3 ? order.lockedAt : '等待中'}}</view>
+      </view>
+    </view>
+    <view class="timeline-item {{order.step >= 4 ? 'done' : ''}}">
+      <view class="tl-dot {{order.step >= 4 ? 'done' : ''}}"></view>
+      <view class="tl-line {{order.step > 4 ? 'done' : ''}}"></view>
+      <view class="tl-content">
+        <view class="tl-title">执行完成</view>
+        <view class="tl-time">{{order.step >= 4 ? order.completedAt : '等待中'}}</view>
+      </view>
+    </view>
+    <view class="timeline-item {{order.step >= 5 ? 'done' : ''}}">
+      <view class="tl-dot {{order.step >= 5 ? 'done' : ''}} last"></view>
+      <view class="tl-content">
+        <view class="tl-title">结算打款</view>
+        <view class="tl-time">{{order.step >= 5 ? order.settledAt : '等待中'}}</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 底部操作 -->
+<view class="bottom-bar">
+  <view class="msg-btn" bindtap="goMessage"><image class="msg-btn-icon" src="/images/icons/comment.png" mode="aspectFit" /> 留言</view>
+  <view
+    wx:if="{{isBoss && order.status === 'open'}}"
+    class="main-btn cancel"
+    bindtap="cancelOrder"
+  >取消订单</view>
+  <!-- 球员：未确认 -->
+  <view
+    wx:if="{{!isBoss && order.status === 'locked' && !order.athleteConfirmed}}"
+    class="main-btn primary"
+    bindtap="completeOrder"
+  >确认完成</view>
+  <!-- 球员：已确认等待中 -->
+  <view
+    wx:if="{{!isBoss && order.status === 'locked' && order.athleteConfirmed}}"
+    class="main-btn waiting"
+  >已确认，等待老板打款</view>
+  <!-- 老板：球员已确认 -->
+  <view
+    wx:if="{{isBoss && order.status === 'locked' && order.athleteConfirmed}}"
+    class="main-btn confirm-pay"
+    bindtap="completeOrder"
+  >球员已完成 · 确认打款</view>
+  <!-- 老板：球员未确认 -->
+  <view
+    wx:if="{{isBoss && order.status === 'locked' && !order.athleteConfirmed}}"
+    class="main-btn primary"
+    bindtap="completeOrder"
+  >确认完成</view>
+  <view
+    wx:if="{{isBoss && order.status === 'locked' && !order.athleteConfirmed}}"
+    class="main-btn cancel"
+    bindtap="cancelCooperation"
+  >取消合作</view>
+  <view
+    wx:if="{{!isBoss && order.status === 'done' && order.canConfirmPayout}}"
+    class="main-btn confirm-pay"
+    bindtap="confirmPayout"
+  >{{payoutConfirming ? '同步中...' : '确认收款'}}</view>
+  <view
+    wx:if="{{!isBoss && order.status === 'done' && order.canRefreshPayout}}"
+    class="main-btn confirm-pay"
+    bindtap="refreshPayoutStatus"
+  >刷新打款状态</view>
+  <view
+    wx:if="{{isBoss && order.status === 'done' && order.canRetryPayout}}"
+    class="main-btn confirm-pay"
+    bindtap="retryPayout"
+  >重新发起打款</view>
+  <view
+    wx:if="{{order.status === 'done' && !order.canConfirmPayout && !order.canRefreshPayout && !order.canRetryPayout}}"
+    class="main-btn done"
+  >已完成 ✓</view>
+</view>
+
+<!-- 评价弹窗 -->
+<view class="eval-mask" wx:if="{{evalModal.show}}" bindtap="closeEval"></view>
+<view class="eval-modal" wx:if="{{evalModal.show}}">
+  <view class="eval-title">完成评价</view>
+  <view class="eval-subtitle">比赛合作</view>
+  <view class="eval-risk-tip">保险风险提示：本平台仅为赛事信息中介，不提供保险。高风险运动建议自行购买运动意外险。</view>
+
+  <view class="eval-row">
+    <view class="eval-label">准时</view>
+    <view class="eval-options">
+      <view class="eval-opt {{evalModal.punctuality === 'good' ? 'active' : ''}}" catchtap="setEval" data-field="punctuality" data-val="good">准时 ✓</view>
+      <view class="eval-opt {{evalModal.punctuality === 'ok' ? 'active' : ''}}" catchtap="setEval" data-field="punctuality" data-val="ok">一般</view>
+      <view class="eval-opt {{evalModal.punctuality === 'bad' ? 'warn' : ''}}" catchtap="setEval" data-field="punctuality" data-val="bad">迟到</view>
+    </view>
+  </view>
+
+  <view class="eval-row">
+    <view class="eval-label">沟通</view>
+    <view class="eval-options">
+      <view class="eval-opt {{evalModal.communication === 'good' ? 'active' : ''}}" catchtap="setEval" data-field="communication" data-val="good">顺畅 ✓</view>
+      <view class="eval-opt {{evalModal.communication === 'ok' ? 'active' : ''}}" catchtap="setEval" data-field="communication" data-val="ok">一般</view>
+      <view class="eval-opt {{evalModal.communication === 'bad' ? 'warn' : ''}}" catchtap="setEval" data-field="communication" data-val="bad">较差</view>
+    </view>
+  </view>
+
+  <view class="eval-rating-row">
+    <view class="eval-label">评分</view>
+    <view class="eval-stars">
+      <text wx:for="{{ratingOptions}}" wx:key="*this" class="eval-star {{evalModal.rating >= item ? 'active' : ''}}" catchtap="setEvalRating" data-rating="{{item}}">★</text>
+    </view>
+  </view>
+
+  <block wx:if="{{order.basketballSettlementEnabled}}">
+    <view class="eval-section-title">篮球赛果与结算</view>
+    <view class="eval-row exit-row">
+      <view class="eval-label">结算情况</view>
+      <view class="eval-options eval-options-wrap">
+        <view class="eval-opt {{evalModal.exitType === 'normal' ? 'active' : ''}}" catchtap="setEval" data-field="exitType" data-val="normal">正常完赛</view>
+        <view class="eval-opt {{evalModal.exitType === 'injury' ? 'active' : ''}}" catchtap="setEval" data-field="exitType" data-val="injury">因公受伤</view>
+        <view class="eval-opt {{evalModal.exitType === 'tactical_low_minutes' ? 'active' : ''}}" catchtap="setEval" data-field="exitType" data-val="tactical_low_minutes">战术少上场</view>
+        <view class="eval-opt {{evalModal.exitType === 'unauthorized_leave' ? 'warn' : ''}}" catchtap="setEval" data-field="exitType" data-val="unauthorized_leave">擅自离场</view>
+      </view>
+    </view>
+    <view wx:if="{{evalModal.exitType !== 'unauthorized_leave'}}" class="eval-row">
+      <view class="eval-label">比赛结果</view>
+      <view class="eval-options">
+        <view class="eval-opt {{evalModal.teamResult === 'win' ? 'active' : ''}}" catchtap="setEval" data-field="teamResult" data-val="win">获胜</view>
+        <view class="eval-opt {{evalModal.teamResult === 'loss' ? 'active' : ''}}" catchtap="setEval" data-field="teamResult" data-val="loss">失利</view>
+      </view>
+    </view>
+    <view wx:if="{{evalModal.exitType !== 'unauthorized_leave'}}" class="eval-row">
+      <view class="eval-label">实际得分</view>
+      <input class="eval-points-input" type="number" placeholder="填写本场累计得分" value="{{evalModal.playerPoints}}" bindinput="onPlayerPointsInput" />
+    </view>
+    <view wx:if="{{evalModal.exitType === 'injury' || evalModal.exitType === 'tactical_low_minutes'}}" class="eval-settlement-tip">保障出场费全额结算；表现提成仅按实际胜负和得分计算，提交后需球员确认。</view>
+    <view wx:if="{{evalModal.exitType === 'unauthorized_leave'}}" class="eval-settlement-tip danger">该情况将结算 ¥0，扣除球员 30 信誉分并退回全部托管款；提交后仍需球员确认。</view>
+  </block>
+
+  <textarea
+    class="eval-comment"
+    placeholder="说说这次合作的感受..."
+    maxlength="120"
+    value="{{evalModal.comment}}"
+    bindinput="onEvalCommentInput"
+  />
+
+  <view class="eval-btns">
+    <view class="eval-cancel" catchtap="closeEval">取消</view>
+    <view class="eval-confirm {{evalSubmitting ? 'disabled' : ''}}" catchtap="submitEval">{{evalSubmitting ? '提交中...' : '完成并评价'}}</view>
+  </view>
+</view>
+
+</view>

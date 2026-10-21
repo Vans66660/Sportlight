@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="date-tabs">
+    <view wx:for="{{dates}}" wx:key="value" class="date-tab {{activeDate === item.value ? 'active' : ''}}" bindtap="switchDate" data-date="{{item.value}}">
+      <view>{{item.label}}</view>
+      <text>{{item.shortDate}}</text>
+    </view>
+  </view>
+
+  <view class="toolbar">
+    <picker mode="selector" range="{{sortOptions}}" range-key="label" value="{{sortIndex}}" bindchange="onSortChange">
+      <view class="sort-btn">{{sortOptions[sortIndex].label}} ▾</view>
+    </picker>
+    <view class="create-btn" bindtap="goCreate">发起组局</view>
+  </view>
+
+  <view class="hint">{{scopedVenue ? '仅显示当前球馆发起的散客组局' : '默认检索 30km 内球局'}}</view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{games.length === 0}}" class="empty">暂无散客组局</view>
+
+  <view wx:else class="game-list">
+    <view wx:for="{{games}}" wx:key="_id" class="game-card" bindtap="goDetail" data-id="{{item._id}}">
+      <image wx:if="{{item.creatorAvatar}}" class="avatar" src="{{item.creatorAvatar}}" mode="aspectFill"/>
+      <view wx:else class="avatar empty-avatar">{{item.creatorInitial}}</view>
+      <view class="game-main">
+        <view class="game-head">
+          <view class="creator">{{item.creatorName}}</view>
+          <view class="distance">{{item.distanceText}}</view>
+        </view>
+        <view class="score-line">平均积分 {{item.avgScore}}</view>
+        <view class="time-line">{{item.date}} {{item.startTime}}-{{item.endTime}}</view>
+        <view class="venue-line">{{item.venueName}} · {{item.courtName}}</view>
+        <view class="people-line {{item.formed ? 'formed' : 'waiting'}}">
+          {{item.formed ? (item.participantCount + '/' + item.maxPlayers) : (item.participantCount + '/' + item.minPlayers)}}
+          <text>{{item.formed ? ' 已发车' : ' 待发车'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

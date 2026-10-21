@@ -1,0 +1,437 @@
+<view class="container">
+
+  <!-- 顶部标题栏 -->
+  <view class="page-header">
+    <view class="page-title">{{userType === 'boss' ? '比赛' : '消息'}}</view>
+    <view wx:if="{{userType === 'boss'}}" class="msg-icon-wrap" catchtap="goMessages">
+      <image class="msg-icon-text" src="/images/icons/chat.png" mode="aspectFit"/>
+      <view wx:if="{{totalUnread > 0}}" class="msg-badge">{{totalUnread > 99 ? '99+' : totalUnread}}</view>
+    </view>
+  </view>
+
+  <!-- ── 球员：消息视图 ── -->
+  <block wx:if="{{userType !== 'boss'}}">
+    <view class="message-tabs">
+      <view class="message-tab {{messageTab === 'chats' ? 'active' : ''}}" data-tab="chats" bindtap="setMessageTab">聊天</view>
+      <view class="message-tab {{messageTab === 'friends' ? 'active' : ''}}" data-tab="friends" bindtap="setMessageTab">
+        好友
+        <text wx:if="{{friendRequests.received.length > 0}}" class="tab-dot">{{friendRequests.received.length}}</text>
+      </view>
+    </view>
+
+    <scroll-view wx:if="{{messageTab === 'chats'}}" class="message-list-scroll" scroll-y>
+      <view class="notif-row" bindtap="goNotifications">
+        <view class="notif-icon-wrap">
+          <image class="notif-icon-img" src="/images/icons/notification.png" mode="aspectFit" />
+          <view wx:if="{{notifUnread > 0}}" class="unread-badge">{{notifUnread}}</view>
+        </view>
+        <view class="msg-info">
+          <view class="msg-header">
+            <view class="msg-name">系统通知</view>
+          </view>
+          <view class="msg-preview">报名审核结果通知</view>
+        </view>
+        <view class="notif-arrow">›</view>
+      </view>
+
+      <view wx:if="{{conversations.length > 0}}">
+        <view
+          class="swipe-wrap"
+          wx:for="{{conversations}}"
+          wx:key="_id"
+          bindtouchstart="onTouchStart"
+          bindtouchmove="onTouchMove"
+          bindtouchend="onTouchEnd"
+          data-index="{{index}}"
+        >
+          <view
+            class="swipe-inner {{item.transitioning ? 'snap' : ''}}"
+            style="transform: translateX({{item.swipeX || 0}}rpx)"
+          >
+            <view
+              class="message-row {{item.pinned ? 'pinned' : ''}}"
+              bindtap="goChat"
+              data-id="{{item._id}}"
+              data-title="{{item.title}}"
+              data-index="{{index}}"
+            >
+              <view class="avatar-wrap">
+                <image wx:if="{{item.otherPhoto}}" class="avatar avatar-img {{item.pinned ? 'avatar-gold' : ''}}" src="{{item.otherPhoto}}" mode="aspectFill"/>
+                <view wx:else class="avatar avatar-text {{item.pinned ? 'avatar-gold' : ''}}">{{item.otherName ? item.otherName[0] : '?'}}</view>
+                <view wx:if="{{item.unreadCount > 0}}" class="unread-badge">{{item.unreadCount}}</view>
+                <view wx:elif="{{item.pinned}}" class="pinned-dot"></view>
+              </view>
+              <view class="msg-info">
+                <view class="msg-header">
+                  <view class="msg-name {{item.pinned ? 'gold' : ''}}">
+                    {{item.otherName || item.title}}
+                    <text wx:if="{{item.pinned}}" class="pinned-tag">进行中</text>
+                  </view>
+                  <view class="msg-status status-{{item.status}}">{{item.statusLabel}}</view>
+                </view>
+                <view class="msg-sub-title {{item.pinned ? 'gold-sub' : ''}}">{{item.title}}</view>
+                <view class="msg-preview {{item.unreadCount > 0 ? 'unread' : ''}}">
+                  {{item.lastMsg || '¥' + item.price + ' · ' + item.city}}
+                </view>
+              </view>
+            </view>
+
+            <view class="delete-action" catchtap="deleteConversation" data-index="{{index}}" data-id="{{item._id}}">
+              <text class="delete-label">删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="message-empty" wx:else>
+        <view class="message-empty-icon">MSG</view>
+        <view class="message-empty-text">暂无消息</view>
+        <view class="message-empty-hint">锁单后可与对方聊天</view>
+      </view>
+    </scroll-view>
+
+    <scroll-view wx:else class="message-list-scroll" scroll-y>
+      <view class="friend-tools">
+        <view class="friend-search-btn" bindtap="goFriendSearch">添加好友</view>
+        <view class="friend-request-row" bindtap="goNotifications">
+          <view>
+            <view class="friend-request-title">好友申请</view>
+            <view class="friend-request-desc">
+              {{friendRequests.received.length > 0 ? friendRequests.received.length + ' 条待处理' : '暂无待处理申请'}}
+            </view>
+          </view>
+          <view class="notif-arrow">›</view>
+        </view>
+      </view>
+
+      <view wx:if="{{friends.length > 0}}" class="friend-list">
+        <view wx:for="{{friends}}" wx:key="_id" class="friend-row" bindtap="goFriendChat" data-index="{{index}}">
+          <image wx:if="{{item.friendAvatar}}" class="avatar avatar-img" src="{{item.friendAvatar}}" mode="aspectFill"/>
+          <view wx:else class="avatar avatar-text">{{item.friendDisplayName ? item.friendDisplayName[0] : '友'}}</view>
+          <view class="msg-info">
+            <view class="msg-header">
+              <view class="msg-name">{{item.remarkName || item.friendDisplayName || '好友'}}</view>
+            </view>
+            <view class="msg-preview">Sport Light ID {{item.friendSportlightId || '未生成'}} · 点击发消息</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="message-empty" wx:else>
+        <view class="message-empty-icon">FRIEND</view>
+        <view class="message-empty-text">还没有好友</view>
+        <view class="message-empty-hint">用 Sport Light ID、真实姓名或昵称添加</view>
+      </view>
+    </scroll-view>
+
+    <view class="schedule-fab" catchtap="goPlayerSchedule">
+      <image class="schedule-fab-icon" src="/images/icons/calendar.png" mode="aspectFit"/>
+      <text>日程</text>
+    </view>
+
+  </block>
+
+  <!-- ── 老板：Tab 切换 + 订单/赛事 ── -->
+  <block wx:if="{{userType === 'boss'}}">
+
+    <!-- Tab 切换（胶囊样式） -->
+    <view class="tab-capsule-wrap">
+      <view class="tab-capsule">
+        <view class="tab-item {{activeTab === 'orders' ? 'tab-active' : ''}}" catchtap="setTab" data-tab="orders">
+          <view class="tab-name">赏金令</view>
+          <view class="tab-num {{totalOrderApplicants > 0 ? 'num-hot' : 'num-empty'}}">{{totalOrderApplicants > 0 ? totalOrderApplicants : '—'}}</view>
+          <view class="tab-label">{{totalOrderApplicants > 0 ? '人新报名' : '暂无新报名'}}</view>
+        </view>
+        <view class="tab-item {{activeTab === 'events' ? 'tab-active' : ''}}" catchtap="setTab" data-tab="events">
+          <view class="tab-name">公开赛</view>
+          <view class="tab-num {{totalPendingCount > 0 ? 'num-hot' : 'num-empty'}}">{{totalPendingCount > 0 ? totalPendingCount : '—'}}</view>
+          <view class="tab-label">{{totalPendingCount > 0 ? '人待审核' : '暂无待审核'}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 订单视图 -->
+    <block wx:if="{{activeTab === 'orders'}}">
+
+    <!-- 状态筛选 -->
+    <scroll-view class="filter-scroll" scroll-x>
+      <view class="filter-row">
+        <view
+          wx:for="{{statusList}}"
+          wx:key="key"
+          class="filter-chip {{activeStatus === item.key ? 'active' : ''}}"
+          catchtap="setStatus"
+          data-key="{{item.key}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+
+    <!-- 订单列表 -->
+    <scroll-view class="list-scroll" scroll-y>
+
+      <view wx:if="{{filteredOrders.length === 0}}" class="empty-wrap">
+        <view class="empty-icon">📋</view>
+        <text class="empty-text">暂无订单</text>
+        <text class="empty-hint">去市场发布吧</text>
+        <view class="empty-btn" catchtap="goMarket">去市场</view>
+      </view>
+
+      <view wx:else class="order-list">
+        <view
+          wx:for="{{filteredOrders}}"
+          wx:key="_id"
+          class="order-card"
+          catchtap="goOrderDetail"
+          data-id="{{item._id}}"
+        >
+          <view class="order-header">
+            <view class="order-type-icon">
+              <image wx:if="{{item.bossLogo}}" class="boss-logo-img" src="{{item.bossLogo}}" mode="aspectFill"/>
+              <text wx:else class="boss-logo-initial">{{item.bossName ? item.bossName[0] : '?'}}</text>
+            </view>
+            <view class="order-info">
+              <view class="order-title">{{item.title}}</view>
+              <view class="order-meta">
+                {{item.sport}}
+                <text wx:if="{{item.status === 'open'}}"> · 已有 {{item.applicants.length}} 人报名</text>
+              </view>
+            </view>
+            <view class="status-badge status-{{item.status}}">{{item.statusLabel}}</view>
+            <view
+              wx:if="{{item.status === 'done' || item.status === 'cancelled'}}"
+              class="order-delete-btn"
+              catchtap="deleteOrder"
+              data-id="{{item._id}}"
+            >×</view>
+          </view>
+
+          <view class="order-body">
+            <view class="order-detail-row">
+              <text class="detail-label">报酬</text>
+              <text class="detail-value orange">¥{{item.price}}</text>
+            </view>
+            <view wx:if="{{item.type === 'match'}}" class="order-detail-row">
+              <text class="detail-label">日期</text>
+              <text class="detail-value">{{item.date}}</text>
+            </view>
+            <view wx:if="{{item.type === 'match'}}" class="order-detail-row">
+              <text class="detail-label">地点</text>
+              <text class="detail-value">{{item.location}}</text>
+            </view>
+          </view>
+
+          <view class="order-actions">
+            <view
+              wx:if="{{item.status === 'open'}}"
+              class="action-btn primary"
+              catchtap="goApplicants"
+              data-id="{{item._id}}"
+            >查看报名{{item.applicants && item.applicants.length > 0 ? '（' + item.applicants.length + '）' : ''}}</view>
+            <view
+              wx:if="{{item.status === 'locked'}}"
+              class="action-btn msg"
+              catchtap="goMessage"
+              data-id="{{item._id}}"
+            >💬 联系球员</view>
+            <view
+              wx:if="{{item.status === 'locked' && item.athleteConfirmed}}"
+              class="action-btn confirm-pay"
+              catchtap="completeOrder"
+              data-id="{{item._id}}"
+            >球员已完成 · 确认打款</view>
+            <view
+              wx:if="{{item.status === 'locked' && !item.athleteConfirmed}}"
+              class="action-btn primary"
+              catchtap="completeOrder"
+              data-id="{{item._id}}"
+            >确认完成</view>
+            <view
+              wx:if="{{item.status === 'locked' && !item.athleteConfirmed}}"
+              class="action-btn cancel"
+              catchtap="cancelCooperation"
+              data-id="{{item._id}}"
+            >取消合作</view>
+            <view
+              wx:if="{{item.status === 'done' && !item.rated}}"
+              class="action-btn primary"
+              catchtap="rateOrder"
+              data-id="{{item._id}}"
+            >⭐ 评价</view>
+            <view
+              wx:if="{{item.status === 'done' && item.rated}}"
+              class="action-btn gray"
+            >已评价 ✓</view>
+            <view
+              wx:if="{{item.status === 'open'}}"
+              class="action-btn cancel"
+              catchtap="cancelOrder"
+              data-id="{{item._id}}"
+            >取消订单</view>
+          </view>
+
+        </view>
+      </view>
+
+    </scroll-view>
+
+    </block><!-- end 订单视图 -->
+
+    <!-- 赛事视图 -->
+    <block wx:elif="{{activeTab === 'events'}}">
+      <scroll-view class="list-scroll" scroll-y>
+
+        <view wx:if="{{myEvents.length === 0}}" class="empty-wrap">
+          <view class="empty-icon">🏆</view>
+          <text class="empty-text">还没有发布赛事</text>
+          <text class="empty-hint">去动态发布一场吧</text>
+          <view class="empty-btn" catchtap="goFeed">去动态</view>
+        </view>
+
+        <view wx:else class="boss-event-list">
+          <view wx:for="{{myEvents}}" wx:key="_id" class="boss-event-wrap">
+
+            <view wx:if="{{item.banner || (item.images && item.images.length > 0)}}" class="ec-img" catchtap="goEventDetail" data-id="{{item._id}}">
+              <image class="ec-img-bg" src="{{item.banner || item.images[0]}}" mode="aspectFill"/>
+              <view class="ec-img-overlay">
+                <view class="ec-top-row">
+                  <view class="ec-status status-{{item.eventStatus}}">
+                    <text class="ec-status-dot">●</text>{{item.statusLabel}}
+                  </view>
+                  <view wx:if="{{item.pendingCount > 0}}" class="event-pending-badge">待审核 {{item.pendingCount}}</view>
+                  <view wx:if="{{item.manageType !== 'collab'}}" class="event-delete-btn on-image" catchtap="deleteEvent" data-id="{{item._id}}" data-registered="{{item.registeredTeams}}">×</view>
+                </view>
+                <view class="ec-bottom">
+                  <view class="ec-title">{{item.title || item.content}}</view>
+                  <view class="ec-meta-row">
+                    <view wx:if="{{item.eventDate}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/calendar.png" mode="aspectFit"/><text> {{item.eventDate}}</text></view>
+                    <text wx:if="{{item.eventDate && item.eventLocation}}"> · </text>
+                    <view wx:if="{{item.eventLocation}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/location.png" mode="aspectFit"/><text> {{item.eventLocation}}</text></view>
+                  </view>
+                  <view class="ec-spots-row">
+                    <text class="ec-spots-label">👥 {{item.registeredTeams}}/{{item.maxTeams || '不限'}} 队已确认</text>
+                  </view>
+                  <view class="ec-footer">
+                    <view wx:if="{{item.prizes && item.prizes.length > 0}}" class="ec-top-prize">
+                      <image wx:if="{{item.prizes[0].label === '冠军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-gold.png" mode="aspectFit"/>
+                      <image wx:elif="{{item.prizes[0].label === '亚军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-silver.png" mode="aspectFit"/>
+                      <image wx:elif="{{item.prizes[0].label === '季军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-bronze.png" mode="aspectFit"/>
+                      <text wx:else class="ec-prize-medal-sm">{{item.prizes[0].medal}}</text>
+                      <text class="ec-prize-name-sm">{{item.prizes[0].label}}</text>
+                      <text class="ec-prize-amount-sm">¥{{item.prizes[0].amount}}</text>
+                    </view>
+                    <view wx:elif="{{item.prizeInfo}}" class="ec-top-prize">
+                      <text class="ec-prize-legacy-sm">{{item.prizeInfo}}</text>
+                    </view>
+                    <view wx:else class="ec-top-prize-placeholder"></view>
+                    <view class="boss-owner-chip">{{item.adminRoleLabel || '主办方'}}</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+
+            <view wx:else class="ec-text ec-sport-{{item.colorClass}}" catchtap="goEventDetail" data-id="{{item._id}}">
+              <view class="ec-text-head">
+                <text class="ec-sport-icon">{{item.sport || '🏆'}}</text>
+                <view class="ec-status status-{{item.eventStatus}}">
+                  <text class="ec-status-dot">●</text>{{item.statusLabel}}
+                </view>
+              </view>
+              <view class="ec-title ec-title-dark">{{item.title || item.content}}</view>
+              <view class="ec-meta-row ec-meta-dark">
+                <view wx:if="{{item.eventDate}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/calendar.png" mode="aspectFit"/><text> {{item.eventDate}}</text></view>
+                <text wx:if="{{item.eventDate && item.eventLocation}}"> · </text>
+                <view wx:if="{{item.eventLocation}}" class="icon-text-pair"><image class="cal-icon-sm" src="/images/icons/location.png" mode="aspectFit"/><text> {{item.eventLocation}}</text></view>
+              </view>
+              <view class="ec-spots-row">
+                <text class="ec-spots-label ec-spots-label-dark">👥 {{item.registeredTeams}}/{{item.maxTeams || '不限'}} 队已确认</text>
+                <text wx:if="{{item.pendingCount > 0}}" class="event-pending-badge inline">待审核 {{item.pendingCount}}</text>
+              </view>
+              <view class="ec-footer ec-footer-text">
+                <view wx:if="{{item.prizes && item.prizes.length > 0}}" class="ec-top-prize">
+                  <image wx:if="{{item.prizes[0].label === '冠军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-gold.png" mode="aspectFit"/>
+                  <image wx:elif="{{item.prizes[0].label === '亚军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-silver.png" mode="aspectFit"/>
+                  <image wx:elif="{{item.prizes[0].label === '季军'}}" class="ec-prize-medal-sm-img" src="/images/icons/medal-bronze.png" mode="aspectFit"/>
+                  <text wx:else class="ec-prize-medal-sm">{{item.prizes[0].medal}}</text>
+                  <text class="ec-prize-amount-sm">¥{{item.prizes[0].amount}}</text>
+                </view>
+                <view wx:elif="{{item.prizeInfo}}" class="ec-top-prize">
+                  <text class="ec-prize-legacy-sm">{{item.prizeInfo}}</text>
+                </view>
+                <view wx:else class="boss-owner-chip dark">{{item.adminRoleLabel || '主办方'}}</view>
+                <view wx:if="{{item.manageType !== 'collab'}}" class="event-delete-btn" catchtap="deleteEvent" data-id="{{item._id}}" data-registered="{{item.registeredTeams}}">×</view>
+              </view>
+            </view>
+
+            <view class="event-mgmt-panel">
+              <view class="event-mgmt-btns">
+                <view wx:if="{{item.canEditEvent}}" class="action-btn msg" catchtap="goEditEvent" data-id="{{item._id}}">编辑</view>
+                <view wx:if="{{item.canManageAdmins}}" class="action-btn msg" catchtap="goEventAdmins" data-id="{{item._id}}">协作管理员</view>
+                <view class="action-btn msg" catchtap="goViewRegistrants" data-id="{{item._id}}">查看报名</view>
+                <view wx:if="{{item.eventStatus === 'closed'}}" class="action-btn gray">平台成绩已录入 ✓</view>
+                <view wx:else class="action-btn gray">等待平台录入成绩</view>
+                <view wx:if="{{item.entryFee > 0}}" class="action-btn gray">报名费主办方自收</view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+      </scroll-view>
+    </block><!-- end 赛事视图 -->
+
+  </block>
+
+  <!-- 评价弹窗 -->
+  <view class="eval-mask" wx:if="{{evalModal.show}}" bindtap="closeEval"></view>
+  <view class="eval-modal" wx:if="{{evalModal.show}}">
+    <view class="eval-title">完成评价</view>
+    <view class="eval-subtitle">比赛合作</view>
+
+    <view class="eval-row">
+      <view class="eval-label">准时</view>
+      <view class="eval-options">
+        <view class="eval-opt {{evalModal.punctuality === 'good' ? 'active' : ''}}" catchtap="setEval" data-field="punctuality" data-val="good">准时 ✓</view>
+        <view class="eval-opt {{evalModal.punctuality === 'ok' ? 'active' : ''}}" catchtap="setEval" data-field="punctuality" data-val="ok">一般</view>
+        <view class="eval-opt {{evalModal.punctuality === 'bad' ? 'warn' : ''}}" catchtap="setEval" data-field="punctuality" data-val="bad">迟到</view>
+      </view>
+    </view>
+
+    <view class="eval-row">
+      <view class="eval-label">沟通</view>
+      <view class="eval-options">
+        <view class="eval-opt {{evalModal.communication === 'good' ? 'active' : ''}}" catchtap="setEval" data-field="communication" data-val="good">顺畅 ✓</view>
+        <view class="eval-opt {{evalModal.communication === 'ok' ? 'active' : ''}}" catchtap="setEval" data-field="communication" data-val="ok">一般</view>
+        <view class="eval-opt {{evalModal.communication === 'bad' ? 'warn' : ''}}" catchtap="setEval" data-field="communication" data-val="bad">较差</view>
+      </view>
+    </view>
+
+    <view class="eval-row" wx:if="{{evalModal.orderType === 'ad'}}">
+      <view class="eval-label">内容</view>
+      <view class="eval-options">
+        <view class="eval-opt {{evalModal.contentQuality === 'good' ? 'active' : ''}}" catchtap="setEval" data-field="contentQuality" data-val="good">优质 ✓</view>
+        <view class="eval-opt {{evalModal.contentQuality === 'ok' ? 'active' : ''}}" catchtap="setEval" data-field="contentQuality" data-val="ok">一般</view>
+        <view class="eval-opt {{evalModal.contentQuality === 'bad' ? 'warn' : ''}}" catchtap="setEval" data-field="contentQuality" data-val="bad">不达标</view>
+      </view>
+    </view>
+
+    <view class="eval-rating-row">
+      <view class="eval-label">评分</view>
+      <view class="eval-stars">
+        <text wx:for="{{ratingOptions}}" wx:key="*this" class="eval-star {{evalModal.rating >= item ? 'active' : ''}}" catchtap="setEvalRating" data-rating="{{item}}">★</text>
+      </view>
+    </view>
+
+    <textarea
+      class="eval-comment"
+      placeholder="说说这次合作的感受..."
+      maxlength="120"
+      value="{{evalModal.comment}}"
+      bindinput="onEvalCommentInput"
+    />
+
+    <view class="eval-btns">
+      <view class="eval-cancel" catchtap="closeEval">取消</view>
+      <view class="eval-confirm" catchtap="submitEval">完成并评价</view>
+    </view>
+  </view>
+
+</view>

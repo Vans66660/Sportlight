@@ -1,0 +1,58 @@
+<view class="container">
+  <map
+    id="courtMap"
+    class="court-map"
+    latitude="{{latitude}}"
+    longitude="{{longitude}}"
+    markers="{{markers}}"
+    scale="14"
+    show-location
+    bindmarkertap="goVenue"
+    bindregionchange="onRegionChange"
+  />
+  <view class="map-tip">
+    <text class="dot green"></text>有局正在拼
+    <text class="dot red"></text>已满/已约
+    <text class="dot blue"></text>空场可约
+  </view>
+
+  <view class="venue-panel">
+    <view class="panel-head">
+      <view>
+        <view class="panel-title">附近球馆</view>
+        <view class="panel-sub">{{loading ? '加载中...' : ('已展示 ' + venues.length + ' 个已审核球馆')}}</view>
+      </view>
+      <view class="refresh-btn" bindtap="loadApprovedVenues">刷新</view>
+    </view>
+
+    <view wx:if="{{!loading && venues.length === 0}}" class="empty-card">
+      暂无已通过审核的球馆
+    </view>
+
+    <scroll-view wx:else class="venue-list" scroll-y>
+      <view
+        wx:for="{{venues}}"
+        wx:key="_id"
+        class="venue-card {{selectedVenue && selectedVenue._id === item._id ? 'active' : ''}}"
+        bindtap="selectVenue"
+        data-id="{{item._id}}"
+      >
+        <image wx:if="{{item.coverImage}}" class="venue-cover" src="{{item.coverImage}}" mode="aspectFill"/>
+        <view wx:else class="venue-cover venue-cover-empty">球馆</view>
+        <view class="venue-main">
+          <view class="venue-name">{{item.name}}</view>
+          <view class="venue-meta">
+            <text class="status-pill {{item.mapStatus}}">{{item.statusLabel}}</text>
+            {{item.distanceText || item.city}} · {{item.venueType || '球馆'}}
+          </view>
+          <view class="venue-address">{{item.locationName || item.address}}</view>
+          <view class="venue-courts">{{item.courtSummary}}</view>
+        </view>
+        <view class="venue-actions">
+          <view class="venue-action ghost" catchtap="openVenue" data-id="{{item._id}}">进入</view>
+          <view class="venue-action" catchtap="navigateVenue" data-id="{{item._id}}">导航</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

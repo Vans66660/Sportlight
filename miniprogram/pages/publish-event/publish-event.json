@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "发布赛事",
+  "navigationBarBackgroundColor": "#111111",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#0F0F0F",
+  "usingComponents": {
+    "page-guide": "/components/page-guide/index"
+  }
+}

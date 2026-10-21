@@ -1,0 +1,50 @@
+<view class="container">
+  <view class="header">
+    <view>
+      <view class="title">匹配球局</view>
+      <view class="sub">为你推荐附近最适合的球局</view>
+    </view>
+    <view class="score-box">
+      <view class="score-label">我的积分</view>
+      <view class="score-value">{{myScore}}</view>
+    </view>
+  </view>
+
+  <view class="summary">
+    <text>{{mySport || '运动'}}</text>
+    <text> · 距离 + 强度 + 成局概率综合排序</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">匹配中...</view>
+  <view wx:elif="{{games.length === 0}}" class="empty">
+    <view>暂无合适球局</view>
+    <view class="empty-link" bindtap="goSoloGames">查看全部散客组局</view>
+  </view>
+
+  <view wx:else class="game-list">
+    <view wx:for="{{games}}" wx:key="_id" class="game-card" bindtap="goDetail" data-id="{{item._id}}">
+      <view class="match-score">
+        <view class="match-num">{{item.matchScore}}</view>
+        <view class="match-label">推荐</view>
+      </view>
+      <view class="game-main">
+        <view class="game-head">
+          <view class="creator-wrap">
+            <image wx:if="{{item.creatorAvatar}}" class="avatar" src="{{item.creatorAvatar}}" mode="aspectFill"/>
+            <view wx:else class="avatar empty-avatar">{{item.creatorInitial}}</view>
+            <view class="creator">{{item.creatorName}}</view>
+          </view>
+          <view class="distance">{{item.distanceText}}</view>
+        </view>
+        <view class="reason">{{item.recommendReason}}</view>
+        <view class="score-line">平均积分 {{item.avgScore}} · 与你相差 {{item.scoreDiffText}}</view>
+        <view class="time-line">{{item.date}} {{item.startTime}}-{{item.endTime}}</view>
+        <view class="venue-line">{{item.venueName}} · {{item.courtName}}</view>
+        <view class="people-line {{item.formed ? 'formed' : 'waiting'}}">
+          {{item.formed ? (item.participantCount + '/' + item.maxPlayers) : (item.participantCount + '/' + item.minPlayers)}}
+          <text>{{item.formed ? ' 已成局' : ' 待发车'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

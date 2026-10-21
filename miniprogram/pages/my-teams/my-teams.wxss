@@ -1,0 +1,19 @@
+page { background: #0F0F0F; }
+.page { min-height: 100vh; padding: 28rpx; box-sizing: border-box; color: #FFFFFF; padding-bottom: calc(120rpx + env(safe-area-inset-bottom)); }
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18rpx; margin-bottom: 28rpx; }
+.title { font-size: 42rpx; font-weight: 800; }
+.sub { margin-top: 8rpx; color: #777777; font-size: 24rpx; line-height: 1.45; }
+.head-btn, .bottom-btn, .manage-btn { background: #FF6B1A; color: #FFFFFF; border-radius: 12rpx; font-size: 24rpx; font-weight: 700; }
+.head-btn { padding: 16rpx 22rpx; flex-shrink: 0; }
+.bottom-btn { height: 88rpx; line-height: 88rpx; text-align: center; margin-top: 28rpx; }
+.section-title { margin: 32rpx 0 16rpx; color: #777777; font-size: 22rpx; letter-spacing: 0; }
+.team-card, .empty-card { background: #1A1A1A; border: 1rpx solid #2A2A2A; border-radius: 16rpx; padding: 20rpx; box-sizing: border-box; margin-bottom: 14rpx; }
+.team-card { display: flex; align-items: center; gap: 18rpx; }
+.logo { width: 78rpx; height: 78rpx; border-radius: 50%; background: #242424; flex-shrink: 0; }
+.logo.text { display: flex; align-items: center; justify-content: center; color: #FF6B1A; font-weight: 800; font-size: 30rpx; }
+.team-main { flex: 1; min-width: 0; }
+.team-name { font-size: 30rpx; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.team-meta, .empty-sub { margin-top: 8rpx; color: #777777; font-size: 23rpx; }
+.manage-btn { padding: 12rpx 20rpx; }
+.arrow { color: #777777; font-size: 42rpx; }
+.empty-title { color: #FFFFFF; font-size: 28rpx; font-weight: 700; }

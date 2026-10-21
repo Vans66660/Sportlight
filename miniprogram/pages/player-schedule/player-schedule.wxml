@@ -1,0 +1,59 @@
+<view class="container">
+  <view class="hero">
+    <view class="hero-kicker">SPORTLIGHT SCHEDULE</view>
+    <view class="hero-title">我的日程</view>
+    <view class="hero-sub">{{scheduleItems.length > 0 ? scheduleItems.length + ' 个比赛安排' : '暂无比赛安排'}}</view>
+  </view>
+
+  <scroll-view class="filter-scroll" scroll-x enable-flex>
+    <view
+      wx:for="{{filterTabs}}"
+      wx:key="value"
+      class="filter-pill {{activeFilter === item.value ? 'active' : ''}}"
+      data-value="{{item.value}}"
+      catchtap="selectFilter"
+    >{{item.label}}</view>
+  </scroll-view>
+
+  <view wx:if="{{!loading && filteredItems.length === 0}}" class="empty-wrap">
+    <view class="empty-icon">CAL</view>
+    <view class="empty-text">{{scheduleItems.length === 0 ? '暂无比赛安排' : '当前筛选暂无日程'}}</view>
+    <view class="empty-hint">{{scheduleItems.length === 0 ? '去战役页报名公开赛或赏金令' : '切换其他状态看看'}}</view>
+    <view wx:if="{{scheduleItems.length === 0}}" class="empty-btn" catchtap="goMarket">去战役</view>
+  </view>
+
+  <view wx:else class="schedule-list">
+    <view
+      wx:for="{{filteredItems}}"
+      wx:key="_id"
+      class="schedule-card type-{{item.itemType}} status-{{item.statusGroup}}"
+      catchtap="goScheduleItem"
+      data-id="{{item._id}}"
+      data-post-id="{{item.postId}}"
+      data-type="{{item.itemType}}"
+    >
+      <view class="card-top">
+        <view class="type-pill">{{item.typeText}}</view>
+        <view class="status-pill">{{item.statusText}}</view>
+      </view>
+
+      <view class="card-title">{{item.title}}</view>
+      <view wx:if="{{item.subTitle}}" class="card-sub">{{item.subTitle}}</view>
+
+      <view class="meta-row">
+        <image class="meta-icon" src="/images/icons/calendar.png" mode="aspectFit"/>
+        <text>{{item.dayLabel}}{{item.timeText ? ' ' + item.timeText : ''}}</text>
+      </view>
+      <view class="meta-row">
+        <image class="meta-icon" src="/images/icons/location.png" mode="aspectFit"/>
+        <text>{{item.locationText}}</text>
+      </view>
+
+      <view class="card-footer">
+        <view wx:if="{{item.price > 0}}" class="price">¥{{item.price}}</view>
+        <view wx:else class="price muted">{{item.sport || '比赛'}}</view>
+        <view class="detail-link">{{item.actionHint}} ›</view>
+      </view>
+    </view>
+  </view>
+</view>

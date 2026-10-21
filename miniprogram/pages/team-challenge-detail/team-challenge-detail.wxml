@@ -1,0 +1,70 @@
+<view class="page" wx:if="{{challenge}}">
+  <view class="versus-card">
+    <view class="team-side" bindtap="goTeam" data-id="{{challenge.homeTeamId}}">
+      <image wx:if="{{challenge.homeTeamLogo}}" class="team-logo" src="{{challenge.homeTeamLogo}}" mode="aspectFill"/>
+      <view wx:else class="team-logo text">{{challenge.homeTeamName ? challenge.homeTeamName[0] : '主'}}</view>
+      <view class="team-name">{{challenge.homeTeamName}}</view>
+      <view class="score">平均{{challenge.homeAverageScore}}</view>
+    </view>
+    <view class="vs">VS</view>
+    <view class="team-side" bindtap="goTeam" data-id="{{challenge.awayTeamId}}">
+      <image wx:if="{{challenge.awayTeamLogo}}" class="team-logo" src="{{challenge.awayTeamLogo}}" mode="aspectFill"/>
+      <view wx:else class="team-logo text">{{challenge.awayTeamName ? challenge.awayTeamName[0] : '?'}}</view>
+      <view class="team-name">{{challenge.awayTeamName || '等待应战'}}</view>
+      <view class="score">{{challenge.awayAverageScore ? '平均' + challenge.awayAverageScore : '待定'}}</view>
+    </view>
+  </view>
+
+  <view class="info-card">
+    <view class="info-row"><text>运动规格</text><text>{{challenge.sport}} {{challenge.spec}}</text></view>
+    <view class="info-row"><text>比赛时间</text><text>{{challenge.date}} {{challenge.time}}</text></view>
+    <view class="info-row"><text>比赛球馆</text><text>{{challenge.venueName}}</text></view>
+    <view class="info-row"><text>费用方式</text><text>{{challenge.paymentMethod === 'host' ? '我方承担' : 'AA'}}</text></view>
+    <view class="info-row"><text>对手要求</text><text>{{challenge.opponentRequirement}}</text></view>
+    <view class="desc">{{challenge.description || '暂无约战说明'}}</view>
+  </view>
+
+  <view class="section-title">应战申请</view>
+  <view wx:if="{{!challenge.applications || challenge.applications.length === 0}}" class="empty">暂无应战申请</view>
+  <view wx:for="{{challenge.applications}}" wx:key="teamId" class="apply-card">
+    <view class="apply-main">
+      <view class="apply-name">{{item.teamName}}</view>
+      <view class="apply-meta">平均积分 {{item.averageScore}}</view>
+    </view>
+    <view wx:if="{{challenge.canConfirmApplication && item.status === 'pending'}}" class="mini-actions">
+      <view class="mini-btn ghost" data-action="reject" data-teamid="{{item.teamId}}" bindtap="confirmApplication">婉拒</view>
+      <view class="mini-btn primary" data-action="accept" data-teamid="{{item.teamId}}" bindtap="confirmApplication">同意</view>
+    </view>
+    <view wx:else class="apply-status">{{item.status === 'accepted' ? '已同意' : item.status === 'rejected' ? '已拒绝' : '待确认'}}</view>
+  </view>
+
+  <view class="section-title">参战名单</view>
+  <view wx:if="{{!challenge.participants || challenge.participants.length === 0}}" class="empty">约战达成后，队员确认参战会显示在这里</view>
+  <view wx:for="{{challenge.participants}}" wx:key="openid" class="member-row" bindtap="goAthlete" data-openid="{{item.openid}}">
+    <image wx:if="{{item.avatar}}" class="avatar" src="{{item.avatar}}" mode="aspectFill"/>
+    <view wx:else class="avatar text">{{item.name ? item.name[0] : '队'}}</view>
+    <view class="member-main">
+      <view class="member-name">{{item.name}}</view>
+      <view class="member-team">{{item.teamName}}</view>
+    </view>
+    <view class="member-score">{{item.score || 0}}</view>
+  </view>
+
+  <view class="bottom-actions">
+    <view wx:if="{{challenge.canApply}}" class="action primary" bindtap="applyBattle">应战</view>
+    <block wx:elif="{{challenge.canRespondDirect}}">
+      <view class="action ghost" data-action="reject" bindtap="respondDirect">婉拒</view>
+      <view class="action primary" data-action="accept" bindtap="respondDirect">应战</view>
+    </block>
+    <block wx:elif="{{challenge.canJoinBattle}}">
+      <view class="action ghost" bindtap="declineBattle">下次再说</view>
+      <view class="action primary" bindtap="joinBattle">参战</view>
+    </block>
+    <block wx:elif="{{challenge.canDeclineBattle}}">
+      <view class="action ghost" bindtap="declineBattle">取消参战</view>
+      <button class="action primary share-btn-native" open-type="share">分享</button>
+    </block>
+    <view wx:else class="action primary" bindtap="shareChallenge">分享</view>
+  </view>
+</view>
+<view wx:else class="loading">加载中...</view>

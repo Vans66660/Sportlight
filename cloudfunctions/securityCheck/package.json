@@ -1,0 +1,9 @@
+{
+  "name": "securityCheck",
+  "version": "1.0.0",
+  "description": "微信内容安全检测（图片+文本）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~3.0.4"
+  }
+}

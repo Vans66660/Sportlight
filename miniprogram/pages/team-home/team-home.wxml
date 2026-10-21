@@ -1,0 +1,71 @@
+<view class="page" wx:if="{{team}}">
+  <view class="hero">
+    <image wx:if="{{team.cover}}" class="cover" src="{{team.cover}}" mode="aspectFill"/>
+    <view wx:else class="cover placeholder"></view>
+    <view class="hero-mask"></view>
+    <view class="hero-info">
+      <image wx:if="{{team.logo}}" class="logo" src="{{team.logo}}" mode="aspectFill"/>
+      <view wx:else class="logo text">{{team.logoText || '队'}}</view>
+      <view class="hero-main">
+        <view class="name">{{team.name}}</view>
+        <view class="meta">{{team.sport}} · {{team.memberCount}}人 · 平均积分 {{team.averageScore}}</view>
+      </view>
+      <view class="recruit {{team.recruitmentStatus === 'open' ? 'open' : ''}}">{{team.recruitmentStatus === 'open' ? '招募中' : '暂不招募'}}</view>
+    </view>
+  </view>
+
+  <view class="content">
+    <view class="section" wx:if="{{team.gallery && team.gallery.length}}">
+      <view class="section-title">相册</view>
+      <scroll-view scroll-x class="gallery-scroll">
+        <view class="gallery-row">
+          <image wx:for="{{team.gallery}}" wx:key="index" class="gallery-img" src="{{item}}" mode="aspectFill" bindtap="previewGallery" data-index="{{index}}"/>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">简介</view>
+      <view class="desc">{{team.description || '暂无球队简介'}}</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">常驻球馆</view>
+      <view wx:for="{{team.venues}}" wx:key="venueId" class="venue-row">
+        <view class="venue-name">{{item.name}}</view>
+        <view class="venue-address">{{item.city}} · {{item.address}}</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">成员名单</view>
+      <view wx:for="{{team.members}}" wx:key="openid" class="member-row" bindtap="goAthlete" data-openid="{{item.openid}}">
+        <image wx:if="{{item.avatar}}" class="member-avatar" src="{{item.avatar}}" mode="aspectFill"/>
+        <view wx:else class="member-avatar text">{{item.name ? item.name[0] : '队'}}</view>
+        <view class="member-main">
+          <view class="member-name">{{item.name}}</view>
+          <view class="member-role">{{item.role === 'captain' ? '队长' : '队员'}}<text wx:if="{{item.position}}"> · {{item.position}}</text></view>
+        </view>
+        <view class="member-score">{{item.score || 0}}</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">近期约战记录</view>
+      <view wx:if="{{!team.recentChallenges || team.recentChallenges.length === 0}}" class="empty">暂无近期约战</view>
+      <view wx:for="{{team.recentChallenges}}" wx:key="_id" class="challenge-row" bindtap="goChallengeDetail" data-id="{{item._id}}">
+        <view class="challenge-title">{{item.homeTeamName}} VS {{item.awayTeamName}}</view>
+        <view class="challenge-meta">{{item.date}} {{item.time}} · {{item.venueName}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-actions">
+    <view wx:if="{{team.isCaptain}}" class="action secondary" bindtap="goManage">管理球队</view>
+    <view wx:elif="{{team.canApply || (inviteMode && !team.isMember && !team.hasPendingApply)}}" class="action secondary" bindtap="applyJoin">申请加入</view>
+    <view wx:elif="{{team.hasPendingApply}}" class="action disabled">已申请</view>
+    <view wx:if="{{team.isCaptain || team.canChallenge}}" class="action primary" bindtap="goChallenge">发起约战</view>
+    <view class="action ghost" bindtap="contactCaptain">联系队长</view>
+  </view>
+</view>
+<view wx:else class="loading">加载中...</view>

@@ -1,0 +1,160 @@
+<view class="container">
+
+  <view class="empty-tip" wx:if="{{!loading && list.length === 0}}">
+    <view class="empty-icon">🔔</view>
+    <view class="empty-text">暂无通知</view>
+  </view>
+
+  <view wx:for="{{list}}" wx:key="_id">
+
+    <!-- 队伍邀请卡片 -->
+    <view wx:if="{{item.type === 'team_invite' || item.type === 'solo_team_invite' || item.type === 'regular_team_event_invite'}}" class="notif-card invite-card {{item.read ? 'read' : 'unread'}}">
+      <view class="notif-dot" wx:if="{{!item.read}}"></view>
+      <view class="notif-body">
+        <view class="notif-label">{{item.label}}</view>
+        <view class="notif-content">{{item.content}}</view>
+        <view class="notif-time">{{item.timeLabel}}</view>
+        <view wx:if="{{item.responded}}" class="invite-responded">
+          {{item.responseAction === 'accept' ? '✅ 已确认参赛' : '❌ 已拒绝'}}
+        </view>
+        <view wx:else class="invite-btns">
+          <view
+            class="invite-btn decline-btn"
+            catchtap="confirmInvite"
+            data-regid="{{item.registrationId}}"
+            data-notifid="{{item._id}}"
+            data-index="{{index}}"
+            data-action="decline"
+            data-invite-type="{{item.type === 'solo_team_invite' ? 'solo' : item.type === 'regular_team_event_invite' ? 'regular' : 'team'}}"
+          >拒绝</view>
+          <view
+            class="invite-btn accept-btn"
+            catchtap="confirmInvite"
+            data-regid="{{item.registrationId}}"
+            data-notifid="{{item._id}}"
+            data-index="{{index}}"
+            data-action="accept"
+            data-invite-type="{{item.type === 'solo_team_invite' ? 'solo' : item.type === 'regular_team_event_invite' ? 'regular' : 'team'}}"
+          >{{item.type === 'solo_team_invite' ? '✓ 加入队伍' : '✓ 确认参赛'}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 好友申请卡片 -->
+    <view wx:elif="{{item.type === 'friend_request'}}" class="notif-card invite-card {{item.read ? 'read' : 'unread'}}">
+      <view class="notif-dot" wx:if="{{!item.read}}"></view>
+      <view class="notif-body">
+        <view class="notif-label">{{item.label}}</view>
+        <view class="notif-content">{{item.content}}</view>
+        <view wx:if="{{item.message}}" class="notif-message">{{item.message}}</view>
+        <view class="notif-time">{{item.timeLabel}}</view>
+        <view wx:if="{{item.responded}}" class="invite-responded">
+          {{item.responseAction === 'approve' ? '✅ 已成为好友' : '❌ 已拒绝'}}
+        </view>
+        <view wx:else class="invite-btns">
+          <view
+            class="invite-btn decline-btn"
+            catchtap="reviewFriend"
+            data-requestid="{{item.requestId}}"
+            data-index="{{index}}"
+            data-action="reject"
+          >拒绝</view>
+          <view
+            class="invite-btn accept-btn"
+            catchtap="reviewFriend"
+            data-requestid="{{item.requestId}}"
+            data-index="{{index}}"
+            data-action="approve"
+          >✓ 通过好友</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 队长邀请入队卡片 -->
+    <view wx:elif="{{item.type === 'team_member_invite'}}" class="notif-card invite-card {{item.read ? 'read' : 'unread'}}">
+      <view class="notif-dot" wx:if="{{!item.read}}"></view>
+      <view class="notif-body">
+        <view class="notif-label">{{item.label}}</view>
+        <view class="notif-content">{{item.content}}</view>
+        <view wx:if="{{item.message}}" class="notif-message">{{item.message}}</view>
+        <view class="notif-time">{{item.timeLabel}}</view>
+        <view wx:if="{{item.responded}}" class="invite-responded">
+          {{item.responseAction === 'accept' ? '✅ 已加入球队' : '❌ 已拒绝'}}
+        </view>
+        <view wx:else class="invite-btns">
+          <view
+            class="invite-btn decline-btn"
+            catchtap="reviewTeamInvite"
+            data-inviteid="{{item.inviteId}}"
+            data-index="{{index}}"
+            data-action="decline"
+          >拒绝</view>
+          <view
+            class="invite-btn accept-btn"
+            catchtap="reviewTeamInvite"
+            data-inviteid="{{item.inviteId}}"
+            data-index="{{index}}"
+            data-action="accept"
+          >✓ 加入球队</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 赛事协作管理员邀请 -->
+    <view wx:elif="{{item.type === 'event_admin_invite'}}" class="notif-card invite-card {{item.read ? 'read' : 'unread'}}">
+      <view class="notif-dot" wx:if="{{!item.read}}"></view>
+      <view class="notif-body">
+        <view class="notif-label">{{item.label}}</view>
+        <view class="notif-content">{{item.content}}</view>
+        <view class="notif-time">{{item.timeLabel}}</view>
+        <view wx:if="{{item.responded}}" class="invite-responded">
+          {{item.responseAction === 'accept' ? '✅ 已接受' : '❌ 已拒绝'}}
+        </view>
+        <view
+          wx:if="{{item.responded && item.responseAction === 'accept'}}"
+          class="invite-btn accept-btn single"
+          catchtap="goPost"
+          data-postid="{{item.postId}}"
+          data-index="{{index}}"
+        >进入赛事</view>
+        <view wx:else class="invite-btns">
+          <view
+            class="invite-btn decline-btn"
+            catchtap="reviewEventAdminInvite"
+            data-eventadminid="{{item.eventAdminId}}"
+            data-notifid="{{item._id}}"
+            data-index="{{index}}"
+            data-action="decline"
+          >拒绝</view>
+          <view
+            class="invite-btn accept-btn"
+            catchtap="reviewEventAdminInvite"
+            data-eventadminid="{{item.eventAdminId}}"
+            data-notifid="{{item._id}}"
+            data-index="{{index}}"
+            data-action="accept"
+          >✓ 接受管理</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 普通通知卡片 -->
+    <view
+      wx:else
+      class="notif-card {{item.read ? 'read' : 'unread'}}"
+      bindtap="goPost"
+      data-postid="{{item.postId}}"
+      data-index="{{index}}"
+    >
+      <view class="notif-dot" wx:if="{{!item.read}}"></view>
+      <view class="notif-body">
+        <view class="notif-label">{{item.label}}</view>
+        <view class="notif-content">{{item.eventContent}}</view>
+        <view class="notif-time">{{item.timeLabel}}</view>
+      </view>
+      <view class="notif-chevron">›</view>
+    </view>
+
+  </view>
+
+</view>

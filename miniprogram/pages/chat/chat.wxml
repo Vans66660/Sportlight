@@ -1,0 +1,109 @@
+<view class="container">
+
+<view class="header">
+  <view class="back-btn" bindtap="goBack">‹</view>
+  <view class="header-title">{{orderTitle}}</view>
+</view>
+
+<!-- 订单信息卡 -->
+<view class="order-card" wx:if="{{order}}">
+  <view class="order-card-top">
+    <view class="order-card-type {{order.type}}">{{order.type === 'match' ? '🏆 参赛' : '📣 广告'}}</view>
+    <view class="order-card-price">¥{{order.price}}</view>
+  </view>
+  <view class="order-card-title">{{order.title}}</view>
+  <view class="order-card-parties">
+    <view class="party">
+      <view class="party-role">老板</view>
+      <view class="party-name">{{order.bossName}}</view>
+    </view>
+    <view class="party-arrow">↔</view>
+    <view class="party">
+      <view class="party-role">球员</view>
+      <view class="party-name">{{order.athleteName}}</view>
+    </view>
+  </view>
+</view>
+
+<scroll-view
+  class="msg-list"
+  scroll-y
+  scroll-into-view="{{scrollToId}}"
+  bindtap="onTapBackground"
+  bindscroll="onChatScroll"
+>
+  <view class="msg-wrap">
+    <view
+      wx:for="{{messages}}"
+      wx:key="_id"
+      id="msg-{{index}}"
+    >
+
+      <!-- 系统消息：居中提示条 -->
+      <view wx:if="{{item.fromOpenid === 'system'}}" class="system-msg-wrap">
+        <view class="system-bubble">{{item.content}}</view>
+      </view>
+
+      <!-- 普通消息：气泡 -->
+      <view wx:else class="msg-row {{item.fromOpenid === myOpenid ? 'mine' : 'theirs'}}">
+        <!-- 对方消息：头像在左 -->
+        <view wx:if="{{item.fromOpenid !== myOpenid}}" class="avatar-wrap" catchtap="goOtherProfile">
+          <image wx:if="{{otherPhoto}}" class="avatar" src="{{otherPhoto}}" mode="aspectFill"/>
+          <view wx:else class="avatar avatar-placeholder">{{otherName[0]}}</view>
+        </view>
+
+        <view class="bubble-col {{item.fromOpenid === myOpenid ? 'mine' : 'theirs'}}">
+          <view class="sender-name" wx:if="{{item.fromOpenid !== myOpenid}}">{{otherName}}</view>
+
+          <!-- 普通文字消息 -->
+          <view wx:if="{{item.type !== 'order_card'}}" class="bubble {{item.fromOpenid === myOpenid ? 'mine' : 'theirs'}} {{item.pending ? 'pending' : ''}}">{{item.content}}</view>
+
+          <!-- 订单卡片消息 -->
+          <view wx:elif="{{item.orderSnapshot}}" class="order-card-msg" bindtap="goOrderDetail">
+            <view class="ocm-header">
+              <view class="ocm-type-badge {{item.orderSnapshot.type}}">
+                {{item.orderSnapshot.type === 'match' ? '⚔️ 参赛' : '📣 广告'}}
+              </view>
+              <view class="ocm-price">¥{{item.orderSnapshot.price}}</view>
+            </view>
+            <view class="ocm-title">{{item.orderSnapshot.title}}</view>
+            <view class="ocm-meta">{{item.orderSnapshot.city}} · {{item.orderSnapshot.date}}</view>
+            <view class="ocm-divider"></view>
+            <view class="ocm-tip">{{item.content}}</view>
+            <view class="ocm-link">查看订单详情 ›</view>
+          </view>
+          <!-- orderSnapshot 缺失时降级为文字气泡 -->
+          <view wx:else class="bubble {{item.fromOpenid === myOpenid ? 'mine' : 'theirs'}} {{item.pending ? 'pending' : ''}}">{{item.content}}</view>
+
+          <view class="msg-time">{{item.timeStr}}</view>
+        </view>
+
+        <!-- 自己消息：头像在右 -->
+        <view wx:if="{{item.fromOpenid === myOpenid}}" class="avatar-wrap" catchtap="goMyProfile">
+          <image wx:if="{{myPhoto}}" class="avatar" src="{{myPhoto}}" mode="aspectFill"/>
+          <view wx:else class="avatar avatar-placeholder">我</view>
+        </view>
+      </view>
+
+    </view>
+  </view>
+</scroll-view>
+
+<view class="input-bar">
+  <input
+    class="msg-input"
+    placeholder="发送消息..."
+    value="{{inputVal}}"
+    bindinput="onInput"
+    confirm-type="send"
+    confirm-hold="{{true}}"
+    hold-keyboard="{{true}}"
+    bindconfirm="sendMsg"
+    bindfocus="onInputFocus"
+    adjust-position
+    cursor-spacing="20"
+  />
+  <view class="send-btn {{inputVal ? 'active' : ''}}" bindtap="sendMsg">发送</view>
+</view>
+
+</view>

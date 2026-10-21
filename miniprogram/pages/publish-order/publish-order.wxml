@@ -1,0 +1,166 @@
+<view class="container">
+
+<page-guide guide-key="boss-publish-order" title="发布需求 · 你将完成什么" content="写清运动类型、地点、时间、预算与合作方式；发布后可在发布管理查看报名者、发起沟通并确认合作。"></page-guide>
+
+<!-- 顶部 -->
+<view class="header">
+  <view class="back-btn" bindtap="goBack">‹</view>
+  <view class="header-title">发布需求</view>
+  <view class="header-right"></view>
+</view>
+
+<!-- 订单类型选择 -->
+<view class="section">
+  <view class="section-title">需求类型</view>
+  <view class="type-row">
+    <view
+      class="type-card {{orderType === 'match' ? 'active' : ''}}"
+      bindtap="setType"
+      data-type="match"
+    >
+      <view class="type-emoji">⚔️</view>
+      <view class="type-name">参赛雇佣</view>
+      <view class="type-desc">为您的队伍寻找球员</view>
+    </view>
+  </view>
+</view>
+
+<!-- 参赛雇佣表单 -->
+<view wx:if="{{orderType === 'match'}}">
+  <view class="section">
+    <view class="section-title">比赛信息</view>
+
+    <view class="label">运动项目</view>
+    <picker bindchange="onSportChange" value="{{sportIndex}}" range="{{sports}}">
+      <view class="select-box">
+        <text>{{form.sport || '选择运动项目'}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </picker>
+
+    <view class="label">开始日期</view>
+    <picker mode="date" bindchange="onStartDateChange">
+      <view class="select-box">
+        <text>{{form.startDate || '选择开始日期'}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </picker>
+
+    <view class="label">截止日期</view>
+    <picker mode="date" start="{{form.startDate}}" bindchange="onEndDateChange">
+      <view class="select-box">
+        <text>{{form.endDate || '选择截止日期'}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </picker>
+
+    <view class="label">比赛地点</view>
+    <view class="select-box location-box" bindtap="chooseLocation">
+      <text>{{form.location || '使用腾讯地图选择场馆'}}</text>
+      <text class="arrow">›</text>
+    </view>
+
+    <view class="label">等级要求</view>
+    <view class="tag-row">
+      <view
+        class="tag-btn {{form.rankReq === item ? 'active' : ''}}"
+        wx:for="{{rankOptions}}"
+        wx:key="index"
+        bindtap="setRankReq"
+        data-rank="{{item}}"
+      >{{item}}</view>
+    </view>
+
+    <view class="label">球员需求</view>
+    <view class="position-hint" wx:if="{{positionOptions.length === 0}}">请先选择相关运动</view>
+    <view class="tag-row position-row">
+      <view
+        class="tag-btn {{item.selected ? 'active' : ''}}"
+        wx:for="{{positionOptions}}"
+        wx:key="position"
+        bindtap="toggleRequirement"
+        data-position="{{item.position}}"
+      >{{item.position}}</view>
+    </view>
+    <view class="requirement-list" wx:if="{{form.playerRequirements.length > 0}}">
+      <view class="requirement-row" wx:for="{{form.playerRequirements}}" wx:key="position">
+        <view class="requirement-position">{{item.position}}</view>
+        <view class="requirement-count">
+          <input class="count-input" type="number" value="{{item.count}}" data-index="{{index}}" bindinput="onRequirementCountInput"/>
+          <text>人</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="label">宣传图片 <text class="label-hint">（最多6张）</text></view>
+    <view class="promo-grid">
+      <view
+        class="promo-item"
+        wx:for="{{form.promoImages}}"
+        wx:key="index"
+      >
+        <image class="promo-img" src="{{item}}" mode="aspectFill"/>
+        <view class="promo-remove" catchtap="removePromoImage" data-index="{{index}}">×</view>
+      </view>
+      <view
+        class="promo-add"
+        wx:if="{{form.promoImages.length < 6}}"
+        bindtap="uploadPromoImage"
+      >
+        <text class="promo-add-icon">+</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 共用字段 -->
+<view class="section" wx:if="{{orderType}}">
+  <view class="label">报酬金额</view>
+  <view class="price-input-wrap">
+    <text class="currency">¥</text>
+    <input
+      class="price-input"
+      type="digit"
+      placeholder="输入金额"
+      bindinput="onInput"
+      data-field="price"
+      value="{{form.price}}"
+    />
+  </view>
+  <view class="price-hint">锁单时报酬将进入平台托管，完成后打款</view>
+
+  <view class="label">报名截止时间</view>
+  <picker mode="date" bindchange="onExpireChange">
+    <view class="select-box">
+      <text>{{form.expireDate || '选择截止日期'}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <view class="label">备注</view>
+  <textarea
+    class="textarea-box"
+    placeholder="其他要求或说明..."
+    bindinput="onInput"
+    data-field="remark"
+    value="{{form.remark}}"
+  />
+
+  <view class="label">球队名称 <text class="label-hint">（选填）</text></view>
+  <input
+    class="input-box"
+    placeholder="输入球队名称，选中球员后将自动加入"
+    bindinput="onInput"
+    data-field="teamName"
+    value="{{form.teamName}}"
+  />
+</view>
+
+<!-- 发布按钮 -->
+<view class="publish-wrap" wx:if="{{orderType}}">
+  <view class="publish-btn {{canPublish && !publishing ? 'active' : 'disabled'}}" bindtap="publishOrder">
+    {{publishing ? '发布中...' : '发布需求'}}
+  </view>
+</view>
+
+</view>

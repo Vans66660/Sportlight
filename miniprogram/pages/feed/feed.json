@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "动态",
+  "navigationBarBackgroundColor": "#111111",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#0F0F0F",
+  "backgroundColorTop": "#0F0F0F",
+  "backgroundColorBottom": "#0F0F0F",
+  "initialRenderingCache": "static"
+}

@@ -1,0 +1,26 @@
+page {
+  background: #0F0F0F;
+}
+
+.container {
+  min-height: 100vh;
+  background: #0F0F0F;
+  padding: 40rpx 28rpx;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 24rpx;
+}
+
+.placeholder {
+  padding: 32rpx 28rpx;
+  border-radius: 16rpx;
+  background: #1A1A1A;
+  border: 1rpx solid #252525;
+  color: #777777;
+  font-size: 24rpx;
+}

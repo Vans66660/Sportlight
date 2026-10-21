@@ -1,0 +1,79 @@
+<view class="tabbar" wx:if="{{isBoss}}">
+
+  <view class="tab-item {{selected === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">
+    <image class="tab-icon" src="{{selected === 0 ? tabs[0].activeIcon : tabs[0].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[0].text}}</text>
+  </view>
+
+  <view class="tab-item {{selected === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">
+    <image class="tab-icon" src="{{selected === 1 ? tabs[1].activeIcon : tabs[1].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[1].text}}</text>
+  </view>
+
+  <view class="tab-center" bindtap="openPublish">
+    <view class="tab-plus">＋</view>
+  </view>
+
+  <view class="tab-item {{selected === 2 ? 'active' : ''}}" bindtap="switchTab" data-index="2">
+    <image class="tab-icon" src="{{selected === 2 ? tabs[2].activeIcon : tabs[2].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[2].text}}</text>
+  </view>
+
+  <view class="tab-item {{selected === 3 ? 'active' : ''}}" bindtap="switchTab" data-index="3">
+    <image class="tab-icon" src="{{selected === 3 ? tabs[3].activeIcon : tabs[3].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[3].text}}</text>
+  </view>
+
+</view>
+
+<view class="tabbar" wx:else>
+
+  <view class="tab-item {{selected === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">
+    <image class="tab-icon" src="{{selected === 0 ? tabs[0].activeIcon : tabs[0].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[0].text}}</text>
+  </view>
+
+  <view class="tab-item {{selected === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">
+    <image class="tab-icon" src="{{selected === 1 ? tabs[1].activeIcon : tabs[1].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[1].text}}</text>
+  </view>
+
+  <view class="tab-item tab-feature {{selected === 2 ? 'active' : ''}}" bindtap="switchTab" data-index="2">
+    <image class="tab-icon" src="{{selected === 2 ? tabs[2].activeIcon : tabs[2].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[2].text}}</text>
+  </view>
+
+  <view class="tab-item {{selected === 3 ? 'active' : ''}}" bindtap="switchTab" data-index="3">
+    <image class="tab-icon" src="{{selected === 3 ? tabs[3].activeIcon : tabs[3].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[3].text}}</text>
+  </view>
+
+  <view class="tab-item {{selected === 4 ? 'active' : ''}}" bindtap="switchTab" data-index="4">
+    <image class="tab-icon" src="{{selected === 4 ? tabs[4].activeIcon : tabs[4].icon}}" mode="aspectFit"/>
+    <text class="tab-text">{{tabs[4].text}}</text>
+  </view>
+
+</view>
+
+<!-- 发布选择弹层 -->
+<view wx:if="{{showPublishSheet}}" class="sheet-mask" catchtap="closePublishSheet">
+  <view class="sheet-wrap" catchtap="">
+    <view class="sheet-handle"></view>
+    <view class="sheet-item" catchtap="goPublishEvent">
+      <view class="sheet-tag tag-event">公开赛</view>
+      <view class="sheet-item-body">
+        <view class="sheet-item-title">发布公开赛</view>
+        <view class="sheet-item-sub">招募球员参加你的比赛</view>
+      </view>
+    </view>
+    <view class="sheet-divider"></view>
+    <view class="sheet-item" catchtap="goPublishOrder">
+      <view class="sheet-tag tag-order">赏金令</view>
+      <view class="sheet-item-body">
+        <view class="sheet-item-title">发布赏金令</view>
+        <view class="sheet-item-sub">寻找合作球员参赛</view>
+      </view>
+    </view>
+    <view class="sheet-cancel" catchtap="closePublishSheet">取消</view>
+  </view>
+</view>

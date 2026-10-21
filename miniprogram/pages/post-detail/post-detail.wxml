@@ -1,0 +1,453 @@
+<view wx:if="{{loadError}}" class="error-wrap">
+  <view class="error-text">加载失败，请返回重试</view>
+  <view class="error-back" bindtap="goBack">返回</view>
+</view>
+
+<view class="container" wx:elif="{{post}}">
+  <scroll-view class="content-scroll" scroll-y>
+
+    <!-- ========== 公开赛详情布局 ========== -->
+    <block wx:if="{{post.postType === 'event'}}">
+
+      <!-- 封面图 -->
+      <view class="ec-cover-wrap">
+        <image wx:if="{{post.banner}}" class="ec-cover-img" src="{{post.banner}}" mode="aspectFill"/>
+        <view wx:else class="ec-cover-fallback">
+          <text class="ec-cover-fallback-text">🏆</text>
+        </view>
+        <view class="ec-cover-overlay">
+          <view class="ec-status-chip {{post.isRegistered ? 'chip-joined' : (post.eventStatus === 'full' || post.eventStatus === 'closed' ? 'chip-closed' : 'chip-open')}}">
+            {{post.isRegistered ? '已参赛' : (post.eventStatus === 'full' ? '名额已满' : post.eventStatus === 'closed' ? '报名已截止' : '招募中')}}
+          </view>
+          <view wx:if="{{post.certificationStatus === 'approved' && post.cardIssuanceEnabled}}" class="ec-platform-certified">S · SPORTLIGHT 官方认证赛事</view>
+          <view wx:if="{{post.isAuthor}}" class="ec-delete-btn" catchtap="deletePost">···</view>
+        </view>
+      </view>
+
+      <!-- 核心信息卡 -->
+      <view class="ec-info-card">
+        <view class="ec-info-row" wx:if="{{post.eventDate}}">
+          <image class="ec-info-icon" src="/images/icons/calendar.png" mode="aspectFit"/>
+          <text class="ec-info-label">比赛日期</text>
+          <text class="ec-info-value">{{post.eventDate}}</text>
+        </view>
+        <view class="ec-info-row" wx:if="{{post.eventLocation}}">
+          <image class="ec-info-icon" src="/images/icons/location.png" mode="aspectFit"/>
+          <text class="ec-info-label">比赛地点</text>
+          <text class="ec-info-value">{{post.eventLocation}}</text>
+        </view>
+        <view class="ec-info-row" wx:if="{{post.entryFee !== undefined}}">
+          <image class="ec-info-icon" src="/images/icons/money.png" mode="aspectFit"/>
+          <text class="ec-info-label">报名费用</text>
+          <text class="ec-info-value {{post.entryFee > 0 ? 'value-paid' : 'value-free'}}">{{post.entryFee > 0 ? '¥' + post.entryFee + ' / 人（报名截止后统一 AA 缴费）' : '免费'}}</text>
+        </view>
+        <view class="ec-info-row" wx:if="{{post.eventFormat}}">
+          <image class="ec-info-icon" src="/images/icons/approval.png" mode="aspectFit" style="opacity:0.55;"/>
+          <text class="ec-info-label">赛制</text>
+          <text class="ec-info-value">{{post.eventFormat}}</text>
+        </view>
+        <view class="ec-info-row" wx:if="{{post.teamSize}}">
+          <image class="ec-info-icon" src="/images/icons/people.png" mode="aspectFit" style="opacity:0.55;"/>
+          <text class="ec-info-label">参赛形式</text>
+          <text class="ec-info-value">{{post.teamSizeLabel || post.teamSize + '人制'}} · 每队{{post.teamSize}}人</text>
+        </view>
+        <view class="ec-info-row" wx:if="{{post.sport === '篮球' && post.basketballConfig}}">
+          <image class="ec-info-icon" src="/images/icons/approval.png" mode="aspectFit" style="opacity:0.55;"/>
+          <text class="ec-info-label">篮球规则</text>
+          <text class="ec-info-value">{{post.basketballConfig.matchStructure}} · {{post.basketballConfig.periodLength}} · {{post.basketballConfig.courtType}}</text>
+        </view>
+        <view class="ec-info-row" wx:if="{{post.sport === '篮球' && post.basketballConfig}}">
+          <image class="ec-info-icon" src="/images/icons/clock.png" mode="aspectFit" style="opacity:0.55;"/>
+          <text class="ec-info-label">加时/暂停</text>
+          <text class="ec-info-value">{{post.basketballConfig.overtime}} · {{post.basketballConfig.timeoutRule}}</text>
+        </view>
+        <view class="ec-info-row" wx:if="{{post.maxTeams}}">
+          <image class="ec-info-icon" src="/images/icons/people.png" mode="aspectFit" style="opacity:0.55;"/>
+          <text class="ec-info-label">赛事规模</text>
+          <text class="ec-info-value">{{post.registeredTeams || 0}} / {{post.maxTeams}} 支队</text>
+        </view>
+        <view class="ec-info-row" wx:if="{{post.registrationDeadline}}">
+          <image class="ec-info-icon" src="/images/icons/clock.png" mode="aspectFit"/>
+          <text class="ec-info-label">报名截止</text>
+          <text class="ec-info-value">{{post.registrationDeadline}}</text>
+        </view>
+      </view>
+
+      <!-- 奖金设置 -->
+      <block wx:if="{{post.prizes && post.prizes.length > 0}}">
+        <view class="ec-prizes-card">
+          <view class="ec-prizes-header"><text class="ec-prizes-title">奖金设置</text></view>
+          <view class="ec-prize-row" wx:for="{{post.prizes}}" wx:key="index">
+            <image wx:if="{{item.label === '冠军'}}" class="ec-prize-medal-img" src="/images/icons/medal-gold.png" mode="aspectFit"/>
+            <image wx:elif="{{item.label === '亚军'}}" class="ec-prize-medal-img" src="/images/icons/medal-silver.png" mode="aspectFit"/>
+            <image wx:elif="{{item.label === '季军'}}" class="ec-prize-medal-img" src="/images/icons/medal-bronze.png" mode="aspectFit"/>
+            <text wx:else class="ec-prize-medal">{{item.medal}}</text>
+            <text class="ec-prize-label">{{item.label}}</text>
+            <text class="ec-prize-amount">¥{{item.amount}}</text>
+          </view>
+        </view>
+      </block>
+      <block wx:elif="{{post.prizeInfo}}">
+        <view class="ec-prizes-card">
+          <view class="ec-prizes-header"><text class="ec-prizes-title">🏅 奖金说明</text></view>
+          <view class="ec-legacy-text">{{post.prizeInfo}}</view>
+        </view>
+      </block>
+
+      <!-- 报名 / 主办方操作 -->
+      <view class="ec-action-wrap">
+        <view wx:if="{{post.canManageEvent}}" class="ec-author-btns">
+          <view class="ec-author-btn ec-btn-green" catchtap="goEventSchedule">
+            进入赛事工作台
+            <text wx:if="{{post.pendingCount > 0}}" class="pending-badge">{{post.pendingCount}} 待审核</text>
+          </view>
+          <view wx:if="{{post.canEditEvent}}" class="ec-author-btn ec-btn-outline" catchtap="goEditEvent">
+            编辑赛事
+          </view>
+          <view wx:if="{{post.isAuthor}}" class="ec-author-btn ec-btn-outline" catchtap="goEventAdmins">
+            协作管理员
+          </view>
+          <view class="ec-author-btn ec-btn-outline" catchtap="goViewRegistrants">报名审核</view>
+        </view>
+        <block wx:else>
+          <block wx:if="{{post.isAssembling}}">
+            <view class="ec-register-btn reg-assembling">👥 组队中 · {{post.myConfirmedCount || 0}}/{{post.minTeamSize}} 人</view>
+            <button wx:if="{{post.isTeamCaptain}}" class="ec-invite-btn" open-type="share">🔗 邀请队友加入</button>
+            <view wx:if="{{post.isTeamCaptain}}" class="ec-author-btn ec-btn-outline" catchtap="goViewRegistrants">查看散客池</view>
+            <view wx:if="{{post.canSubmitReview}}" class="ec-register-btn reg-open" catchtap="submitTeamForReview">提交审核</view>
+            <view wx:if="{{post.canCancelRegistration}}" class="ec-register-btn reg-cancel" catchtap="cancelRegistration">{{post.cancelActionText || '取消报名'}}</view>
+          </block>
+          <block wx:else>
+            <view wx:if="{{post.isExpired && post.isTeamCaptain}}" class="expired-hint">⏰ 上次报名逾期未付款已取消，可重新提交</view>
+            <view wx:elif="{{post.isExpired}}" class="expired-hint">⏰ 原队伍报名已取消，可重新加入队伍</view>
+            <view wx:if="{{post.isSoloPending}}" class="ec-register-btn reg-pending">散客报名池中 …</view>
+            <view
+              wx:elif="{{post.isRegistered || post.isPending || post.eventStatus === 'full' || post.eventStatus === 'closed'}}"
+              class="ec-register-btn {{post.isRegistered ? 'reg-done' : post.isPending ? 'reg-pending' : 'reg-closed'}}"
+            >{{post.isRegistered ? '已参赛 ✓' : post.isPending ? '审核中 …' : post.eventStatus === 'full' ? '名额已满' : '报名已截止'}}</view>
+            <block wx:else>
+              <view class="ec-register-btn reg-open" catchtap="goEventRegistration">立即报名</view>
+            </block>
+            <view wx:if="{{post.canCancelRegistration}}" class="ec-register-btn reg-cancel" catchtap="cancelRegistration">{{post.cancelActionText || '取消报名'}}</view>
+          </block>
+        </block>
+      </view>
+
+      <view class="schedule-entry" catchtap="goEventSchedule">
+        <view>
+          <view class="schedule-entry-title">赛事赛程</view>
+          <view class="schedule-entry-sub">查看小组对阵、比分和积分榜</view>
+        </view>
+        <view class="schedule-entry-arrow">›</view>
+      </view>
+
+      <!-- 数据反馈 -->
+      <view class="dispute-entry" wx:if="{{post.eventStatus !== 'open' && !post.isAuthor}}" catchtap="goDispute">
+        <view class="dispute-entry-text">对数据有异议？请反馈</view>
+        <view class="schedule-entry-arrow">›</view>
+      </view>
+
+      <!-- 赛务联系二维码 -->
+      <view class="captain-qr-card" wx:if="{{post.canViewCaptainGroupQr && post.captainGroupQrUrl}}">
+        <view class="captain-qr-header">
+          <view>
+            <view class="captain-qr-title">赛务联系二维码</view>
+            <view class="captain-qr-sub">仅供已确认参赛队伍接收赛务通知与现场沟通</view>
+          </view>
+        </view>
+        <image class="captain-qr-img" src="{{post.captainGroupQrUrl}}" mode="aspectFit" bindtap="previewCaptainGroupQr"/>
+        <view class="captain-qr-save" catchtap="saveCaptainGroupQr">保存二维码</view>
+      </view>
+
+      <!-- 我的队伍 -->
+      <view class="my-team-card" wx:if="{{!post.isAuthor && !post.isSoloPending && post.myMembers.length > 0}}">
+        <view class="my-team-header">
+          <text class="my-team-title">我的队伍</text>
+          <text class="my-team-name">「{{post.myTeamName}}」</text>
+        </view>
+        <view class="my-team-members">
+          <view class="my-team-member" wx:for="{{post.myMembers}}" wx:key="index">
+            <block wx:if="{{item.openid}}">
+              <image wx:if="{{item.photoUrl}}" class="my-team-avatar" src="{{item.photoUrl}}" mode="aspectFill" catchtap="goAthleteProfile" data-openid="{{item.openid}}"/>
+              <view wx:else class="my-team-avatar my-team-avatar-placeholder" catchtap="goAthleteProfile" data-openid="{{item.openid}}">{{item.name ? item.name[0] : '?'}}</view>
+              <text class="my-team-member-name">{{item.name}}</text>
+              <text wx:if="{{item.role === 'captain'}}" class="my-team-tag tag-captain">队长</text>
+              <text wx:elif="{{item.confirmed}}" class="my-team-tag tag-confirmed">✓</text>
+              <text wx:else class="my-team-tag tag-pending">待确认</text>
+            </block>
+            <block wx:else>
+              <view class="my-team-avatar my-team-avatar-empty"></view>
+              <text class="my-team-member-name empty-slot">（空缺）</text>
+            </block>
+          </view>
+        </view>
+      </view>
+
+      <!-- 主办方 -->
+      <view class="ec-organizer-wrap" bindtap="goAuthorProfile">
+        <text class="ec-organizer-tag">主办方</text>
+        <image class="ec-organizer-avatar" src="{{post.authorPhotoUrl}}" mode="aspectFill"/>
+        <view class="ec-organizer-meta">
+          <text class="ec-organizer-name">{{post.authorName}}</text>
+          <text class="ec-organizer-time">发布于 {{post.timeLabel}}</text>
+        </view>
+      </view>
+
+      <!-- 赛事介绍 -->
+      <view class="ec-desc-wrap" wx:if="{{post.content}}">
+        <text class="ec-desc-label">赛事介绍</text>
+        <text class="ec-desc-text">{{post.content}}</text>
+      </view>
+
+      <!-- 图片 -->
+      <view class="post-images img-count-{{post.imageUrls.length}} ec-images" wx:if="{{post.imageUrls.length > 0}}">
+        <image
+          class="post-img"
+          wx:for="{{post.imageUrls}}"
+          wx:for-item="img"
+          wx:key="index"
+          src="{{img}}"
+          mode="aspectFill"
+          catchtap="previewImage"
+          data-src="{{img}}"
+          data-all="{{post.imageUrls}}"
+        />
+      </view>
+
+      <!-- 点赞 / 评论数 -->
+      <view class="ec-like-row">
+        <view class="like-btn {{post.liked ? 'liked' : ''}}" catchtap="likePost">
+          <text class="like-icon">{{post.liked ? '❤️' : '🤍'}}</text>
+          <text class="like-count">{{post.likesCount}}</text>
+        </view>
+        <view class="comment-stat">
+          <image class="comment-icon-img" src="/images/icons/comment.png" mode="aspectFit" />
+          <text class="comment-count-text">{{comments.length}} 条评论</text>
+        </view>
+      </view>
+
+    </block>
+
+    <!-- ========== 普通动态布局 ========== -->
+    <block wx:else>
+      <view class="post-wrap">
+        <view class="post-header" bindtap="goAuthorProfile">
+          <image class="post-avatar" src="{{post.authorPhotoUrl}}" mode="aspectFill"/>
+          <view class="post-meta">
+            <view class="post-name">{{post.authorName}}</view>
+            <view class="post-time">{{post.timeLabel}}</view>
+          </view>
+<view wx:if="{{post.isAuthor}}" class="post-delete-btn" catchtap="deletePost">···</view>
+        </view>
+        <view class="post-content">{{post.content}}</view>
+        <view class="post-images img-count-{{post.imageUrls.length}}" wx:if="{{post.imageUrls.length > 0}}">
+          <image
+            class="post-img"
+            wx:for="{{post.imageUrls}}"
+            wx:for-item="img"
+            wx:key="index"
+            src="{{img}}"
+            mode="aspectFill"
+            catchtap="previewImage"
+            data-src="{{img}}"
+            data-all="{{post.imageUrls}}"
+          />
+        </view>
+        <view class="action-row">
+          <view class="like-btn {{post.liked ? 'liked' : ''}}" catchtap="likePost">
+            <text class="like-icon">{{post.liked ? '❤️' : '🤍'}}</text>
+            <text class="like-count">{{post.likesCount}}</text>
+          </view>
+          <view class="comment-stat">
+            <image class="comment-icon-img" src="/images/icons/comment.png" mode="aspectFit" />
+            <text class="comment-count-text">{{comments.length}} 条评论</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 赛事成绩 -->
+    <view wx:if="{{post.postType === 'event' && post.eventStatus === 'closed' && eventResults.length > 0}}" class="results-wrap">
+      <view class="results-header">
+        <view class="results-title">🏆 赛事成绩</view>
+        <view class="results-count">{{eventResults.length}}人参赛</view>
+      </view>
+      <view class="results-list">
+        <view class="result-row" wx:for="{{eventResults}}" wx:key="openid">
+          <view class="result-rank">
+            <image wx:if="{{item.medalIcon}}" class="result-medal-icon" src="{{item.medalIcon}}" mode="aspectFit"/>
+            <text wx:elif="{{item.rank !== null}}" class="rank-num">{{item.rank}}</text>
+            <text wx:else class="rank-num gray">—</text>
+          </view>
+          <view class="result-name">{{item.name}}</view>
+          <view class="result-right">
+            <text wx:if="{{item.score !== null}}" class="result-score">{{item.score}}分</text>
+            <text wx:if="{{item.notes}}" class="result-notes">{{item.notes}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评论区 -->
+    <view class="comments-wrap">
+      <view class="comments-title">评论 · {{comments.length}}</view>
+      <view wx:if="{{comments.length === 0}}" class="no-comments">
+        <text>暂无评论，来说点什么吧</text>
+      </view>
+      <view class="comment-list">
+        <view class="comment-item" wx:for="{{comments}}" wx:key="_id" id="comment-{{item._id}}">
+          <image wx:if="{{item.authorPhotoUrl}}" class="comment-avatar" src="{{item.authorPhotoUrl}}" mode="aspectFill"/>
+          <view wx:else class="comment-avatar avatar-placeholder">{{item.authorName ? item.authorName[0] : '?'}}</view>
+          <view class="comment-body">
+            <view class="comment-name">{{item.authorName}}</view>
+            <view class="comment-text">{{item.content}}</view>
+            <view class="comment-time">{{item.timeLabel}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <!-- 评论输入栏 -->
+  <view class="input-bar {{keyboardActive ? 'keyboard-active' : ''}}" style="bottom: {{keyboardBottom}}px;">
+    <input
+      class="comment-input"
+      placeholder="写评论..."
+      placeholder-class="input-placeholder"
+      value="{{inputVal}}"
+      bindinput="onInputChange"
+      confirm-type="send"
+      bindconfirm="sendComment"
+      adjust-position="{{false}}"
+      cursor-spacing="24"
+    />
+    <view class="send-btn {{inputVal ? 'active' : ''}}" catchtap="sendComment">发送</view>
+  </view>
+
+</view>
+
+<!-- 队伍报名弹窗 -->
+<view class="modal-mask" wx:if="{{teamModal.show}}" catchtap="closeTeamModal"></view>
+<view class="team-modal" wx:if="{{teamModal.show}}">
+  <view class="team-modal-body">
+    <view class="team-modal-title">队伍报名</view>
+
+    <view class="team-modal-label">队名</view>
+    <input
+      class="team-modal-input"
+      placeholder="填写你们的队名"
+      value="{{teamModal.teamName}}"
+      confirm-type="done"
+      bindinput="onTeamNameInput"
+      bindblur="onTeamNameInput"
+      bindconfirm="hideKeyboard"
+    />
+
+    <view class="team-modal-label">队员（共{{teamModal.totalSize}}人，可先提交再邀请）</view>
+
+    <!-- 队长（自己，自动确认） -->
+    <view class="member-slot slot-captain">
+      <text class="slot-captain-icon">🙋</text>
+      <text class="slot-captain-name">你（队长）</text>
+    </view>
+
+    <!-- 其他槽位 -->
+    <view wx:for="{{teamModal.slots}}" wx:key="index" class="member-slot {{item.openid ? 'slot-filled' : 'slot-empty'}}" catchtap="openSearchPanel" data-index="{{index}}">
+      <block wx:if="{{item.openid}}">
+        <image wx:if="{{item.photoUrl}}" class="slot-avatar" src="{{item.photoUrl}}" mode="aspectFill"/>
+        <view wx:else class="slot-avatar slot-avatar-placeholder">{{item.name ? item.name[0] : '?'}}</view>
+        <text class="slot-name">{{item.name}}</text>
+        <view class="slot-remove" catchtap="removeMember" data-index="{{index}}">×</view>
+      </block>
+      <block wx:else>
+        <text class="slot-plus">+</text>
+        <text class="slot-hint">点击搜索队友</text>
+      </block>
+    </view>
+  </view>
+</view>
+
+<view class="team-modal-actions" wx:if="{{teamModal.show && !teamModal.searchPanel.show && !teamModal.disclaimerShow}}">
+  <view class="team-modal-cancel" catchtap="closeTeamModal">取消</view>
+  <view
+    class="team-modal-confirm {{teamModal.submitting || teamModal.preparingSubmit ? 'disabled' : ''}}"
+    catchtouchend="handleTeamSubmit"
+    catchtap="handleTeamSubmit"
+  >{{teamModal.submitting ? '提交中...' : teamModal.preparingSubmit ? '准备提交...' : '提交报名'}}</view>
+</view>
+
+<view class="team-disclaimer-mask" wx:if="{{teamModal.disclaimerShow}}" catchtap="cancelTeamDisclaimer"></view>
+<view class="team-disclaimer-modal" wx:if="{{teamModal.disclaimerShow}}">
+  <view class="team-disclaimer-title">保险风险免责声明</view>
+  <view class="team-disclaimer-text">平台仅提供赛事信息服务，不提供保险。参赛前请自行评估运动风险，建议购买运动意外险。</view>
+  <view class="team-disclaimer-actions">
+    <view class="team-disclaimer-cancel" catchtap="cancelTeamDisclaimer">取消</view>
+    <view class="team-disclaimer-confirm" catchtap="confirmTeamDisclaimer">已知晓，继续</view>
+  </view>
+</view>
+
+<!-- 搜索面板（覆盖在弹窗之上） -->
+<view class="search-overlay" wx:if="{{teamModal.searchPanel.show}}">
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索昵称..."
+      value="{{teamModal.searchPanel.keyword}}"
+      bindinput="onSearchInput"
+      focus="{{teamModal.searchPanel.show}}"
+      confirm-type="search"
+    />
+    <view class="search-cancel" catchtap="closeSearchPanel">取消</view>
+  </view>
+  <view class="search-body">
+    <block wx:if="{{!teamModal.searchPanel.keyword}}">
+      <view class="quick-section">
+        <view class="quick-title-row">
+          <text class="quick-title">常用队友</text>
+          <text class="quick-sub">来自你以前组过的队伍</text>
+        </view>
+        <view wx:if="{{teamModal.searchPanel.loadingFrequent}}" class="search-tip">加载中...</view>
+        <view wx:elif="{{teamModal.searchPanel.frequent.length === 0}}" class="search-tip">暂无常用队友，输入昵称搜索添加</view>
+        <view wx:else class="search-results">
+          <view
+            wx:for="{{teamModal.searchPanel.frequent}}"
+            wx:key="openid"
+            class="search-result-item {{teamModal.searchPanel.selectedOpenids[item.openid] || teamModal.searchPanel.selectedNames[item.name] ? 'result-disabled' : ''}}"
+            catchtap="selectMember"
+            data-user="{{item}}"
+            data-disabled="{{teamModal.searchPanel.selectedOpenids[item.openid] || teamModal.searchPanel.selectedNames[item.name]}}"
+          >
+            <image wx:if="{{item.photoUrl}}" class="result-avatar" src="{{item.photoUrl}}" mode="aspectFill"/>
+            <view wx:else class="result-avatar result-avatar-placeholder">{{item.name ? item.name[0] : '?'}}</view>
+            <view class="result-main">
+              <text class="result-name">{{item.name}}</text>
+              <text class="result-meta">组队 {{item.count}} 次<text wx:if="{{item.lastTeamName}}"> · 最近「{{item.lastTeamName}}」</text></text>
+            </view>
+            <text wx:if="{{teamModal.searchPanel.selectedOpenids[item.openid] || teamModal.searchPanel.selectedNames[item.name]}}" class="result-added-tag">已添加</text>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view wx:elif="{{teamModal.searchPanel.searching}}" class="search-tip">搜索中...</view>
+    <view wx:elif="{{teamModal.searchPanel.results.length === 0}}" class="search-tip">未找到用户</view>
+    <view wx:else class="search-results">
+      <view
+        wx:for="{{teamModal.searchPanel.results}}"
+        wx:key="openid"
+        class="search-result-item {{teamModal.searchPanel.selectedOpenids[item.openid] || teamModal.searchPanel.selectedNames[item.name] ? 'result-disabled' : ''}}"
+        catchtap="selectMember"
+        data-user="{{item}}"
+        data-disabled="{{teamModal.searchPanel.selectedOpenids[item.openid] || teamModal.searchPanel.selectedNames[item.name]}}"
+      >
+        <image wx:if="{{item.photoUrl}}" class="result-avatar" src="{{item.photoUrl}}" mode="aspectFill"/>
+        <view wx:else class="result-avatar result-avatar-placeholder">{{item.name ? item.name[0] : '?'}}</view>
+        <view class="result-main">
+          <text class="result-name">{{item.name}}</text>
+        </view>
+        <text wx:if="{{teamModal.searchPanel.selectedOpenids[item.openid] || teamModal.searchPanel.selectedNames[item.name]}}" class="result-added-tag">已添加</text>
+      </view>
+    </view>
+  </view>
+</view>

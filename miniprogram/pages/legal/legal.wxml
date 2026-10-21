@@ -1,0 +1,19 @@
+<view class="legal-page">
+  <view
+    wx:for="{{items}}"
+    wx:key="id"
+    class="legal-block legal-{{item.type}}"
+  >
+    <text>{{item.text}}</text>
+  </view>
+
+  <view wx:if="{{isConsentMode}}" class="legal-action-spacer"></view>
+  <view wx:if="{{isConsentMode}}" class="legal-action">
+    <view
+      class="legal-agree-btn {{canAgree ? 'enabled' : 'disabled'}}"
+      bindtap="confirmAgreement"
+    >
+      {{canAgree ? '我已阅读并同意' : '阅读到底部后可同意'}}
+    </view>
+  </view>
+</view>

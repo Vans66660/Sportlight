@@ -1,0 +1,15 @@
+page { background: #0F0F0F; }
+.page { min-height: 100vh; padding: 28rpx; box-sizing: border-box; color: #FFFFFF; }
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18rpx; margin-bottom: 24rpx; }
+.title { font-size: 42rpx; font-weight: 900; }
+.sub { margin-top: 8rpx; color: #777777; font-size: 24rpx; }
+.create-btn { flex-shrink: 0; padding: 16rpx 22rpx; border-radius: 12rpx; background: #FF6B1A; color: #FFFFFF; font-size: 24rpx; font-weight: 800; }
+.challenge-card, .empty { background: #1A1A1A; border: 1rpx solid #2A2A2A; border-radius: 16rpx; padding: 20rpx; margin-bottom: 16rpx; }
+.top { display: flex; align-items: center; gap: 16rpx; }
+.logo { width: 72rpx; height: 72rpx; border-radius: 50%; background: #242424; flex-shrink: 0; }
+.logo.text { display: flex; align-items: center; justify-content: center; color: #FF6B1A; font-weight: 800; }
+.main { flex: 1; min-width: 0; }
+.name { font-size: 30rpx; font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meta, .info, .desc, .empty { color: #777777; font-size: 23rpx; margin-top: 8rpx; }
+.status { padding: 10rpx 14rpx; border-radius: 10rpx; background: rgba(255,107,26,.15); color: #FF8A3D; font-size: 22rpx; }
+.info { color: #CCCCCC; margin-top: 18rpx; }

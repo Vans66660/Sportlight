@@ -1,0 +1,156 @@
+.container {
+  min-height: 100vh;
+  background: #0F0F0F;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* 顶部栏 */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #1E1E1E;
+  flex-shrink: 0;
+}
+
+.nav-cancel {
+  font-size: 30rpx;
+  color: #888888;
+  padding: 10rpx 0;
+  min-width: 80rpx;
+}
+
+.nav-spacer {
+  min-width: 80rpx;
+}
+
+.nav-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.compose-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20rpx 28rpx 0;
+  flex-shrink: 0;
+}
+
+.send-btn {
+  height: 64rpx;
+  min-width: 120rpx;
+  padding: 0 28rpx;
+  border-radius: 32rpx;
+  background: #FF6B1A;
+  color: #0F0F0F;
+  font-size: 28rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-btn.disabled {
+  background: #24170F;
+  color: #72503A;
+}
+
+/* 输入区 */
+.content-input {
+  font-size: 32rpx;
+  color: #DDDDDD;
+  line-height: 1.75;
+  padding: 24rpx 28rpx 32rpx;
+  min-height: 280rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-placeholder { color: #3A3A3A; }
+
+.visibility-row {
+  display: flex;
+  gap: 14rpx;
+  padding: 0 28rpx 28rpx;
+}
+
+.visibility-chip {
+  height: 56rpx;
+  line-height: 56rpx;
+  padding: 0 22rpx;
+  border-radius: 28rpx;
+  background: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  color: #777777;
+  font-size: 24rpx;
+}
+
+.visibility-chip.active {
+  color: #FFFFFF;
+  background: rgba(255, 107, 26, 0.18);
+  border-color: rgba(255, 107, 26, 0.72);
+}
+
+/* 图片九宫格 */
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6rpx;
+  padding: 0 28rpx 40rpx;
+}
+
+.img-item {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.img-preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 8rpx;
+  display: block;
+  background: #2A2A2A;
+}
+
+.img-remove {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: #333333;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.img-add {
+  aspect-ratio: 1;
+  background: #1A1A1A;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-add-icon {
+  font-size: 52rpx;
+  color: #FF6B1A;
+  line-height: 1;
+}
+
+.uploading .img-add-icon {
+  font-size: 36rpx;
+  letter-spacing: 4rpx;
+}

@@ -1,0 +1,903 @@
+<view class="container">
+  <!-- Header -->
+  <view class="page-header">
+    <view class="title-wrap">
+      <view class="page-kicker">{{sportKicker}}</view>
+      <view class="page-title">{{tournament.title || '公开赛'}}</view>
+      <view class="page-sub">{{tournament.eventDate || '时间待定'}} · {{tournament.eventLocation || '地点待定'}}</view>
+    </view>
+    <view class="header-badges">
+      <view wx:if="{{tournament.platformCertified}}" class="certified-badge">S · 官方认证</view>
+      <view wx:if="{{canManage}}" class="owner-badge">管理</view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty-wrap">加载中...</view>
+
+  <block wx:elif="{{tournament}}">
+    <!-- Stats strip -->
+    <view wx:if="{{canManage}}" class="summary-strip">
+      <view class="summary-item"><text class="summary-num">{{displayTeams.length}}</text><text class="summary-label">队伍</text></view>
+      <view class="summary-item"><text class="summary-num">{{allScheduleMatches.length}}</text><text class="summary-label">赛程</text></view>
+      <view class="summary-item"><text class="summary-num">{{standingsList.length}}</text><text class="summary-label">积分榜</text></view>
+    </view>
+
+    <view wx:if="{{canManage}}" class="workflow-card">
+      <view class="workflow-head"><text class="workflow-stage">当前：{{workflow.stage}}</text><text class="workflow-status">{{workflow.label}}</text></view>
+      <view class="workflow-detail">{{workflow.detail}}</view>
+      <view class="workflow-foot"><text>积分结算：{{workflow.settlementLabel}}</text><text class="workflow-link" bindtap="goRegistrants">报名管理 ›</text></view>
+      <view class="next-action" bindtap="runNextAction">
+        <view><view class="next-action-label">下一步：{{nextAction.label}}</view><view class="next-action-detail">{{nextAction.detail}}</view></view>
+        <view class="next-action-arrow">›</view>
+      </view>
+    </view>
+
+    <!-- Viewer mode: athletes/audience -->
+    <block wx:if="{{!canManage}}">
+      <scroll-view class="tab-scroll viewer-tabs" scroll-x>
+        <view class="top-tab {{viewerTab === 'teams' ? 'active' : ''}}" data-value="teams" bindtap="selectViewerTab">队伍</view>
+        <view class="top-tab {{viewerTab === 'schedule' ? 'active' : ''}}" data-value="schedule" bindtap="selectViewerTab">赛程</view>
+        <view class="top-tab {{viewerTab === 'standings' ? 'active' : ''}}" data-value="standings" bindtap="selectViewerTab">积分榜</view>
+        <view class="top-tab {{viewerTab === 'stats' ? 'active' : ''}}" data-value="stats" bindtap="selectViewerTab">数据榜</view>
+      </scroll-view>
+
+      <view wx:if="{{viewerTab === 'teams'}}" class="viewer-content">
+        <view wx:if="{{displayTeams.length === 0}}" class="empty-card">主办方暂未确认参赛队伍。</view>
+        <view wx:else class="viewer-team-list">
+          <view class="viewer-team-card" wx:for="{{displayTeams}}" wx:key="teamId" data-teamid="{{item.teamId}}" bindtap="openTeamDetail">
+            <view class="viewer-team-main">
+              <view class="viewer-team-name-line">{{item.teamName}}</view>
+              <view class="viewer-team-meta">{{item.roster.length || 0}} 名队员</view>
+            </view>
+            <view class="viewer-team-arrow">›</view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{viewerTab === 'schedule'}}" class="viewer-content">
+        <view wx:if="{{allScheduleMatches.length === 0}}" class="empty-card">主办方暂未公布赛程，请稍后再来查看。</view>
+        <block wx:else>
+          <scroll-view class="filter-scroll viewer-schedule-filter" scroll-x>
+            <view class="filter-chip {{entryFilter.stage === 'all' ? 'active' : ''}}" data-mode="all" bindtap="setViewerScheduleFilter">全部</view>
+            <block wx:for="{{groupOptions}}" wx:key="value" wx:for-item="g">
+              <view wx:if="{{g.value !== 'all'}}" class="filter-chip {{entryFilter.stage === 'group' && entryFilter.group === g.value ? 'active' : ''}}" data-mode="group" data-value="{{g.value}}" bindtap="setViewerScheduleFilter">{{g.label}}</view>
+            </block>
+            <block wx:if="{{knockoutBrackets.length > 1}}">
+              <view wx:for="{{knockoutBrackets}}" wx:key="bracketId" wx:for-item="bracket"
+                class="filter-chip {{entryFilter.stage === 'knockout' && entryFilter.bracket === bracket.bracketId ? 'active' : ''}}"
+                data-mode="knockout" data-value="{{bracket.bracketId}}" bindtap="setViewerScheduleFilter"
+              >{{bracket.name}}</view>
+            </block>
+            <view wx:else class="filter-chip {{entryFilter.stage === 'knockout' ? 'active' : ''}}" data-mode="knockout" data-value="all" bindtap="setViewerScheduleFilter">淘汰赛</view>
+          </scroll-view>
+
+          <view class="viewer-progress-card">
+            <view class="viewer-progress-title">赛程进度</view>
+            <view class="viewer-progress-sub">已结束 {{completedCount}} / {{totalCount}} 场</view>
+            <view class="progress-bar-wrap"><view class="progress-bar-fill" style="width: {{completionRate}}%;"></view></view>
+          </view>
+
+          <view wx:if="{{entryFilter.stage === 'knockout'}}" class="viewer-bracket-block">
+            <view wx:for="{{viewerKnockoutChampions}}" wx:key="bracketId" class="champion-banner">
+              <text>{{item.title}}</text><text>{{item.teamName}}</text>
+            </view>
+            <view wx:if="{{viewerBracketRounds.length === 0}}" class="empty-card">暂无淘汰赛对阵图。</view>
+            <scroll-view wx:else class="bracket-scroll" scroll-x>
+              <view class="bracket-board">
+                <view class="bracket-round" wx:for="{{viewerBracketRounds}}" wx:for-item="round" wx:for-index="roundIndex" wx:key="label">
+                  <view class="bracket-round-title">{{round.label}}</view>
+                  <view class="bracket-stack {{round.roundClass}}">
+                    <view class="bracket-node {{match.hasPrev ? 'has-prev' : ''}} {{match.hasNext ? 'has-next' : ''}} {{match.nodeClass}}"
+                      wx:for="{{round.matches}}" wx:for-item="match" wx:key="matchId"
+                      data-match="{{match}}" bindtap="openMatchDetail">
+                      <view wx:if="{{match.hasPrev}}" class="bracket-line in"></view>
+                      <view wx:if="{{match.hasNext}}" class="bracket-line out"></view>
+                      <view wx:if="{{match.hasNext}}" class="bracket-line bridge"></view>
+                      <view class="bracket-status">{{match.statusLabel}}</view>
+                      <view class="bracket-team {{match.homeWinner ? 'winner' : ''}}">
+                        <text>{{match.home_team_name}}</text>
+                        <text>{{match.status === 'finished' ? (entrySport === 'basketball' ? match.basketball.homeScore : (entrySport === 'badminton' ? match.badminton.homeScore : match.football.homeScore)) : '-'}}</text>
+                      </view>
+                      <view class="bracket-team {{match.awayWinner ? 'winner' : ''}}">
+                        <text>{{match.away_team_name}}</text>
+                        <text>{{match.status === 'finished' ? (entrySport === 'basketball' ? match.basketball.awayScore : (entrySport === 'badminton' ? match.badminton.awayScore : match.football.awayScore)) : '-'}}</text>
+                      </view>
+                      <view class="bracket-time">{{match.match_time || match.venue || '时间待定'}}</view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </scroll-view>
+          </view>
+
+          <view class="match-list">
+            <view
+              wx:for="{{filteredEntryMatches}}"
+              wx:key="matchId"
+              class="match-entry-card {{item.status === 'finished' ? 'done' : ''}}"
+              data-match="{{item}}"
+              bindtap="openMatchDetail"
+            >
+              <view class="match-entry-row">
+                <view class="match-entry-status">
+                  <view wx:if="{{item.status === 'finished'}}" class="status-dot done">✓</view>
+                  <view wx:elif="{{item.status === 'in_progress'}}" class="status-dot live"></view>
+                  <view wx:else class="status-dot pending"></view>
+                </view>
+                <view class="match-entry-info">
+                  <view class="match-entry-meta">{{item.scheduleStage === 'knockout' ? '淘汰赛' : '小组赛'}} · {{item.groupRoundLabel}}</view>
+                  <view class="match-entry-teams">
+                    <text class="{{item.homeWinner ? 'winner' : ''}}">{{item.home_team_name}}</text>
+                    <text class="match-entry-score">{{item.displayScore}}</text>
+                    <text class="{{item.awayWinner ? 'winner' : ''}}">{{item.away_team_name}}</text>
+                  </view>
+                  <view class="match-entry-foot">{{item.match_time || '时间待定'}} · {{item.venue || '场地待定'}} · {{item.statusLabel}}</view>
+                </view>
+                <view class="match-entry-arrow">›</view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <view wx:if="{{viewerTab === 'standings'}}" class="viewer-content">
+        <view wx:if="{{standingsList.length === 0}}" class="empty-card">暂无积分榜。赛程生成并录入赛果后会自动更新。</view>
+        <view class="standing-card" wx:for="{{standingsList}}" wx:key="key">
+          <view class="standing-title">{{item.title}}</view>
+          <view class="table-head"><text class="rank">#</text><text class="team">队伍</text><text class="num">赛</text><text class="num">胜</text><text class="num">平</text><text class="num">负</text><text class="num">净</text><text class="num hot">分</text></view>
+          <view class="table-row" wx:for="{{item.rows}}" wx:for-item="row" wx:key="teamId">
+            <text class="rank">{{row.rank}}</text><text class="team">{{row.teamName}}</text><text class="num">{{row.played}}</text><text class="num">{{row.win}}</text><text class="num">{{row.draw}}</text><text class="num">{{row.loss}}</text><text class="num">{{row.diff}}</text><text class="num hot">{{row.points}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{viewerTab === 'stats'}}" class="viewer-content">
+        <scroll-view class="subtab-scroll" scroll-x>
+          <block wx:if="{{entrySport === 'basketball'}}">
+            <view class="sub-tab {{activeStatTab === item.value ? 'active' : ''}}" wx:for="{{basketballStatTabs}}" wx:key="value" data-value="{{item.value}}" bindtap="selectStatTab">{{item.label}}</view>
+          </block>
+          <block wx:elif="{{entrySport === 'badminton'}}">
+            <view class="sub-tab {{activeStatTab === item.value ? 'active' : ''}}" wx:for="{{badmintonStatTabs}}" wx:key="value" data-value="{{item.value}}" bindtap="selectStatTab">{{item.label}}</view>
+          </block>
+          <block wx:else>
+            <view class="sub-tab {{activeStatTab === item.value ? 'active' : ''}}" wx:for="{{footballStatTabs}}" wx:key="value" data-value="{{item.value}}" bindtap="selectStatTab">{{item.label}}</view>
+          </block>
+        </scroll-view>
+        <view wx:if="{{!leaderboards}}" class="empty-card">暂无数据榜。录入已结束比赛后会自动生成。</view>
+        <block wx:elif="{{entrySport === 'basketball' && leaderboards.basketball}}">
+          <block wx:if="{{activeStatTab === 'primary'}}"><view class="leader-row" wx:for="{{leaderboards.basketball.points}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'rebounds'}}"><view class="leader-row" wx:for="{{leaderboards.basketball.rebounds}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'assists'}}"><view class="leader-row" wx:for="{{leaderboards.basketball.assists}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:else><view class="leader-row" wx:for="{{leaderboards.basketball.turnovers}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+        </block>
+        <block wx:elif="{{entrySport === 'badminton' && leaderboards.badminton}}">
+          <block wx:if="{{activeStatTab === 'primary'}}"><view class="leader-row" wx:for="{{leaderboards.badminton.points}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'winners'}}"><view class="leader-row" wx:for="{{leaderboards.badminton.winners}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'aces'}}"><view class="leader-row" wx:for="{{leaderboards.badminton.aces}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'saves'}}"><view class="leader-row" wx:for="{{leaderboards.badminton.saves}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:else><view class="leader-row" wx:for="{{leaderboards.badminton.errors}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+        </block>
+        <block wx:elif="{{entrySport === 'football' && leaderboards.football}}">
+          <block wx:if="{{activeStatTab === 'primary'}}"><view class="leader-row" wx:for="{{leaderboards.football.goals}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'assists'}}"><view class="leader-row" wx:for="{{leaderboards.football.assists}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'shots'}}"><view class="leader-row" wx:for="{{leaderboards.football.shots}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'dribbles'}}"><view class="leader-row" wx:for="{{leaderboards.football.dribbles}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'throughBalls'}}"><view class="leader-row" wx:for="{{leaderboards.football.throughBalls}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'keyPasses'}}"><view class="leader-row" wx:for="{{leaderboards.football.keyPasses}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'tackles'}}"><view class="leader-row" wx:for="{{leaderboards.football.tackles}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'saves'}}"><view class="leader-row" wx:for="{{leaderboards.football.saves}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'yellowCards'}}"><view class="leader-row" wx:for="{{leaderboards.football.yellowCards}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:else><view class="leader-row" wx:for="{{leaderboards.football.redCards}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+        </block>
+      </view>
+
+    </block>
+
+    <!-- Phase navigation -->
+    <view wx:if="{{canManage}}" class="phase-nav">
+      <view class="phase-tab {{phase === 'setup' ? 'active' : ''}}" data-phase="setup" bindtap="switchPhase">
+        <text class="phase-step">01</text>
+        <text>准备赛程</text>
+        <text class="phase-hint">{{displayTeams.length}} 支参赛队</text>
+      </view>
+      <view class="phase-arrow">›</view>
+      <view class="phase-tab {{phase === 'entry' ? 'active' : ''}}" data-phase="entry" bindtap="switchPhase">
+        <text class="phase-step">02</text>
+        <text>录入赛果</text>
+        <text class="phase-hint">{{completedCount}}/{{totalCount}} 场完成</text>
+      </view>
+      <view class="phase-arrow">›</view>
+      <view class="phase-tab {{phase === 'results' ? 'active' : ''}}" data-phase="results" bindtap="switchPhase">
+        <text class="phase-step">03</text>
+        <text>结算公示</text>
+        <text class="phase-hint">积分 · 荣誉 · 卡片</text>
+      </view>
+    </view>
+
+    <!-- ═══════════════ PHASE: SETUP ═══════════════ -->
+    <view wx:if="{{canManage && phase === 'setup'}}" class="phase-content">
+      <view class="phase-intro"><text class="phase-intro-kicker">第一步</text><text class="phase-intro-title">确认参赛队伍，再选择赛制</text><text class="phase-intro-desc">报名审核完成后，系统会使用已通过队伍生成赛程。</text></view>
+      <view class="team-status-card" bindtap="goRegistrants">
+        <view><view class="team-status-title">参赛名单</view><view class="team-status-desc">{{displayTeams.length}} 支已通过审核的队伍</view></view>
+        <view class="team-status-link">管理报名 ›</view>
+      </view>
+      <view wx:if="{{displayTeams.length === 0}}" class="empty-card">暂无已通过审核的报名队伍。请先在报名管理中审核队伍。</view>
+
+      <view class="team-grid">
+        <view class="team-mini-card" wx:for="{{displayTeams}}" wx:key="teamId" data-teamid="{{item.teamId}}" bindtap="openTeamDetail">
+          <view class="team-mini-name">{{item.teamName}}</view>
+          <view class="team-mini-count">{{item.roster.length || 0}} 人</view>
+        </view>
+      </view>
+
+      <!-- Group management -->
+      <view class="section-title" style="margin-top: 32rpx;">选择赛制</view>
+      <view class="section-note">选择赛制后生成小组赛；淘汰赛会在全部小组赛结束后按积分榜自动编排。</view>
+      <view class="action-grid setup">
+        <view class="action-card primary" bindtap="generateTwoStageSplit">
+          <view class="action-card-icon">↔</view>
+          <view class="action-card-title">胜者组 / 败者组赛制</view>
+          <view class="action-card-desc">首阶段前 2 名进胜者组，其余进败者组；两组再各取前 2 名争冠</view>
+        </view>
+        <view class="action-card primary" bindtap="generateTwoGroupKnockout">
+          <view class="action-card-icon">🏆</view>
+          <view class="action-card-title">两组小组赛 + 淘汰赛</view>
+          <view class="action-card-desc">A/B 两组 → 每组前 2 名晋级 → 半决赛 → 决赛</view>
+        </view>
+        <view class="action-card" bindtap="generateGroups">
+          <view class="action-card-icon">⚽</view>
+          <view class="action-card-title">其他小组赛赛程</view>
+          <view class="action-card-desc">选择组数 → 自定义创建或随机分组 → 自动生成赛程</view>
+        </view>
+        <view class="action-card" bindtap="openManualGroups">
+          <view class="action-card-icon">📋</view>
+          <view class="action-card-title">手动调整分组</view>
+          <view class="action-card-desc">拖拽队伍到不同小组</view>
+        </view>
+        <view class="action-card" bindtap="generateLeague">
+          <view class="action-card-icon">🔄</view>
+          <view class="action-card-title">单循环联赛</view>
+          <view class="action-card-desc">所有队伍互赛一次</view>
+        </view>
+        <view class="action-card" bindtap="generateDoubleLeague">
+          <view class="action-card-icon">🔁</view>
+          <view class="action-card-title">双循环联赛</view>
+          <view class="action-card-desc">主客场各一轮</view>
+        </view>
+      </view>
+
+      <!-- Advanced toggle -->
+      <view class="advanced-toggle" bindtap="toggleAdvancedSetup">
+        <text>高级选项</text>
+        <text class="advanced-arrow {{showAdvancedSetup ? 'open' : ''}}">›</text>
+      </view>
+      <view wx:if="{{showAdvancedSetup}}" class="action-grid setup advanced">
+        <view class="action-card" bindtap="seedVirtualTeams">
+          <view class="action-card-title">添加机器人队伍</view>
+          <view class="action-card-desc">补齐名额用于测试</view>
+        </view>
+        <view class="action-card" data-mode="batch" bindtap="openScheduleTool">
+          <view class="action-card-title">批量调整赛程</view>
+          <view class="action-card-desc">统一修改时间/场地</view>
+        </view>
+        <view class="action-card" data-mode="swap" bindtap="openScheduleTool">
+          <view class="action-card-title">交换两场安排</view>
+          <view class="action-card-desc">互换时间和场地</view>
+        </view>
+        <view class="action-card danger" data-mode="reset" bindtap="openScheduleTool">
+          <view class="action-card-title">清空赛果</view>
+          <view class="action-card-desc">按范围清除</view>
+        </view>
+      </view>
+
+      <!-- Generate knockout -->
+      <view class="section-title" style="margin-top: 32rpx;">淘汰赛</view>
+      <view wx:if="{{tournament.openTournament.playoffMode === 'two_stage_split'}}" class="section-note">流程：首阶段小组赛 → 胜者组/败者组小组赛 → 两个独立决赛。每一步结束后再生成下一步，避免提前锁定名单。</view>
+      <view wx:else class="section-note">两组赛制默认每组前 2 名晋级：A1 对 B2、B1 对 A2。全部小组赛确认后，点击下方即可生成半决赛和决赛。</view>
+      <view class="action-grid setup">
+        <view wx:if="{{tournament.openTournament.playoffMode === 'two_stage_split' && tournament.openTournament.secondStage.status !== 'active'}}" class="action-card primary" bindtap="generateSecondStage">
+          <view class="action-card-icon">⇢</view>
+          <view class="action-card-title">生成胜者组 / 败者组</view>
+          <view class="action-card-desc">首阶段每组前 2 名进入胜者组，其余进入败者组</view>
+        </view>
+        <view class="action-card primary" bindtap="generateKnockout">
+          <view class="action-card-icon">🏆</view>
+          <view class="action-card-title">{{tournament.openTournament.playoffMode === 'two_stage_split' ? '生成两个组别决赛' : (knockoutBrackets.length > 1 ? '生成双淘汰赛' : '生成淘汰赛')}}</view>
+          <view class="action-card-desc">{{tournament.openTournament.playoffMode === 'two_stage_split' ? '胜者组、败者组各取前 2 名进行决赛' : (knockoutBrackets.length > 1 ? '前两名 → 淘汰赛一，后两名 → 淘汰赛二' : '小组赛后按积分榜自动晋级')}}</view>
+        </view>
+        <view wx:if="{{knockoutBrackets.length <= 1}}" class="action-card" bindtap="generateSplitKnockout">
+          <view class="action-card-title">生成双淘汰赛</view>
+          <view class="action-card-desc">前两名/后两名分别进入两个淘汰赛</view>
+        </view>
+      </view>
+
+      <!-- Existing schedule preview -->
+      <view wx:if="{{allScheduleMatches.length > 0}}" class="section-title" style="margin-top: 32rpx;">
+        已有赛程（{{allScheduleMatches.length}} 场）
+        <text class="goto-entry" data-phase="entry" bindtap="switchPhase">进入录入 ›</text>
+      </view>
+      <view wx:if="{{allScheduleMatches.length > 0}}" class="action-grid setup">
+        <view class="action-card danger" bindtap="reselectScheduleFormat">
+          <view class="action-card-title">重新选择赛制</view>
+          <view class="action-card-desc">选错赛制时使用，会覆盖当前赛程并重排</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ═══════════════ PHASE: ENTRY ═══════════════ -->
+    <view wx:if="{{canManage && phase === 'entry'}}" class="phase-content">
+      <view class="phase-intro entry-intro"><text class="phase-intro-kicker">第二步</text><text class="phase-intro-title">逐场确认赛果</text><text class="phase-intro-desc">草稿不会影响积分；将比赛状态设为“已结束”后才会同步积分与球星卡。</text></view>
+      <!-- Progress bar -->
+      <view class="entry-progress">
+        <view class="progress-bar-wrap">
+          <view class="progress-bar-fill" style="width: {{completionRate}}%;"></view>
+        </view>
+        <text class="progress-text">{{completionRate}}%</text>
+      </view>
+      <!-- Per-group progress -->
+      <view wx:if="{{groupProgress.length > 0}}" class="group-progress-row">
+        <text
+          wx:for="{{groupProgress}}"
+          wx:key="name"
+          class="group-progress-chip {{item.done === item.total ? 'done' : ''}}"
+        >{{item.name}} {{item.done}}/{{item.total}}</text>
+      </view>
+
+      <!-- Toolbar -->
+      <view class="entry-toolbar">
+        <view wx:if="{{canManage}}" class="toolbar-actions">
+          <view class="tool-btn" data-mode="batch" bindtap="openScheduleTool">批量调整</view>
+          <view class="tool-btn" data-mode="swap" bindtap="openScheduleTool">交换</view>
+          <view class="tool-btn danger" data-mode="reset" bindtap="openScheduleTool">清空</view>
+        </view>
+      </view>
+
+      <!-- Stage filter chips -->
+      <scroll-view class="filter-scroll" scroll-x>
+        <view class="filter-chip {{entryFilter.stage === 'all' ? 'active' : ''}}" data-field="stage" data-value="all" bindtap="setEntryFilter">全部</view>
+        <view class="filter-chip {{entryFilter.stage === 'group' ? 'active' : ''}}" data-field="stage" data-value="group" bindtap="setEntryFilter">小组赛</view>
+        <view class="filter-chip {{entryFilter.stage === 'knockout' ? 'active' : ''}}" data-field="stage" data-value="knockout" bindtap="setEntryFilter">淘汰赛</view>
+        <!-- Bracket tabs (for split knockout) -->
+        <block wx:if="{{entryFilter.stage === 'knockout' && knockoutBrackets.length > 1}}">
+          <view wx:for="{{knockoutBrackets}}" wx:key="bracketId" wx:for-item="bracket"
+            class="filter-chip {{entryFilter.bracket === bracket.bracketId ? 'active' : ''}}"
+            data-field="bracket" data-value="{{bracket.bracketId}}" bindtap="setEntryFilter"
+          >{{bracket.name}}</view>
+        </block>
+      </scroll-view>
+
+      <!-- Group/Round sub-filters -->
+      <scroll-view wx:if="{{entryFilter.stage === 'group'}}" class="filter-scroll" scroll-x>
+        <view class="filter-chip {{entryFilter.group === 'all' ? 'active' : ''}}" data-field="group" data-value="all" bindtap="setEntryFilter">全部小组</view>
+        <block wx:for="{{groupOptions}}" wx:key="value" wx:for-item="g">
+          <view wx:if="{{g.value !== 'all'}}" class="filter-chip {{entryFilter.group === g.value ? 'active' : ''}}" data-field="group" data-value="{{g.value}}" bindtap="setEntryFilter">{{g.label}}</view>
+        </block>
+      </scroll-view>
+      <scroll-view wx:if="{{entryFilter.stage === 'knockout' && knockoutRoundOptions.length > 1}}" class="filter-scroll" scroll-x>
+        <view wx:for="{{knockoutRoundOptions}}" wx:key="value" wx:for-item="r"
+          class="filter-chip {{entryFilter.knockoutRound === r.value ? 'active' : ''}}"
+          data-field="knockoutRound" data-value="{{r.value}}" bindtap="setEntryFilter"
+        >{{r.label}}</view>
+      </scroll-view>
+
+      <!-- Match list -->
+      <view wx:if="{{filteredEntryMatches.length === 0}}" class="empty-card">暂无赛程。请先在"准备"阶段生成赛程。</view>
+
+      <view class="match-list">
+        <view
+          wx:for="{{filteredEntryMatches}}"
+          wx:key="matchId"
+          id="match-{{item.matchId}}"
+          class="match-entry-card {{selectedMatchId === item.matchId ? 'expanded' : ''}} {{item.status === 'finished' ? 'done' : ''}}"
+        >
+          <!-- Match row (always visible) -->
+          <view class="match-entry-row" data-matchid="{{item.matchId}}" bindtap="selectMatch">
+            <view class="match-entry-status">
+              <view wx:if="{{item.status === 'finished'}}" class="status-dot done">✓</view>
+              <view wx:elif="{{item.status === 'in_progress'}}" class="status-dot live"></view>
+              <view wx:else class="status-dot pending"></view>
+            </view>
+            <view class="match-entry-info">
+              <view class="match-entry-meta">{{item.scheduleStage === 'knockout' ? '淘汰赛' : '小组赛'}} · {{item.groupRoundLabel}}</view>
+              <view class="match-entry-teams">
+                <text class="{{item.homeWinner ? 'winner' : ''}}">{{item.home_team_name}}</text>
+                <text class="match-entry-score">{{item.displayScore}}</text>
+                <text class="{{item.awayWinner ? 'winner' : ''}}">{{item.away_team_name}}</text>
+              </view>
+              <view class="match-entry-foot">{{item.match_time || '时间待定'}} · {{item.venue || '场地待定'}} · {{item.statusLabel}}</view>
+            </view>
+            <view wx:if="{{canManage}}" class="match-entry-arrow">{{selectedMatchId === item.matchId && editorExpanded ? '▲' : '▼'}}</view>
+          </view>
+
+          <!-- Inline editor (expands when selected) -->
+          <view wx:if="{{selectedMatchId === item.matchId && editorExpanded && canManage}}" class="match-editor-inline">
+            <!-- Editor tabs -->
+            <view class="editor-tabs">
+              <view class="editor-tab {{editor.activeTab === 'score' ? 'active' : ''}}" data-value="score" bindtap="selectEditorTab">比分</view>
+              <view wx:if="{{entrySport === 'football'}}" class="editor-tab {{editor.activeTab === 'events' ? 'active' : ''}}" data-value="events" bindtap="selectEditorTab">事件</view>
+              <view wx:if="{{entrySport === 'basketball'}}" class="editor-tab {{editor.activeTab === 'quarters' ? 'active' : ''}}" data-value="quarters" bindtap="selectEditorTab">分节</view>
+              <view wx:if="{{entrySport === 'basketball' || entrySport === 'badminton'}}" class="editor-tab {{editor.activeTab === 'players' ? 'active' : ''}}" data-value="players" bindtap="selectEditorTab">球员</view>
+              <view class="editor-tab {{editor.activeTab === 'lineup' ? 'active' : ''}}" data-value="lineup" bindtap="selectEditorTab">出场</view>
+              <view class="editor-tab {{editor.activeTab === 'info' ? 'active' : ''}}" data-value="info" bindtap="selectEditorTab">信息</view>
+            </view>
+
+            <!-- SCORE TAB -->
+            <view wx:if="{{editor.activeTab === 'score'}}" class="editor-section">
+              <!-- Teams -->
+              <view class="editor-team-row">
+                <picker range="{{editorTeamOptions}}" range-key="teamName" data-side="home" bindchange="onEditorTeamChange">
+                  <view class="team-select">{{editorTeamOptions[editor.homeTeamIndex].teamName || '选择主队'}}</view>
+                </picker>
+                <view class="team-vs">VS</view>
+                <picker range="{{editorTeamOptions}}" range-key="teamName" data-side="away" bindchange="onEditorTeamChange">
+                  <view class="team-select">{{editorTeamOptions[editor.awayTeamIndex].teamName || '选择客队'}}</view>
+                </picker>
+              </view>
+              <view class="swap-btn" bindtap="swapEditorTeams">⇄ 交换主客队</view>
+
+              <!-- Score inputs -->
+              <view wx:if="{{entrySport === 'football'}}" class="score-input-row">
+                <input class="score-input-lg" type="number" value="{{editor.football.homeScore}}" data-side="homeScore" bindinput="onFootballScoreInput" placeholder="0"/>
+                <text class="score-colon">:</text>
+                <input class="score-input-lg" type="number" value="{{editor.football.awayScore}}" data-side="awayScore" bindinput="onFootballScoreInput" placeholder="0"/>
+              </view>
+              <view wx:elif="{{entrySport === 'badminton'}}" class="score-input-row">
+                <input class="score-input-lg" type="number" value="{{editor.badminton.homeScore}}" data-side="homeScore" bindinput="onBadmintonScoreInput" placeholder="0"/>
+                <text class="score-colon">:</text>
+                <input class="score-input-lg" type="number" value="{{editor.badminton.awayScore}}" data-side="awayScore" bindinput="onBadmintonScoreInput" placeholder="0"/>
+              </view>
+
+              <!-- Status picker -->
+              <picker range="{{statusOptions}}" range-key="label" bindchange="onStatusChange">
+                <view class="field-picker">状态：{{statusLabels[editor.status]}}</view>
+              </picker>
+            </view>
+
+            <!-- FOOTBALL EVENTS TAB -->
+            <view wx:if="{{entrySport === 'football' && editor.activeTab === 'events'}}" class="editor-section">
+              <!-- Quick event form -->
+              <view class="quick-event-form">
+                <view class="quick-event-label">快速添加事件</view>
+                <picker range="{{editorMatchTeams}}" range-key="teamName" bindchange="onQuickEventTeamChange">
+                  <view class="field-picker">球队：{{editorMatchTeams[quickEvent.teamIndex].teamName || '选择'}}</view>
+                </picker>
+                <picker range="{{editorSelectedRoster}}" range-key="name" bindchange="onQuickEventPlayerChange">
+                  <view class="field-picker">球员：{{editorSelectedRoster[quickEvent.playerIndex].name || '选择'}}</view>
+                </picker>
+                <view class="quick-event-row">
+                  <input class="field-input half" type="number" placeholder="分钟" value="{{quickEvent.minute}}" bindinput="onQuickEventMinute"/>
+                  <input class="field-input half" type="number" placeholder="次数(默认1)" value="{{quickEvent.count}}" bindinput="onQuickEventCount"/>
+                </view>
+                <view class="quick-event-types">
+                  <view
+                    wx:for="{{eventTypes}}"
+                    wx:key="value"
+                    class="quick-type-btn {{quickEvent.typeIndex === index ? 'active' : ''}}"
+                    data-typeindex="{{index}}"
+                    bindtap="quickAddEvent"
+                  >{{item.label}}</view>
+                </view>
+              </view>
+
+              <!-- Per-player quick entry -->
+              <view class="quick-event-label" style="margin-top: 16rpx;">按球员快捷录入</view>
+              <view class="quick-event-minute-row">
+                <text class="quick-minute-label">默认分钟：</text>
+                <input class="field-input inline-min" type="number" placeholder="分钟" value="{{quickEvent.minute}}" bindinput="onQuickEventMinute"/>
+              </view>
+              <view class="quick-player-list">
+                <view class="quick-player-card" wx:for="{{editorMatchTeams}}" wx:for-item="team" wx:for-index="teamIndex" wx:key="teamId">
+                  <view class="quick-player-team-name">{{team.teamName}}</view>
+                  <view wx:if="{{!team.participants || !team.participants.length}}" class="viewer-empty">暂无出场球员，请先在“出场”中确认</view>
+                  <view class="quick-player-row" wx:for="{{team.participants}}" wx:for-item="player" wx:for-index="playerIndex" wx:key="openid">
+                    <text class="quick-player-name">{{player.name}}</text>
+                    <view class="quick-player-actions">
+                      <text
+                        wx:for="{{eventTypes}}"
+                        wx:for-item="et"
+                        wx:key="value"
+                        class="quick-player-event"
+                        data-teamindex="{{teamIndex}}"
+                        data-playerindex="{{playerIndex}}"
+                        data-type="{{et.value}}"
+                        bindtap="quickAddEventByPlayer"
+                      >{{et.label}}</text>
+                    </view>
+                  </view>
+                </view>
+              </view>
+
+              <!-- Events list -->
+              <view class="events-list-header">
+                <view class="quick-event-label" style="margin-top: 16rpx; margin-bottom: 0;">已添加事件（{{editor.football.events.length}}）</view>
+                <view wx:if="{{editor.football.events.length > 0}}" class="undo-btn" bindtap="undoLastFootballEvent">↩ 撤销</view>
+              </view>
+              <view wx:if="{{editor.football.events.length === 0}}" class="viewer-empty">暂无事件</view>
+              <view class="event-row" wx:for="{{editor.football.events}}" wx:key="index">
+                <text>{{item.minute}}' {{item.playerName}} · {{item.typeLabel}}{{item.count > 1 ? ' ×' + item.count : ''}} ({{item.teamName}})</text>
+                <text class="remove" data-index="{{index}}" bindtap="removeFootballEvent">删除</text>
+              </view>
+            </view>
+
+            <!-- BASKETBALL QUARTERS TAB -->
+            <view wx:if="{{entrySport === 'basketball' && editor.activeTab === 'quarters'}}" class="editor-section">
+              <view class="quarter-row" wx:for="{{editor.basketball.quarters}}" wx:key="index">
+                <text>第{{index + 1}}节</text>
+                <input class="mini-input" type="number" value="{{item.home}}" data-index="{{index}}" data-side="home" bindinput="onQuarterInput"/>
+                <text>:</text>
+                <input class="mini-input" type="number" value="{{item.away}}" data-index="{{index}}" data-side="away" bindinput="onQuarterInput"/>
+              </view>
+            </view>
+
+            <!-- BASKETBALL / BADMINTON PLAYER STATS TAB -->
+            <view wx:if="{{(entrySport === 'basketball' || entrySport === 'badminton') && editor.activeTab === 'players'}}" class="editor-section">
+              <view wx:if="{{entrySport === 'basketball'}}">
+                <view class="box-row head basketball-wide"><text>球员</text><text>分</text><text>板</text><text>助</text><text>断</text><text>帽</text><text>误</text></view>
+                <view class="box-row basketball-wide" wx:for="{{editor.basketball.playerStats}}" wx:key="playerOpenid">
+                  <text>{{item.playerName}}</text>
+                  <input class="stat-input" type="number" value="{{item.points}}" data-index="{{index}}" data-field="points" bindinput="onBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.rebounds}}" data-index="{{index}}" data-field="rebounds" bindinput="onBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.assists}}" data-index="{{index}}" data-field="assists" bindinput="onBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.steals}}" data-index="{{index}}" data-field="steals" bindinput="onBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.blocks}}" data-index="{{index}}" data-field="blocks" bindinput="onBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.turnovers}}" data-index="{{index}}" data-field="turnovers" bindinput="onBoxInput"/>
+                </view>
+              </view>
+              <view wx:else>
+                <view class="box-row head badminton-wide"><text>球员</text><text>分</text><text>制胜</text><text>发球</text><text>救</text><text>误</text></view>
+                <view class="box-row badminton-wide" wx:for="{{editor.badminton.playerStats}}" wx:key="playerOpenid">
+                  <text>{{item.playerName}}</text>
+                  <input class="stat-input" type="number" value="{{item.points}}" data-index="{{index}}" data-field="points" bindinput="onBadmintonBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.winners}}" data-index="{{index}}" data-field="winners" bindinput="onBadmintonBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.aces}}" data-index="{{index}}" data-field="aces" bindinput="onBadmintonBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.saves}}" data-index="{{index}}" data-field="saves" bindinput="onBadmintonBoxInput"/>
+                  <input class="stat-input" type="number" value="{{item.errors}}" data-index="{{index}}" data-field="errors" bindinput="onBadmintonBoxInput"/>
+                </view>
+              </view>
+            </view>
+
+            <!-- PARTICIPANTS TAB -->
+            <view wx:if="{{editor.activeTab === 'lineup'}}" class="editor-section">
+              <view class="lineup-limit">选择实际出场人员；当前未统计换人，已选球员均按全额出场时间结算。</view>
+              <view class="lineup-editor-team" wx:for="{{editorMatchTeams}}" wx:for-item="team" wx:key="teamId">
+                <view class="lineup-editor-title">{{team.teamName}} · 已选 {{team.starterCount || 0}} 人</view>
+                <view class="lineup-chip-wrap">
+                  <view class="lineup-chip {{player.starterSelected ? 'active' : ''}}"
+                    wx:for="{{team.roster}}" wx:for-item="player" wx:key="openid"
+                    data-side="{{team.side}}" data-openid="{{player.openid}}" bindtap="toggleStarter"
+                  >{{player.name}}</view>
+                </view>
+              </view>
+            </view>
+
+            <!-- INFO TAB -->
+            <view wx:if="{{editor.activeTab === 'info'}}" class="editor-section">
+              <view class="time-picker-row">
+                <picker class="time-picker-cell" mode="date" value="{{editor.match_date}}" bindchange="onEditorDateChange">
+                  <view class="field-picker">{{editor.match_date || '选择日期'}}</view>
+                </picker>
+                <picker class="time-picker-cell" mode="time" value="{{editor.match_clock}}" bindchange="onEditorTimeChange">
+                  <view class="field-picker">{{editor.match_clock || '选择时间'}}</view>
+                </picker>
+              </view>
+              <input class="field-input" placeholder="场地" value="{{editor.venue}}" data-field="venue" bindinput="onEditorInput"/>
+            </view>
+
+            <!-- Editor actions -->
+            <view class="editor-save-hint">保存草稿不会结算积分；将比赛状态设为“已结束”并保存后，才会确认赛果并同步积分。</view>
+            <view class="editor-actions">
+              <view class="editor-btn cancel" bindtap="collapseEditor">收起</view>
+              <view class="editor-btn save" bindtap="saveMatchOnly">{{editor.status === 'finished' ? '确认赛果' : '保存草稿'}}</view>
+              <view class="editor-btn next" bindtap="saveAndNext">保存+下一场 ›</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ═══════════════ PHASE: RESULTS ═══════════════ -->
+    <view wx:if="{{canManage && phase === 'results'}}" class="phase-content">
+      <view class="phase-intro"><text class="phase-intro-kicker">第三步</text><text class="phase-intro-title">核对结算并公示</text><text class="phase-intro-desc">确认所有赛果后，积分已自动同步；完成荣誉填写后即可对外公示。</text></view>
+      <view class="settlement-checklist">
+        <view class="settlement-item {{totalCount > 0 && completedCount === totalCount ? 'done' : ''}}"><text>{{totalCount > 0 && completedCount === totalCount ? '✓' : '•'}}</text><view><text>全部赛果确认</text><text>{{completedCount}}/{{totalCount}} 场</text></view></view>
+        <view class="settlement-item {{totalCount > 0 && completedCount === totalCount ? 'done' : ''}}"><text>{{totalCount > 0 && completedCount === totalCount ? '✓' : '•'}}</text><view><text>积分同步</text><text>{{totalCount > 0 && completedCount === totalCount ? '已随赛果完成' : '等待全部赛果确认'}}</text></view></view>
+        <view class="settlement-item"><text>•</text><view><text>赛事荣誉与公示</text><text>请在“荣誉”中确认最终名次</text></view></view>
+      </view>
+      <!-- Results sub-tabs -->
+      <scroll-view class="tab-scroll" scroll-x>
+        <view class="top-tab {{activeResultsTab === 'standings' ? 'active' : ''}}" data-value="standings" bindtap="selectResultsTab">积分榜</view>
+        <view class="top-tab {{activeResultsTab === 'stats' ? 'active' : ''}}" data-value="stats" bindtap="selectResultsTab">数据榜</view>
+        <view class="top-tab {{activeResultsTab === 'bracket' ? 'active' : ''}}" data-value="bracket" bindtap="selectResultsTab">对阵图</view>
+        <view wx:if="{{canManage}}" class="top-tab {{activeResultsTab === 'honors' ? 'active' : ''}}" data-value="honors" bindtap="selectResultsTab">荣誉</view>
+      </scroll-view>
+
+      <!-- Standings -->
+      <view wx:if="{{activeResultsTab === 'standings'}}">
+        <view wx:if="{{standingsList.length === 0}}" class="empty-card">暂无积分数据。赛程生成并录入赛果后会自动更新。</view>
+        <view class="standing-card" wx:for="{{standingsList}}" wx:key="key">
+          <view class="standing-title">{{item.title}}</view>
+          <view class="table-head"><text class="rank">#</text><text class="team">队伍</text><text class="num">赛</text><text class="num">胜</text><text class="num">平</text><text class="num">负</text><text class="num">净</text><text class="num hot">分</text></view>
+          <view class="table-row" wx:for="{{item.rows}}" wx:for-item="row" wx:key="teamId">
+            <text class="rank">{{row.rank}}</text><text class="team">{{row.teamName}}</text><text class="num">{{row.played}}</text><text class="num">{{row.win}}</text><text class="num">{{row.draw}}</text><text class="num">{{row.loss}}</text><text class="num">{{row.diff}}</text><text class="num hot">{{row.points}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- Stats -->
+      <view wx:if="{{activeResultsTab === 'stats'}}">
+        <scroll-view class="subtab-scroll" scroll-x>
+          <block wx:if="{{entrySport === 'basketball'}}">
+            <view class="sub-tab {{activeStatTab === item.value ? 'active' : ''}}" wx:for="{{basketballStatTabs}}" wx:key="value" data-value="{{item.value}}" bindtap="selectStatTab">{{item.label}}</view>
+          </block>
+          <block wx:elif="{{entrySport === 'badminton'}}">
+            <view class="sub-tab {{activeStatTab === item.value ? 'active' : ''}}" wx:for="{{badmintonStatTabs}}" wx:key="value" data-value="{{item.value}}" bindtap="selectStatTab">{{item.label}}</view>
+          </block>
+          <block wx:else>
+            <view class="sub-tab {{activeStatTab === item.value ? 'active' : ''}}" wx:for="{{footballStatTabs}}" wx:key="value" data-value="{{item.value}}" bindtap="selectStatTab">{{item.label}}</view>
+          </block>
+        </scroll-view>
+
+        <view wx:if="{{!leaderboards}}" class="empty-card">暂无数据榜。录入已结束比赛后会自动生成。</view>
+        <block wx:elif="{{entrySport === 'basketball' && leaderboards.basketball}}">
+          <block wx:if="{{activeStatTab === 'primary'}}"><view class="leader-row" wx:for="{{leaderboards.basketball.points}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'rebounds'}}"><view class="leader-row" wx:for="{{leaderboards.basketball.rebounds}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'assists'}}"><view class="leader-row" wx:for="{{leaderboards.basketball.assists}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:else><view class="leader-row" wx:for="{{leaderboards.basketball.turnovers}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+        </block>
+        <block wx:elif="{{entrySport === 'badminton' && leaderboards.badminton}}">
+          <block wx:if="{{activeStatTab === 'primary'}}"><view class="leader-row" wx:for="{{leaderboards.badminton.points}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'winners'}}"><view class="leader-row" wx:for="{{leaderboards.badminton.winners}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'aces'}}"><view class="leader-row" wx:for="{{leaderboards.badminton.aces}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'saves'}}"><view class="leader-row" wx:for="{{leaderboards.badminton.saves}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:else><view class="leader-row" wx:for="{{leaderboards.badminton.errors}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+        </block>
+        <block wx:elif="{{entrySport === 'football' && leaderboards.football}}">
+          <block wx:if="{{activeStatTab === 'primary'}}"><view class="leader-row" wx:for="{{leaderboards.football.goals}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'assists'}}"><view class="leader-row" wx:for="{{leaderboards.football.assists}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'shots'}}"><view class="leader-row" wx:for="{{leaderboards.football.shots}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'dribbles'}}"><view class="leader-row" wx:for="{{leaderboards.football.dribbles}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'throughBalls'}}"><view class="leader-row" wx:for="{{leaderboards.football.throughBalls}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'keyPasses'}}"><view class="leader-row" wx:for="{{leaderboards.football.keyPasses}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'tackles'}}"><view class="leader-row" wx:for="{{leaderboards.football.tackles}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'saves'}}"><view class="leader-row" wx:for="{{leaderboards.football.saves}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:elif="{{activeStatTab === 'yellowCards'}}"><view class="leader-row" wx:for="{{leaderboards.football.yellowCards}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+          <block wx:else><view class="leader-row" wx:for="{{leaderboards.football.redCards}}" wx:key="playerOpenid"><text>{{index + 1}}. {{item.playerName}}</text><text>{{item.value}}</text></view></block>
+        </block>
+      </view>
+
+      <!-- Bracket -->
+      <view wx:if="{{activeResultsTab === 'bracket'}}">
+        <view wx:for="{{knockoutChampions}}" wx:key="bracketId" class="champion-banner">
+          <text>{{item.title}}</text><text>{{item.teamName}}</text>
+        </view>
+        <view wx:if="{{bracketRounds.length === 0}}" class="empty-card">暂无淘汰赛对阵图。</view>
+        <scroll-view wx:else class="bracket-scroll" scroll-x>
+          <view class="bracket-board">
+            <view class="bracket-round" wx:for="{{bracketRounds}}" wx:for-item="round" wx:for-index="roundIndex" wx:key="label">
+              <view class="bracket-round-title">{{round.label}}</view>
+              <view class="bracket-stack {{round.roundClass}}">
+                <view class="bracket-node {{match.hasPrev ? 'has-prev' : ''}} {{match.hasNext ? 'has-next' : ''}} {{match.nodeClass}}"
+                  wx:for="{{round.matches}}" wx:for-item="match" wx:key="matchId"
+                  data-match="{{match}}" bindtap="openMatchDetail">
+                  <view wx:if="{{match.hasPrev}}" class="bracket-line in"></view>
+                  <view wx:if="{{match.hasNext}}" class="bracket-line out"></view>
+                  <view wx:if="{{match.hasNext}}" class="bracket-line bridge"></view>
+                  <view class="bracket-status">{{match.statusLabel}}</view>
+                  <view class="bracket-team {{match.homeWinner ? 'winner' : ''}}">
+                    <text>{{match.home_team_name}}</text>
+                    <text>{{match.status === 'finished' ? (entrySport === 'basketball' ? match.basketball.homeScore : (entrySport === 'badminton' ? match.badminton.homeScore : match.football.homeScore)) : '-'}}</text>
+                  </view>
+                  <view class="bracket-team {{match.awayWinner ? 'winner' : ''}}">
+                    <text>{{match.away_team_name}}</text>
+                    <text>{{match.status === 'finished' ? (entrySport === 'basketball' ? match.basketball.awayScore : (entrySport === 'badminton' ? match.badminton.awayScore : match.football.awayScore)) : '-'}}</text>
+                  </view>
+                  <view class="bracket-time">{{match.match_time || match.venue || '时间待定'}}</view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- Honors -->
+      <view wx:if="{{activeResultsTab === 'honors' && canManage}}" class="editor-section">
+        <view class="action-card primary" bindtap="openHonorEditor" style="margin-bottom: 24rpx;">
+          <view class="action-card-icon">🏅</view>
+          <view class="action-card-title">编辑名次 / 荣誉</view>
+          <view class="action-card-desc">录入赛事名次后自动同步到队员主页</view>
+        </view>
+
+        <!-- Dev tools -->
+        <view class="advanced-toggle" bindtap="toggleDevTools">
+          <text>开发工具（测试用）</text>
+          <text class="advanced-arrow {{showDevTools ? 'open' : ''}}">›</text>
+        </view>
+        <view wx:if="{{showDevTools}}" class="action-grid setup advanced">
+          <view class="action-card" bindtap="simulateResults">
+            <view class="action-card-title">模拟赛果</view>
+            <view class="action-card-desc">自动生成比分和榜单</view>
+          </view>
+          <view wx:if="{{knockoutBrackets.length > 1}}" class="action-card" bindtap="simulateSplitResults">
+            <view class="action-card-title">模拟双淘汰赛</view>
+            <view class="action-card-desc">生成两个冠军</view>
+          </view>
+          <view wx:if="{{knockoutBrackets.length > 1}}" wx:for="{{knockoutBrackets}}" wx:key="bracketId" class="action-card" data-bracketid="{{item.bracketId}}" bindtap="renameKnockoutBracket">
+            <view class="action-card-title">修改{{item.name}}</view>
+            <view class="action-card-desc">自定义淘汰赛名称</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- Group Modal -->
+<view wx:if="{{groupModal.show}}" class="modal-mask" catchtap="closeGroupModal"></view>
+<view wx:if="{{groupModal.show}}" class="modal">
+  <view class="modal-header">
+    <view>
+      <view class="modal-title">{{groupModal.title}}</view>
+      <view class="modal-context">选择队伍归属小组，保存后再生成赛程</view>
+    </view>
+    <view class="modal-close" bindtap="closeGroupModal">×</view>
+  </view>
+  <view wx:if="{{groupModal.moveIndex >= 0}}" class="move-target-panel">
+    <view class="move-target-title">移动「{{groupModal.moveTeamName}}」到</view>
+    <view class="move-target-row">
+      <view class="move-target-chip" wx:for="{{groupModal.groupLabels}}" wx:key="index" data-groupindex="{{index}}" catchtap="selectMoveTarget">{{item}}</view>
+    </view>
+  </view>
+  <scroll-view class="group-board-scroll" scroll-x>
+    <view class="group-board">
+      <view class="group-column" wx:for="{{groupModal.groupColumns}}" wx:for-item="group" wx:key="groupIndex">
+        <view class="group-column-head">
+          <view class="group-column-title">{{group.label}}</view>
+          <view class="group-column-count">{{group.teams.length}} 队</view>
+        </view>
+        <view wx:if="{{group.teams.length === 0}}" class="group-empty">点击其他队伍移动到本组</view>
+        <view class="group-team-card {{groupModal.moveIndex === team.assignmentIndex ? 'selected' : ''}}"
+          wx:for="{{group.teams}}" wx:for-item="team" wx:key="teamId"
+          data-teamid="{{team.teamId}}" data-index="{{team.assignmentIndex}}" catchtap="moveTeamGroup">
+          <view class="group-team-name">{{team.teamName}}</view>
+          <view class="group-team-meta">{{team.roster.length || 0}} 人</view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+  <view class="modal-actions">
+    <view class="modal-btn cancel" bindtap="closeGroupModal">取消</view>
+    <view class="modal-btn save" bindtap="saveManualGroups">{{groupModal.afterSaveGenerate ? '保存并生成赛程' : '保存分组'}}</view>
+  </view>
+</view>
+
+<!-- Schedule Tool Modal -->
+<view wx:if="{{scheduleTool.show}}" class="modal-mask" catchtap="closeScheduleTool"></view>
+<view wx:if="{{scheduleTool.show}}" class="modal">
+  <view class="modal-header">
+    <view>
+      <view class="modal-title">{{scheduleTool.mode === 'batch' ? '批量调整赛程' : scheduleTool.mode === 'swap' ? '交换两场比赛' : '清空赛果'}}</view>
+      <view class="modal-context">小组赛改动会重算积分；淘汰赛改动会清理后续晋级</view>
+    </view>
+    <view class="modal-close" bindtap="closeScheduleTool">×</view>
+  </view>
+  <block wx:if="{{scheduleTool.mode !== 'swap'}}">
+    <picker range="{{scheduleStageOptions}}" range-key="label" bindchange="onScheduleToolStage">
+      <view class="picker">范围：{{scheduleTool.targetStage === 'group' ? '小组赛' : scheduleTool.targetStage === 'knockout' ? '淘汰赛' : '所有赛程'}}</view>
+    </picker>
+    <block wx:if="{{scheduleTool.targetStage === 'group'}}">
+      <picker range="{{groupOptions}}" range-key="label" bindchange="onScheduleToolGroup"><view class="picker">小组：{{scheduleTool.targetGroup === 'all' ? '全部' : scheduleTool.targetGroup + '组'}}</view></picker>
+      <picker range="{{roundOptions}}" range-key="label" bindchange="onScheduleToolRound"><view class="picker">轮次：{{scheduleTool.targetRound === 'all' ? '全部' : '第' + scheduleTool.targetRound + '轮'}}</view></picker>
+    </block>
+    <block wx:if="{{scheduleTool.targetStage === 'knockout'}}">
+      <picker range="{{knockoutRoundOptions}}" range-key="label" bindchange="onScheduleToolKnockoutRound"><view class="picker">轮次：{{scheduleTool.targetKnockoutRound === 'all' ? '所有轮次' : scheduleTool.targetKnockoutRound}}</view></picker>
+    </block>
+  </block>
+  <block wx:if="{{scheduleTool.mode === 'batch'}}">
+    <view class="time-picker-row">
+      <picker class="time-picker-cell" mode="date" value="{{scheduleTool.match_date}}" bindchange="onScheduleToolDateChange"><view class="picker">{{scheduleTool.match_date || '选择日期'}}</view></picker>
+      <picker class="time-picker-cell" mode="time" value="{{scheduleTool.match_clock}}" bindchange="onScheduleToolTimeChange"><view class="picker">{{scheduleTool.match_clock || '选择时间'}}</view></picker>
+    </view>
+    <input class="input field-input" placeholder="场地" value="{{scheduleTool.venue}}" data-field="venue" bindinput="onScheduleToolInput"/>
+    <picker range="{{scheduleStatusOptions}}" range-key="label" bindchange="onScheduleToolStatus"><view class="picker">状态：{{scheduleTool.status ? statusLabels[scheduleTool.status] : '不修改'}}</view></picker>
+  </block>
+  <block wx:if="{{scheduleTool.mode === 'swap'}}">
+    <picker range="{{allMatchOptions}}" range-key="optionLabel" data-field="firstIndex" bindchange="onScheduleToolMatch"><view class="picker">比赛一：{{allMatchOptions[scheduleTool.firstIndex].optionLabel || '请选择'}}</view></picker>
+    <picker range="{{allMatchOptions}}" range-key="optionLabel" data-field="secondIndex" bindchange="onScheduleToolMatch"><view class="picker">比赛二：{{allMatchOptions[scheduleTool.secondIndex].optionLabel || '请选择'}}</view></picker>
+  </block>
+  <view class="modal-actions">
+    <view class="modal-btn cancel" bindtap="closeScheduleTool">取消</view>
+    <view wx:if="{{scheduleTool.mode === 'batch'}}" class="modal-btn save" bindtap="saveBatchSchedule">保存</view>
+    <view wx:if="{{scheduleTool.mode === 'swap'}}" class="modal-btn save" bindtap="saveSwapSlots">交换</view>
+    <view wx:if="{{scheduleTool.mode === 'reset'}}" class="modal-btn danger" bindtap="resetScoresByTool">清空</view>
+  </view>
+</view>
+
+<!-- Honor Editor Modal -->
+<view wx:if="{{honorEditor.show}}" class="modal-mask" catchtap="closeHonorEditor"></view>
+<view wx:if="{{honorEditor.show}}" class="modal">
+  <view class="modal-header">
+    <view><view class="modal-title">编辑名次 / 荣誉</view><view class="modal-context">{{honorEditor.modeLabel}} · 保存后同步到队伍成员主页</view></view>
+    <view class="modal-close" bindtap="closeHonorEditor">×</view>
+  </view>
+  <view class="honor-award-row" wx:for="{{honorEditor.awards}}" wx:key="rank">
+    <view class="honor-award-label">{{item.label}}</view>
+    <picker class="honor-award-picker" range="{{honorEditor.teamOptions}}" range-key="teamName" value="{{item.teamIndex}}" data-index="{{index}}" bindchange="onHonorTeamChange">
+      <view class="picker">{{item.teamName || '请选择队伍'}}</view>
+    </picker>
+  </view>
+  <view class="modal-actions">
+    <view class="modal-btn cancel" bindtap="closeHonorEditor">取消</view>
+    <view class="modal-btn save" bindtap="saveHonorAwards">保存并同步</view>
+  </view>
+</view>
+
+<!-- Match Viewer Modal (for non-editing users or tapping bracket) -->
+<view wx:if="{{matchViewer.show}}" class="modal-mask" catchtap="closeMatchDetail"></view>
+<view wx:if="{{matchViewer.show}}" class="modal">
+  <view class="modal-header">
+    <view><view class="modal-title">比赛详情</view><view class="modal-context">{{matchViewer.match.home_team_name}} VS {{matchViewer.match.away_team_name}}</view></view>
+    <view class="modal-close" bindtap="closeMatchDetail">×</view>
+  </view>
+  <view class="viewer-score"><view>{{matchViewer.match.home_team_name}}</view><view class="viewer-score-num">{{matchViewer.match.displayScore}}</view><view>{{matchViewer.match.away_team_name}}</view></view>
+  <view class="viewer-meta">{{matchViewer.match.groupRoundLabel}} · {{matchViewer.match.statusLabel}}</view>
+  <view class="viewer-meta">{{matchViewer.match.match_time || '时间待定'}} · {{matchViewer.match.venue || '场地待定'}}</view>
+  <view wx:if="{{matchViewer.match.lineups.home.length || matchViewer.match.lineups.away.length}}">
+    <view class="viewer-title">出场人员</view>
+    <view class="lineup-view">
+      <view class="lineup-view-team">
+        <view class="viewer-team-name">{{matchViewer.match.home_team_name}}</view>
+        <view wx:if="{{matchViewer.match.lineups.home.length}}"><view class="viewer-player" wx:for="{{matchViewer.match.lineups.home}}" wx:key="openid" data-openid="{{item.openid}}" bindtap="goAthleteProfile">{{item.name}}</view></view>
+        <view wx:else class="viewer-empty">暂无</view>
+      </view>
+      <view class="lineup-view-team">
+        <view class="viewer-team-name">{{matchViewer.match.away_team_name}}</view>
+        <view wx:if="{{matchViewer.match.lineups.away.length}}"><view class="viewer-player" wx:for="{{matchViewer.match.lineups.away}}" wx:key="openid" data-openid="{{item.openid}}" bindtap="goAthleteProfile">{{item.name}}</view></view>
+        <view wx:else class="viewer-empty">暂无</view>
+      </view>
+    </view>
+  </view>
+  <block wx:if="{{entrySport === 'football' && matchViewer.match.football && matchViewer.match.football.events.length}}">
+    <view class="viewer-title">比赛事件</view>
+    <view class="event-row" wx:for="{{matchViewer.match.football.events}}" wx:key="index" data-openid="{{item.playerOpenid}}" bindtap="goAthleteProfile"><text>{{item.minute}}' {{item.playerName}} · {{item.typeLabel}}{{item.count > 1 ? ' ×' + item.count : ''}}</text><text>{{item.teamName}}</text></view>
+  </block>
+  <block wx:if="{{entrySport === 'basketball' && matchViewer.match.basketball && matchViewer.match.basketball.quarters.length}}">
+    <view class="viewer-title">分节比分</view>
+    <view class="quarter-row" wx:for="{{matchViewer.match.basketball.quarters}}" wx:key="index"><text>第{{index + 1}}节</text><view class="viewer-mini-score">{{item.home || 0}}</view><text>:</text><view class="viewer-mini-score">{{item.away || 0}}</view></view>
+  </block>
+  <view class="viewer-title">队伍球员</view>
+  <view class="viewer-team" wx:for="{{matchViewer.teams}}" wx:key="teamId">
+    <view class="viewer-team-name">{{item.teamName}}</view>
+    <view class="viewer-player" wx:for="{{item.roster}}" wx:key="openid" data-openid="{{player.openid}}" bindtap="goAthleteProfile">{{player.name}}</view>
+    <view wx:if="{{!item.roster.length}}" class="viewer-empty">暂无球员名单</view>
+  </view>
+</view>
+
+<!-- Team Viewer Modal -->
+<view wx:if="{{teamViewer.show}}" class="modal-mask" catchtap="closeTeamDetail"></view>
+<view wx:if="{{teamViewer.show}}" class="modal">
+  <view class="modal-header">
+    <view><view class="modal-title">{{teamViewer.team.teamName}}</view><view class="modal-context">{{teamViewer.players.length}} 名球员 · 累计赛事数据</view></view>
+    <view class="modal-close" bindtap="closeTeamDetail">×</view>
+  </view>
+  <block wx:if="{{entrySport === 'basketball'}}">
+    <view class="player-stat-head basketball"><text>球员</text><text>场</text><text>分</text><text>板</text><text>助</text><text>误</text></view>
+    <view class="player-stat-row basketball" wx:for="{{teamViewer.players}}" wx:key="statKey" data-openid="{{item.openid}}" bindtap="goAthleteProfile">
+      <text>{{item.name}}</text><text>{{item.played}}</text><text>{{item.points}}</text><text>{{item.rebounds}}</text><text>{{item.assists}}</text><text>{{item.turnovers}}</text>
+    </view>
+  </block>
+  <block wx:elif="{{entrySport === 'football'}}">
+    <view class="player-stat-head football"><text>球员</text><text>场</text><text>球</text><text>助</text><text>技</text><text>牌</text></view>
+    <view class="player-stat-row football" wx:for="{{teamViewer.players}}" wx:key="statKey" data-openid="{{item.openid}}" bindtap="goAthleteProfile">
+      <text>{{item.name}}</text><text>{{item.played}}</text><text>{{item.goals}}</text><text>{{item.assists}}</text><text>{{item.technical}}</text><text>{{item.cards}}</text>
+    </view>
+  </block>
+  <block wx:else>
+    <view class="player-stat-head badminton"><text>球员</text><text>场</text><text>分</text><text>制胜</text><text>发球</text><text>误</text></view>
+    <view class="player-stat-row badminton" wx:for="{{teamViewer.players}}" wx:key="statKey" data-openid="{{item.openid}}" bindtap="goAthleteProfile">
+      <text>{{item.name}}</text><text>{{item.played}}</text><text>{{item.points}}</text><text>{{item.winners}}</text><text>{{item.aces}}</text><text>{{item.errors}}</text>
+    </view>
+  </block>
+  <view wx:if="{{teamViewer.players.length === 0}}" class="viewer-empty">暂无球员名单</view>
+</view>

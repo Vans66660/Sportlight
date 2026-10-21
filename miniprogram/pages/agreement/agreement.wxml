@@ -1,0 +1,53 @@
+<view class="container">
+  <view class="content">
+    <view class="title">Sportlight 用户协议</view>
+    <view class="update">更新日期：2026年7月8日</view>
+
+    <view class="section">
+      <view class="h2">一、总则</view>
+      <view class="p">欢迎使用 Sportlight（以下简称"本小程序"）。本协议是您与本小程序运营方之间关于使用本小程序服务所订立的协议。请您仔细阅读本协议，您点击"同意"或使用本小程序服务即表示您已充分理解并同意接受本协议的约束。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">二、服务内容</view>
+      <view class="p">2.1 本小程序提供运动社交平台服务，包括但不限于：运动员展示个人资料、赛事报名、合作接单、社区动态发布等。</view>
+      <view class="p">2.2 您理解并同意，本小程序仅提供信息发布与匹配服务，不对交易双方的实际履约承担责任。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">三、用户行为规范</view>
+      <view class="p">3.1 您承诺在使用本小程序时遵守中华人民共和国相关法律法规，不得发布含有以下内容的信息：</view>
+      <view class="p">（1）反对宪法所确定的基本原则的；</view>
+      <view class="p">（2）危害国家安全、泄露国家秘密的；</view>
+      <view class="p">（3）损害国家荣誉和利益的；</view>
+      <view class="p">（4）煽动民族仇恨、民族歧视，破坏民族团结的；</view>
+      <view class="p">（5）破坏国家宗教政策，宣扬邪教和封建迷信的；</view>
+      <view class="p">（6）散布谣言，扰乱社会秩序，破坏社会稳定的；</view>
+      <view class="p">（7）散布淫秽、色情、赌博、暴力、凶杀、恐怖或者教唆犯罪的；</view>
+      <view class="p">（8）侮辱或者诽谤他人，侵害他人合法权益的。</view>
+      <view class="p">3.2 不得利用本小程序从事任何违法违规或侵犯他人权益的行为。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">四、知识产权</view>
+      <view class="p">4.1 您在通过本小程序发布的内容，您仍保留内容的所有权。但您授予本小程序运营方一项全球范围内免费的非独家使用许可。</view>
+      <view class="p">4.2 本小程序的名称、标识、源代码等知识产权归运营方所有，未经许可不得使用。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">五、免责声明</view>
+      <view class="p">5.1 本小程序按"现状"提供服务，不对服务的及时性、安全性、准确性作出任何保证。</view>
+      <view class="p">5.2 用户之间通过本小程序产生的任何纠纷，由双方自行解决，本小程序不承担调解或赔偿责任。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">六、协议修改</view>
+      <view class="p">6.1 本小程序有权根据需要不时修改本协议，修改后的协议一经发布即生效。您继续使用本小程序即表示接受修改后的协议。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">七、联系我们</view>
+      <view class="p">如对本协议有任何疑问，请联系我们：sportlight@example.com</view>
+    </view>
+  </view>
+</view>

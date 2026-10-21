@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="head">
+    <view>
+      <view class="title">约战广场</view>
+      <view class="sub">公开约战请求会显示在这里</view>
+    </view>
+    <view class="create-btn" bindtap="create">发起约战</view>
+  </view>
+
+  <view wx:if="{{challenges.length === 0 && !loading}}" class="empty">暂无公开约战</view>
+  <view wx:for="{{challenges}}" wx:key="_id" class="challenge-card" bindtap="goDetail" data-id="{{item._id}}">
+    <view class="top">
+      <image wx:if="{{item.homeTeamLogo}}" class="logo" src="{{item.homeTeamLogo}}" mode="aspectFill"/>
+      <view wx:else class="logo text">{{item.homeTeamName ? item.homeTeamName[0] : '队'}}</view>
+      <view class="main">
+        <view class="name">{{item.homeTeamName}}</view>
+        <view class="meta">{{item.sport}} {{item.spec}} · 平均{{item.homeAverageScore}}</view>
+      </view>
+      <view class="status">待应战</view>
+    </view>
+    <view class="info">{{item.date}} {{item.time}} · {{item.venueName}}</view>
+    <view class="desc">{{item.opponentRequirement}} · {{item.paymentMethod === 'host' ? '我方承担' : 'AA'}}</view>
+  </view>
+</view>

@@ -1,0 +1,9 @@
+{
+  "navigationBarBackgroundColor": "#111111",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#0F0F0F",
+  "backgroundColorTop": "#0D0F10",
+  "backgroundColorBottom": "#0D0F10",
+  "initialRenderingCache": "static",
+  "usingComponents": {}
+}

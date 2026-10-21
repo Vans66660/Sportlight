@@ -1,0 +1,202 @@
+<view class="container">
+
+  <view class="page-header">
+    <view class="back-btn" bindtap="goBack">‹</view>
+    <view class="header-info">
+      <view class="page-title">平台录入成绩</view>
+      <view class="page-sub" wx:if="{{eventDate}}">{{eventDate}}{{sport ? ' · ' + sport : ''}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{postContent}}" class="event-title-bar">
+    <text class="event-label">🏆</text>
+    <text class="event-name">{{postContent}}</text>
+  </view>
+
+  <view wx:if="{{hasExisting}}" class="existing-tip">已有成绩记录，提交将覆盖</view>
+
+  <view wx:if="{{!loading && registrants.length === 0}}" class="empty-wrap">
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">暂无已报名选手</view>
+  </view>
+
+  <view wx:if="{{registrants.length > 0}}" class="card-list">
+    <view
+      class="athlete-card {{item.attended ? '' : 'card-absent'}}"
+      wx:for="{{registrants}}"
+      wx:key="openid"
+    >
+      <!-- 顶行：头像 + 姓名 + 出席切换 -->
+      <view class="card-top">
+        <image wx:if="{{item.photo}}" class="athlete-avatar" src="{{item.photo}}" mode="aspectFill"/>
+        <view wx:else class="athlete-avatar avatar-placeholder">{{item.name[0]}}</view>
+        <view class="athlete-name">{{item.name}}</view>
+        <view
+          class="attend-toggle {{item.attended ? 'on' : 'off'}}"
+          bindtap="toggleAttended"
+          data-index="{{index}}"
+        >{{item.attended ? '出席 ✓' : '缺席 ✗'}}</view>
+      </view>
+
+      <!-- 出席才展开填写区 -->
+      <view wx:if="{{item.attended}}" class="card-body">
+
+        <!-- 名次 + 备注（通用） -->
+        <view class="basic-row">
+          <view class="field-wrap">
+            <text class="field-label">名次</text>
+            <input
+              class="field-input short"
+              type="number"
+              placeholder="—"
+              value="{{item.rank}}"
+              data-index="{{index}}"
+              data-field="rank"
+              bindinput="onInput"
+            />
+          </view>
+          <view wx:if="{{sport !== '篮球' && sport !== '足球' && sport !== '羽毛球'}}" class="field-wrap">
+            <text class="field-label">得分</text>
+            <input
+              class="field-input short"
+              type="digit"
+              placeholder="—"
+              value="{{item.score}}"
+              data-index="{{index}}"
+              data-field="score"
+              bindinput="onInput"
+            />
+          </view>
+          <view class="field-wrap flex1">
+            <text class="field-label">备注</text>
+            <input
+              class="field-input"
+              type="text"
+              placeholder="可选"
+              value="{{item.notes}}"
+              data-index="{{index}}"
+              data-field="notes"
+              bindinput="onInput"
+            />
+          </view>
+        </view>
+
+        <!-- 篮球数据 -->
+        <view wx:if="{{sport === '篮球'}}" class="stats-section">
+          <view class="stats-label">篮球数据</view>
+          <view class="stats-grid">
+            <view class="stat-cell">
+              <text class="stat-lbl">得分</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.points}}" data-index="{{index}}" data-field="stats.points" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">篮板</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.rebounds}}" data-index="{{index}}" data-field="stats.rebounds" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">助攻</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.assists}}" data-index="{{index}}" data-field="stats.assists" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">抢断</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.steals}}" data-index="{{index}}" data-field="stats.steals" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">盖帽</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.blocks}}" data-index="{{index}}" data-field="stats.blocks" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">失误</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.turnovers}}" data-index="{{index}}" data-field="stats.turnovers" bindinput="onInput"/>
+            </view>
+          </view>
+        </view>
+
+        <!-- 足球数据 -->
+        <view wx:if="{{sport === '足球'}}" class="stats-section">
+          <view class="stats-label">足球数据</view>
+          <view class="stats-grid">
+            <view class="stat-cell">
+              <text class="stat-lbl">进球</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.goals}}" data-index="{{index}}" data-field="stats.goals" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">助攻</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.assists}}" data-index="{{index}}" data-field="stats.assists" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">射正</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.shotsOnTarget}}" data-index="{{index}}" data-field="stats.shotsOnTarget" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">成功过人</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.successfulDribbles}}" data-index="{{index}}" data-field="stats.successfulDribbles" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">关键直塞</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.throughBalls}}" data-index="{{index}}" data-field="stats.throughBalls" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">关键传球</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.keyPasses}}" data-index="{{index}}" data-field="stats.keyPasses" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">成功抢断</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.successfulTackles}}" data-index="{{index}}" data-field="stats.successfulTackles" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">扑救</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.saves}}" data-index="{{index}}" data-field="stats.saves" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">黄牌</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.yellowCards}}" data-index="{{index}}" data-field="stats.yellowCards" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">红牌</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.redCards}}" data-index="{{index}}" data-field="stats.redCards" bindinput="onInput"/>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{sport === '羽毛球'}}" class="stats-section">
+          <view class="stats-label">羽毛球数据</view>
+          <view class="stats-grid">
+            <view class="stat-cell">
+              <text class="stat-lbl">得分</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.points}}" data-index="{{index}}" data-field="stats.points" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">制胜分</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.winners}}" data-index="{{index}}" data-field="stats.winners" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">发球得分</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.aces}}" data-index="{{index}}" data-field="stats.aces" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">救球</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.saves}}" data-index="{{index}}" data-field="stats.saves" bindinput="onInput"/>
+            </view>
+            <view class="stat-cell">
+              <text class="stat-lbl">失误</text>
+              <input class="stat-input" type="number" placeholder="0" value="{{item.stats.errors}}" data-index="{{index}}" data-field="stats.errors" bindinput="onInput"/>
+            </view>
+          </view>
+        </view>
+
+      </view>
+    </view>
+  </view>
+
+  <view class="hint-row">
+    <text class="hint-text">数据字段与平台竞技积分算法保持一致；请只填写已核实的现场事件</text>
+  </view>
+
+  <view
+    wx:if="{{registrants.length > 0}}"
+    class="submit-btn"
+    bindtap="submit"
+  >确认提交成绩</view>
+
+</view>

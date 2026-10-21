@@ -1,0 +1,12 @@
+page { background: #0F0F0F; }
+.page { min-height: 100vh; padding: 28rpx; box-sizing: border-box; color: #FFFFFF; }
+.title { font-size: 42rpx; font-weight: 900; margin-bottom: 22rpx; }
+.banner { background: rgba(255,107,26,.12); border: 1rpx solid rgba(255,107,26,.35); border-radius: 16rpx; padding: 22rpx; margin-bottom: 20rpx; }
+.banner-title { font-size: 28rpx; font-weight: 800; color: #FF8A3D; }
+.banner-sub { margin-top: 8rpx; color: rgba(255,255,255,.7); font-size: 24rpx; }
+.entry-card { min-height: 180rpx; border-radius: 18rpx; padding: 28rpx; box-sizing: border-box; margin-bottom: 18rpx; display: flex; flex-direction: column; justify-content: center; }
+.mine { background: linear-gradient(135deg, #344B38, #162017); border: 1rpx solid rgba(110,211,128,.2); }
+.square { background: linear-gradient(135deg, #5A3D22, #24180E); border: 1rpx solid rgba(255,171,92,.24); }
+.challenge { background: linear-gradient(135deg, #263E69, #111C31); border: 1rpx solid rgba(107,156,255,.24); }
+.entry-title { font-size: 34rpx; font-weight: 900; margin-bottom: 10rpx; }
+.entry-sub { color: rgba(255,255,255,.72); font-size: 24rpx; line-height: 1.5; }

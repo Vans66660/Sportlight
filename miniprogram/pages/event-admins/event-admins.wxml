@@ -1,0 +1,44 @@
+<view class="page">
+  <page-guide guide-key="boss-event-admins" title="协作管理员" content="可邀请其他用户共同管理赛事；成绩权限仅能处理赛程、赛果和名次荣誉。"></page-guide>
+  <view class="panel">
+    <view class="panel-title">添加协作管理员</view>
+    <view class="panel-desc">可以邀请球员或其他用户参与这场赛事的运营管理。</view>
+    <view class="search-row">
+      <input class="search-input" value="{{keyword}}" bindinput="onInput" bindconfirm="search" confirm-type="search" placeholder="搜索 Sport Light ID、真实姓名或昵称" placeholder-class="placeholder"/>
+      <view class="search-btn" bindtap="search">搜索</view>
+    </view>
+    <view class="role-row">
+      <view wx:for="{{roleOptions}}" wx:key="value" class="role-card {{role === item.value ? 'active' : ''}}" bindtap="setRole" data-role="{{item.value}}">
+        <view class="role-name">{{item.label}}</view>
+        <view class="role-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{searching}}" class="empty">搜索中...</view>
+  <view wx:elif="{{searched && results.length === 0}}" class="empty">没有找到相关用户</view>
+
+  <view wx:if="{{results.length > 0}}" class="section-title">搜索结果</view>
+  <view wx:for="{{results}}" wx:key="openid" class="user-card">
+    <image wx:if="{{item.avatar}}" class="avatar" src="{{item.avatar}}" mode="aspectFill"/>
+    <view wx:else class="avatar text">{{item.displayName ? item.displayName[0] : 'S'}}</view>
+    <view class="user-info">
+      <view class="name">{{item.displayName}}</view>
+      <view class="meta">Sport Light ID {{item.sportlightId || '未生成'}} · {{item.userType === 'boss' ? '主办方' : item.userType === 'venue' ? '球馆方' : '运动员'}}</view>
+      <view wx:if="{{item.realName && item.realName !== item.displayName}}" class="meta">真实姓名：{{item.realName}}</view>
+    </view>
+    <view wx:if="{{item.invited}}" class="action disabled">已邀请</view>
+    <view wx:else class="action primary" bindtap="invite" data-index="{{index}}">邀请</view>
+  </view>
+
+  <view class="section-title">当前管理员</view>
+  <view wx:if="{{loading}}" class="empty small">加载中...</view>
+  <view wx:elif="{{admins.length === 0}}" class="empty small">暂无协作管理员</view>
+  <view wx:for="{{admins}}" wx:key="_id" class="admin-card">
+    <view class="admin-main">
+      <view class="admin-name">{{item.adminName || item.adminNickname || '未命名用户'}}</view>
+      <view class="meta">Sport Light ID {{item.sportlightId || '未生成'}} · {{item.roleLabel}} · {{item.statusLabel}}</view>
+    </view>
+    <view wx:if="{{item.status !== 'removed'}}" class="action danger" bindtap="removeAdmin" data-id="{{item._id}}">移除</view>
+  </view>
+</view>

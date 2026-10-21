@@ -1,0 +1,965 @@
+page {
+  background: #0F0F0F;
+}
+
+.container {
+  min-height: 100vh;
+  background-color: #0F0F0F;
+  background: #0F0F0F;
+}
+
+/* 顶部 */
+.header {
+  background-color: #111111;
+  padding: 20rpx 28rpx 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-text {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.logo-dot { color: #FF6B1A; }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.activity-entry {
+  height: 52rpx;
+  padding: 0 22rpx;
+  border-radius: 26rpx;
+  border: 1rpx solid #333333;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  line-height: 52rpx;
+}
+
+.publish-btn {
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 500;
+  padding: 12rpx 24rpx;
+  border-radius: 16rpx;
+}
+
+.boss-home-guide { margin: 18rpx 28rpx 4rpx; padding: 22rpx; border: 1rpx solid rgba(255, 107, 26, .38); border-radius: 18rpx; background: linear-gradient(135deg, #241811, #171717); }
+.boss-home-guide-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16rpx; }
+.boss-home-guide-kicker { color: #FF934E; font-size: 19rpx; font-weight: 700; letter-spacing: 1rpx; }
+.boss-home-guide-title { margin-top: 6rpx; color: #F5F5F5; font-size: 28rpx; font-weight: 700; }
+.boss-home-guide-progress { color: #FF9B5A; font-size: 24rpx; font-weight: 700; }
+.boss-home-guide-steps { display: flex; gap: 10rpx; margin-top: 20rpx; }
+.boss-home-guide-step { flex: 1; min-width: 0; color: #838383; font-size: 20rpx; text-align: center; }
+.boss-home-guide-step.done { color: #D2D2D2; }
+.boss-home-guide-dot { width: 32rpx; height: 32rpx; margin: 0 auto 7rpx; border-radius: 50%; background: #303030; color: #A5A5A5; font-size: 18rpx; font-weight: 700; line-height: 32rpx; }
+.boss-home-guide-step.done .boss-home-guide-dot { background: #FF6B1A; color: #111111; }
+.boss-home-guide-cta { display: flex; align-items: center; justify-content: space-between; margin-top: 18rpx; padding: 14rpx 16rpx; border-radius: 10rpx; background: rgba(255, 107, 26, .14); color: #FF9B5A; font-size: 23rpx; font-weight: 700; }
+
+/* 搜索 */
+.search-wrap {
+  padding: 16rpx 28rpx;
+  background-color: #111111;
+}
+
+.search-box {
+  background-color: #1E1E1E;
+  border-radius: 20rpx;
+  padding: 18rpx 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.search-icon { width: 32rpx; height: 32rpx; flex-shrink: 0; }
+
+.search-input {
+  flex: 1;
+  font-size: 26rpx;
+  color: #FFFFFF;
+  min-width: 0;
+}
+
+.search-clear {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: #333333;
+  color: #AAAAAA;
+  font-size: 32rpx;
+  line-height: 40rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.event-search-wrap {
+  padding-top: 0;
+}
+
+/* 筛选 */
+.filter-scroll {
+  background-color: #111111;
+  white-space: nowrap;
+}
+
+.filter-row {
+  display: flex;
+  padding: 0 28rpx 20rpx;
+  gap: 12rpx;
+}
+
+.filter-chip {
+  display: inline-block;
+  background-color: #1E1E1E;
+  border-radius: 40rpx;
+  padding: 10rpx 24rpx;
+  font-size: 24rpx;
+  color: #888888;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.filter-chip.active {
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+}
+
+.event-filter-scroll {
+  border-bottom: 1rpx solid #171717;
+  padding: 0 28rpx 18rpx;
+}
+
+/* 公开赛分组筛选 */
+.event-filter-groups {
+  padding: 0 28rpx 12rpx;
+  border-bottom: 1rpx solid #171717;
+}
+
+.player-filter-groups {
+  padding: 8rpx 28rpx 16rpx;
+  background: #111111;
+  border-bottom: 1rpx solid #1D1D1D;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  min-height: 64rpx;
+  margin-bottom: 12rpx;
+}
+
+.player-filter-groups .filter-group {
+  min-height: 50rpx;
+  margin-bottom: 8rpx;
+  gap: 12rpx;
+}
+
+.player-filter-groups .filter-group:last-child {
+  margin-bottom: 0;
+}
+
+.filter-group-label {
+  width: 64rpx;
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #555;
+  line-height: 44rpx;
+}
+
+.player-filter-groups .filter-group-label {
+  width: 54rpx;
+  color: #6E6E6E;
+  font-size: 21rpx;
+  font-weight: 700;
+}
+
+.filter-group-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 12rpx;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filter-group-row .filter-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1E1E1E;
+  border-radius: 40rpx;
+  min-width: 92rpx;
+  height: 52rpx;
+  padding: 0 24rpx;
+  font-size: 24rpx;
+  color: #888;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.player-filter-groups .filter-group-row .filter-chip {
+  height: 44rpx;
+  min-width: 78rpx;
+  padding: 0 18rpx;
+  border-radius: 8rpx;
+  border: 1rpx solid #252525;
+  background: #171717;
+  color: #8C8C8C;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.filter-group-row .filter-chip.active {
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+}
+
+.player-filter-groups .filter-group-row .filter-chip.active {
+  border-color: rgba(255, 107, 26, 0.55);
+  background: rgba(255, 107, 26, 0.14);
+  color: #FF8C47;
+}
+
+.deadline-range {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-left: 66rpx;
+  padding-top: 2rpx;
+}
+
+.deadline-picker {
+  min-width: 180rpx;
+  height: 48rpx;
+  padding: 0 18rpx;
+  border-radius: 8rpx;
+  border: 1rpx solid rgba(255, 107, 26, 0.38);
+  background: rgba(255, 107, 26, 0.1);
+  color: #FF8C47;
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 48rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.deadline-picker.placeholder {
+  border-color: #252525;
+  background: #171717;
+  color: #777777;
+}
+
+.deadline-sep {
+  color: #666666;
+  font-size: 22rpx;
+}
+
+.filter-hint {
+  font-size: 22rpx;
+  color: #555;
+  line-height: 52rpx;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.event-filter-scroll .filter-row {
+  width: calc(100vw - 56rpx);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 6rpx;
+  border: 1rpx solid #242424;
+  border-radius: 30rpx;
+  background-color: #171717;
+  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.04);
+}
+
+.event-filter-scroll .filter-chip {
+  flex: 1;
+  min-width: 108rpx;
+  height: 52rpx;
+  box-sizing: border-box;
+  padding: 0 16rpx;
+  border-radius: 24rpx;
+  background-color: transparent;
+  color: #8A8A8A;
+  font-size: 24rpx;
+  font-weight: 600;
+  line-height: 52rpx;
+  text-align: center;
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+
+.event-filter-scroll .filter-chip.active {
+  background: linear-gradient(135deg, #FF7A24 0%, #FF5A14 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8rpx 18rpx rgba(255, 107, 26, 0.28);
+}
+
+/* Tab */
+.tab-wrap {
+  display: flex;
+  margin: 20rpx 28rpx;
+  background-color: #1A1A1A;
+  border-radius: 20rpx;
+  padding: 6rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: #555555;
+  border-radius: 16rpx;
+}
+
+.tab.active {
+  background-color: #FF6B1A;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.battle-control {
+  padding: 16rpx 28rpx 12rpx;
+  background: #111111;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.02);
+}
+
+.battle-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8rpx;
+  padding: 6rpx;
+  border: 1rpx solid #242424;
+  border-radius: 8rpx;
+  background: #171717;
+}
+
+.battle-tab {
+  height: 64rpx;
+  border-radius: 6rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  color: #747474;
+  font-size: 25rpx;
+  font-weight: 800;
+  box-sizing: border-box;
+}
+
+.battle-tab.active {
+  background: #FF6B1A;
+  color: #111111;
+}
+
+.battle-caption {
+  margin-top: 10rpx;
+  color: #666666;
+  font-size: 21rpx;
+  line-height: 30rpx;
+}
+
+.player-search-wrap {
+  padding: 4rpx 28rpx 12rpx;
+}
+
+.player-search-wrap .search-box {
+  height: 58rpx;
+  border-radius: 8rpx;
+  padding: 0 18rpx;
+  background: #191919;
+  border: 1rpx solid #242424;
+  box-sizing: border-box;
+}
+
+.player-search-wrap .search-input {
+  font-size: 24rpx;
+}
+
+/* 运动员网格 */
+.list-scroll {
+  width: 100%;
+}
+
+.athlete-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+  padding: 0 28rpx calc(180rpx + env(safe-area-inset-bottom));
+}
+
+.athlete-card {
+  position: relative;
+  border-radius: 28rpx;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  background-color: #1A1A1A;
+}
+
+.athlete-photo {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.96));
+  padding: 60rpx 20rpx 20rpx;
+}
+
+.athlete-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+  margin-bottom: 4rpx;
+}
+
+.athlete-affil {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 20rpx;
+  color: #777777;
+  margin-bottom: 10rpx;
+}
+
+.athlete-location {
+  font-size: 20rpx;
+  color: #999999;
+  margin-bottom: 10rpx;
+}
+
+.affil-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background-color: #FF6B1A;
+  flex-shrink: 0;
+}
+
+.type-tags {
+  display: flex;
+  gap: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.type-tag {
+  font-size: 18rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+}
+
+.type-tag.match { background-color: #0d2010; color: #3DBB8A; }
+.type-tag.ad { background-color: #0d1020; color: #5BA8D4; }
+
+.card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.avg-label { font-size: 18rpx; color: #666666; margin-bottom: 2rpx; }
+.avg-price { font-size: 26rpx; font-weight: 500; color: #FFFFFF; }
+.per-unit { font-size: 18rpx; color: #666666; }
+
+.lock-pill {
+  font-size: 20rpx;
+  color: #555555;
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 8rpx;
+  padding: 4rpx 14rpx;
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.lock-icon { width: 24rpx; height: 24rpx; }
+.rep-icon { width: 28rpx; height: 28rpx; display: inline-block; vertical-align: middle; margin-right: 2rpx; }
+
+.rank-badge {
+  font-size: 20rpx;
+  font-weight: 500;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+
+
+.rank-badge.rank-D { color: #FF8C47; background-color: #2A1800; }
+.rank-badge.rank-C { color: #5BA8D4; background-color: #0A1E2A; }
+.rank-badge.rank-B { color: #3DBB8A; background-color: #0A2A1A; }
+.rank-badge.rank-A { color: #7B7BDD; background-color: #0A0A20; }
+.rank-badge.rank-S { color: #D85A30; background-color: #2A1008; }
+.rank-badge.rank-pending { color: #FFD36A; background-color: #2A2108; }
+
+.badges-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6rpx;
+}
+
+.rep-badge {
+  font-size: 18rpx;
+  width: 72rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rep-badge.rep-great { color: #3DBB8A; background-color: #0A2A1A; }
+.rep-badge.rep-good  { color: #FFB700; background-color: #2A2000; }
+.rep-badge.rep-ok    { color: #FF8C47; background-color: #2A1800; }
+.rep-badge.rep-bad   { color: #A32D2D; background-color: #2A1010; }
+
+/* 公开赛列表 */
+.event-list {
+  padding: 0 0 calc(180rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.ec-wrap {
+  padding: 0 28rpx;
+}
+
+/* ── 通用：状态徽章 ── */
+.ec-status {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 20rpx;
+  font-weight: 600;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
+.ec-status-dot { font-size: 14rpx; }
+.ec-status.status-open   { background: rgba(0,50,25,0.85); color: #3DBB8A; }
+.ec-status.status-full   { background: rgba(50,25,0,0.85); color: #FF8C47; }
+.ec-status.status-closed { background: rgba(30,30,30,0.85); color: #555; }
+.ec-certified {
+  display: flex;
+  align-items: center;
+  padding: 7rpx 14rpx;
+  border: 1rpx solid rgba(255,112,31,.55);
+  border-radius: 20rpx;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(255,116,37,.94), rgba(238,72,0,.94));
+  box-shadow: 0 8rpx 18rpx rgba(255,81,0,.18);
+  font-size: 19rpx;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* ── 我的报名状态标签（替代原立即报名按钮） ── */
+.ec-my-status {
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+}
+.ec-my-status:empty { display: none; }
+.my-registered { background: rgba(61,187,138,0.15); color: #3DBB8A; }
+.my-pending    { background: rgba(91,168,212,0.15); color: #5BA8D4; }
+.my-pay        { background: rgba(255,107,26,0.15); color: #FF6B1A; }
+
+/* ── 通用：进度条 ── */
+.ec-spots-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.ec-spots-track {
+  flex: 1;
+  height: 6rpx;
+  background: rgba(255,255,255,0.12);
+  border-radius: 3rpx;
+  overflow: hidden;
+}
+.ec-spots-track-dark {
+  background: #2A2A2A;
+}
+.ec-spots-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF6B1A, #CC8800);
+  border-radius: 3rpx;
+}
+.ec-spots-label {
+  font-size: 20rpx;
+  color: rgba(255,255,255,0.4);
+  flex-shrink: 0;
+}
+.ec-spots-label-dark { color: #555; }
+
+/* ── 有图卡 ── */
+.ec-img {
+  position: relative;
+  border-radius: 24rpx;
+  overflow: hidden;
+  background: #1A1A1A;
+}
+.ec-img-bg {
+  width: 100%;
+  height: 440rpx;
+  display: block;
+}
+.ec-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.94) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24rpx;
+}
+.ec-top-row {
+  display: flex;
+  gap: 12rpx;
+  justify-content: flex-end;
+}
+.ec-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+.ec-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ec-author {
+  font-size: 22rpx;
+  color: #FF6B1A;
+  font-weight: 500;
+}
+.ec-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4rpx;
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.55);
+}
+.ec-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4rpx;
+}
+.ec-top-prize {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+.ec-top-prize-placeholder { flex: 0; }
+.ec-prize-medal-sm { font-size: 22rpx; }
+.ec-prize-medal-sm-img {
+  width: 28rpx;
+  height: 28rpx;
+  display: block;
+  flex-shrink: 0;
+}
+.ec-prize-name-sm { font-size: 22rpx; color: rgba(255,255,255,0.6); }
+.ec-prize-amount-sm { font-size: 26rpx; font-weight: 600; color: #FFB700; }
+.ec-prize-legacy-sm { font-size: 24rpx; color: #FFB700; }
+
+/* ── 运动主题色（无横幅兜底） ── */
+.ec-sport-basketball { background: linear-gradient(135deg, #1E1A14 0%, #2A1800 100%); border-top: 3rpx solid #FF6B1A; }
+.ec-sport-football   { background: linear-gradient(135deg, #141E14 0%, #0A2A0A 100%); border-top: 3rpx solid #3DBB8A; }
+.ec-sport-badminton  { background: linear-gradient(135deg, #141820 0%, #0A1A2E 100%); border-top: 3rpx solid #5BA8D4; }
+.ec-sport-fight      { background: linear-gradient(135deg, #1E1414 0%, #2A0A0A 100%); border-top: 3rpx solid #E53935; }
+.ec-sport-esport     { background: linear-gradient(135deg, #18141E 0%, #1A0A2A 100%); border-top: 3rpx solid #7B7BDD; }
+.ec-sport-swim       { background: linear-gradient(135deg, #14181E 0%, #0A1E2A 100%); border-top: 3rpx solid #00BCD4; }
+
+/* ── 无图卡 ── */
+.ec-text {
+  background: #1A1A1A;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+.ec-text-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ec-text-head-badges { display: flex; align-items: center; gap: 10rpx; }
+.ec-sport-icon { font-size: 48rpx; line-height: 1; }
+.ec-title-dark { color: #FFFFFF; }
+.ec-meta-dark  { color: #666; }
+.ec-footer-text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1rpx solid #242424;
+  padding-top: 16rpx;
+  margin-top: 4rpx;
+}
+.ec-author-text { font-size: 22rpx; color: #FF6B1A; font-weight: 500; }
+
+/* ── 空态 / 加载 ── */
+.empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+  gap: 20rpx;
+}
+.empty-icon { font-size: 80rpx; }
+.empty-text { font-size: 26rpx; color: #444444; }
+
+.empty-clear {
+  color: #FF6B1A;
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 12rpx 24rpx;
+  border-radius: 28rpx;
+  background: rgba(255,107,26,0.12);
+}
+
+.loading-tip, .no-more-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #444444;
+  padding: 32rpx 0;
+}
+
+/* 赏金令列表 */
+.order-list {
+  padding: 0 28rpx calc(180rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.ocv {
+  background: #1A1A1A;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  border-left: 4rpx solid #FF6B1A;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.ocv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ocv-boss-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.ocv-boss-logo {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 10rpx;
+  background: #2A2A2A;
+  display: block;
+  flex-shrink: 0;
+}
+
+.ocv-boss-initial {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 10rpx;
+  background: #2A2A2A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.ocv-boss-name {
+  font-size: 24rpx;
+  color: #888;
+}
+
+.ocv-type-badge {
+  font-size: 20rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+}
+.ocv-type-badge.match { background: #0d2010; color: #3DBB8A; }
+.ocv-type-badge.ad    { background: #0d1020; color: #5BA8D4; }
+
+.ocv-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ocv-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4rpx;
+  font-size: 22rpx;
+  color: #555;
+}
+
+.ocv-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-top: 1rpx solid #242424;
+  padding-top: 16rpx;
+}
+
+.ocv-price-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+}
+
+.ocv-price-label {
+  font-size: 18rpx;
+  color: #555;
+  letter-spacing: 2rpx;
+}
+
+.ocv-price {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #FF6B1A;
+  line-height: 1.1;
+}
+
+.ocv-detail-btn {
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 16rpx 34rpx;
+  border-radius: 40rpx;
+  background: rgba(255,107,26,0.12);
+  color: #FF8C47;
+}
+
+.cal-icon-sm { width: 22rpx; height: 22rpx; display: block; filter: invert(1); }
+.icon-text-pair { display: flex; align-items: center; gap: 4rpx; }
+
+.ocv-detail-btn.status-pending {
+  background: rgba(255,107,26,0.14);
+  color: #FF8C47;
+}
+
+.ocv-detail-btn.status-approved {
+  background: rgba(61,187,138,0.15);
+  color: #3DBB8A;
+}
+
+.ocv-detail-btn.status-rejected {
+  background: rgba(120,120,120,0.14);
+  color: #888888;
+}
+
+/* 发布选择弹层 */
+.sheet-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.sheet-wrap {
+  background: #1A1A1A;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 0 0 calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.sheet-handle {
+  width: 64rpx;
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: #333333;
+  margin: 20rpx auto 28rpx;
+}
+
+.sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 32rpx 36rpx;
+}
+
+.sheet-tag {
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 6rpx 18rpx;
+  border-radius: 10rpx;
+  flex-shrink: 0;
+}
+
+.tag-event {
+  background: rgba(204,136,0,0.15);
+  color: #CC8800;
+}
+
+.tag-order {
+  background: rgba(255,107,26,0.15);
+  color: #FF6B1A;
+}
+
+.sheet-item-body { flex: 1; }
+.sheet-item-title { font-size: 30rpx; font-weight: 500; color: #FFFFFF; margin-bottom: 6rpx; }
+.sheet-item-sub { font-size: 24rpx; color: #555555; }
+
+.sheet-divider {
+  height: 1rpx;
+  background: #242424;
+  margin: 0 36rpx;
+}
+
+.sheet-cancel {
+  margin: 20rpx 36rpx 0;
+  padding: 28rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+  color: #555555;
+  border-top: 1rpx solid #242424;
+}

@@ -1,0 +1,65 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <block wx:else>
+    <scroll-view class="scroll" scroll-y>
+      <view class="hero">
+        <view class="sport">{{game.sport}}</view>
+        <view class="title">{{game.venueName}} · {{game.courtName}}</view>
+        <view class="sub">{{game.date}} {{game.startTime}}-{{game.endTime}}</view>
+      </view>
+
+      <view class="stats">
+        <view><text>{{game.avgScore || 0}}</text><label>平均积分</label></view>
+        <view><text>{{game.participantCount || 0}}/{{game.maxPlayers}}</text><label>报名/上限</label></view>
+        <view><text>{{game.minPlayers}}</text><label>发车人数</label></view>
+      </view>
+
+      <view class="pay-card">
+        <view class="pay-label">费用方式</view>
+        <view class="pay-value">{{game.paymentLabel}}</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">场地定位</view>
+        <view class="location-card" bindtap="openLocation">
+          <view>
+            <view class="loc-name">{{game.venueName}}</view>
+            <view class="loc-address">{{game.venueAddress}}</view>
+          </view>
+          <view class="loc-action">查看</view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">报名名单</view>
+        <view class="member-row">
+          <view wx:for="{{game.participants}}" wx:key="openid" class="member" bindtap="goAthlete" data-openid="{{item.openid}}">
+            <image wx:if="{{item.avatar}}" class="member-avatar" src="{{item.avatar}}" mode="aspectFill"/>
+            <view wx:else class="member-avatar empty-avatar">{{item.initial}}</view>
+            <view class="member-name">{{item.name}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section" wx:if="{{game.notice}}">
+        <view class="section-title">活动公告</view>
+        <view class="notice">{{game.notice}}</view>
+      </view>
+
+      <view class="section" wx:if="{{game.isPrivateBooking}}">
+        <view class="section-title">包场说明</view>
+        <view class="notice">该球局为包场局，不会在大厅展示。只有包场人分享链接后，其他人才能通过链接进入并上车。</view>
+      </view>
+
+      <view class="deadline">报名截止：{{game.deadlineDate}} {{game.deadlineTime}}</view>
+    </scroll-view>
+
+    <view class="bottom-bar">
+      <button class="share-btn" open-type="share">分享</button>
+      <view wx:if="{{game.needsPrivatePayment}}" class="join-btn" bindtap="joinGame">支付包场费</view>
+      <view wx:elif="{{game.isPrivateBooking && game.isCreator && game.privatePaid}}" class="join-btn muted">包场成功</view>
+      <view wx:elif="{{game.joined}}" class="join-btn muted" bindtap="cancelJoin">取消报名</view>
+      <view wx:else class="join-btn" bindtap="joinGame">{{game.paymentMethod === 'aa' ? '支付并报名' : '申请报名'}}</view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,109 @@
+<view class="container">
+  <view class="page-header">
+    <view class="back-btn" bindtap="goBack">‹</view>
+    <view class="header-main">
+      <view class="page-title">赛事赛程</view>
+      <view class="page-sub" wx:if="{{post}}">{{post.title || post.content || '公开赛'}}{{post.eventDate ? ' · ' + post.eventDate : ''}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && !schedule}}" class="empty-wrap">
+    <view class="empty-title">暂无赛程</view>
+    <view class="empty-sub">主办方生成后，参赛队伍和观众都能在这里查看对阵与积分榜</view>
+    <view wx:if="{{canManage}}" class="primary-btn" bindtap="generateSchedule">生成小组赛程</view>
+  </view>
+
+  <block wx:if="{{schedule}}">
+    <view class="summary-band">
+      <view class="summary-item">
+        <view class="summary-value">{{schedule.generatedTeamCount}}</view>
+        <view class="summary-label">参赛队伍</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-value">{{schedule.groupCount}}</view>
+        <view class="summary-label">小组</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-value">{{schedule.advancePerGroup}}</view>
+        <view class="summary-label">每组晋级</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-header">
+        <view class="section-title">小组积分榜</view>
+      </view>
+      <view class="standing-card" wx:for="{{standingsList}}" wx:key="groupName">
+        <view class="group-title">{{item.groupName}} 组</view>
+        <view class="table-head">
+          <text class="rank-col">#</text>
+          <text class="team-col">队伍</text>
+          <text class="num-col">赛</text>
+          <text class="num-col">胜</text>
+          <text class="num-col">负</text>
+          <text class="num-col">净</text>
+          <text class="num-col">分</text>
+        </view>
+        <view class="table-row" wx:for="{{item.rows}}" wx:for-item="row" wx:key="teamId">
+          <text class="rank-col">{{row.rank}}</text>
+          <text class="team-col">{{row.teamName}}</text>
+          <text class="num-col">{{row.played}}</text>
+          <text class="num-col">{{row.win}}</text>
+          <text class="num-col">{{row.loss}}</text>
+          <text class="num-col">{{row.diff}}</text>
+          <text class="num-col points">{{row.points}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-header">
+        <view class="section-title">小组赛对阵</view>
+        <view wx:if="{{canRecord}}" class="section-action">平台录入比分</view>
+        <view wx:elif="{{canManage}}" class="section-action">比分由平台录入</view>
+      </view>
+
+      <view class="match-group" wx:for="{{matchesByGroup}}" wx:key="groupName" wx:for-index="groupIndex">
+        <view class="group-title">{{item.groupName}} 组</view>
+        <view
+          class="match-card {{match.status === 'finished' ? 'match-finished' : ''}}"
+          wx:for="{{item.matches}}"
+          wx:for-item="match"
+          wx:key="matchId"
+          bindtap="openScoreModal"
+          data-group="{{groupIndex}}"
+          data-index="{{index}}"
+        >
+          <view class="match-meta">
+            <text>第 {{match.round}} 场</text>
+            <text>{{match.status === 'finished' ? '已结束' : '未开始'}}</text>
+          </view>
+          <view class="match-line">
+            <view class="match-team">{{match.teamAName}}</view>
+            <view class="match-score">
+              <text wx:if="{{match.status === 'finished'}}">{{match.scoreA}} : {{match.scoreB}}</text>
+              <image wx:else class="vs-icon" src="/images/icons/VS.png" mode="aspectFit" />
+            </view>
+            <view class="match-team right">{{match.teamBName}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<view wx:if="{{scoreModal.show}}" class="modal-mask" catchtap="closeScoreModal"></view>
+<view wx:if="{{scoreModal.show}}" class="score-sheet">
+  <view class="sheet-title">录入比分</view>
+  <view class="score-teams">
+    <view class="score-team">{{scoreModal.match.teamAName}}</view>
+    <input class="score-input" type="number" value="{{scoreModal.scoreA}}" data-side="scoreA" bindinput="onScoreInput"/>
+    <view class="score-sep">:</view>
+    <input class="score-input" type="number" value="{{scoreModal.scoreB}}" data-side="scoreB" bindinput="onScoreInput"/>
+    <view class="score-team right">{{scoreModal.match.teamBName}}</view>
+  </view>
+  <view class="sheet-actions">
+    <view class="sheet-btn cancel" catchtap="closeScoreModal">取消</view>
+    <view class="sheet-btn save" catchtap="saveScore">保存比分</view>
+  </view>
+</view>

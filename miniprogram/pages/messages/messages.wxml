@@ -1,0 +1,82 @@
+<view class="container">
+
+<view class="header">
+  <view class="header-title">消息</view>
+</view>
+
+<scroll-view class="list-scroll" scroll-y>
+
+  <!-- 系统通知入口 -->
+  <view class="message-section-title">系统与待办</view>
+  <view class="notif-row" bindtap="goNotifications">
+    <view class="notif-icon-wrap">
+      <image class="notif-icon-img" src="/images/icons/notification.png" mode="aspectFit" />
+      <view wx:if="{{notifUnread > 0}}" class="unread-badge">{{notifUnread}}</view>
+    </view>
+    <view class="msg-info">
+      <view class="msg-header">
+        <view class="msg-name">系统通知</view>
+      </view>
+      <view class="msg-preview">报名、邀请、订单与系统提醒</view>
+    </view>
+    <view class="notif-arrow">›</view>
+  </view>
+
+  <view wx:if="{{conversations.length > 0}}">
+    <view class="message-section-title conversation-title">私信与沟通</view>
+    <view
+      class="swipe-wrap"
+      wx:for="{{conversations}}"
+      wx:key="_id"
+      bindtouchstart="onTouchStart"
+      bindtouchmove="onTouchMove"
+      bindtouchend="onTouchEnd"
+      data-index="{{index}}"
+    >
+      <view
+        class="swipe-inner {{item.transitioning ? 'snap' : ''}}"
+        style="transform: translateX({{item.swipeX || 0}}rpx)"
+      >
+        <view
+          class="msg-row {{item.pinned ? 'pinned' : ''}}"
+          bindtap="goChat"
+          data-id="{{item._id}}"
+          data-title="{{item.title}}"
+          data-index="{{index}}"
+        >
+          <view class="avatar-wrap">
+            <image wx:if="{{item.otherPhoto}}" class="avatar avatar-img {{item.pinned ? 'avatar-gold' : ''}}" src="{{item.otherPhoto}}" mode="aspectFill"/>
+            <view wx:else class="avatar avatar-text {{item.pinned ? 'avatar-gold' : ''}}">{{item.otherName ? item.otherName[0] : '?'}}</view>
+            <view wx:if="{{item.unreadCount > 0}}" class="unread-badge">{{item.unreadCount}}</view>
+            <view wx:elif="{{item.pinned}}" class="pinned-dot"></view>
+          </view>
+          <view class="msg-info">
+            <view class="msg-header">
+              <view class="msg-name {{item.pinned ? 'gold' : ''}}">
+                {{item.otherName || item.title}}
+                <text wx:if="{{item.pinned}}" class="pinned-tag">⚡ 进行中</text>
+              </view>
+              <view class="msg-status status-{{item.status}}">{{item.statusLabel}}</view>
+            </view>
+            <view class="msg-sub-title {{item.pinned ? 'gold-sub' : ''}}">{{item.title}}</view>
+            <view class="msg-preview {{item.unreadCount > 0 ? 'unread' : ''}}">
+              {{item.lastMsg || '¥' + item.price + ' · ' + item.city}}
+            </view>
+          </view>
+        </view>
+
+        <view class="delete-action" catchtap="deleteConversation" data-index="{{index}}" data-id="{{item._id}}">
+          <text class="delete-label">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-wrap" wx:else>
+    <view class="empty-icon">💬</view>
+    <view class="empty-text">暂无消息</view>
+    <view class="empty-hint">锁单后可与对方聊天</view>
+  </view>
+</scroll-view>
+
+</view>

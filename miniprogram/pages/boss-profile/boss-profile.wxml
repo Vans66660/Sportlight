@@ -1,0 +1,76 @@
+<view class="container">
+
+  <!-- 顶部导航 -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">‹</view>
+    <view class="header-title">发布方资料</view>
+    <view class="header-right"></view>
+  </view>
+
+  <view wx:if="{{loaded}}">
+
+    <!-- 老板信息卡 -->
+    <view class="hero-card">
+      <view class="boss-avatar-wrap">
+        <image wx:if="{{boss.logo}}" class="boss-logo" src="{{boss.logo}}" mode="aspectFill"/>
+        <view wx:else class="boss-avatar">{{boss.name[0]}}</view>
+      </view>
+      <view class="boss-name">{{boss.name}}</view>
+      <view class="boss-meta">
+        {{boss.bossType === 'personal' ? '个人' : boss.bossType === 'company' ? '企业' : '俱乐部'}}
+        {{boss.city ? ' · ' + boss.city : ''}}
+      </view>
+      <view class="badge-row">
+        <view class="badge {{boss.wechatVerified ? 'verified' : 'unverified'}}">
+          {{boss.wechatVerified ? '✓ 微信认证' : '未认证'}}
+        </view>
+        <view class="badge {{boss.phoneVerified ? 'verified' : 'unverified'}}">
+          {{boss.phoneVerified ? '✓ 手机认证' : '手机未认证'}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 数据统计 -->
+    <view class="stat-row">
+      <view class="stat-box">
+        <view class="stat-value">{{boss.orderCount}}</view>
+        <view class="stat-label">发布订单</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-box">
+        <view class="stat-value">{{boss.doneCount}}</view>
+        <view class="stat-label">已完成</view>
+      </view>
+    </view>
+
+    <!-- 详细介绍 -->
+    <view wx:if="{{boss.description}}" class="desc-section">
+      <view class="section-title">关于我们</view>
+      <view class="desc-text">{{boss.description}}</view>
+    </view>
+
+    <!-- 最近动态 -->
+    <view class="section-title">最近动态</view>
+    <view wx:if="{{boss.recentPosts && boss.recentPosts.length > 0}}" class="post-list">
+      <view
+        class="mini-post"
+        wx:for="{{boss.recentPosts}}"
+        wx:key="_id"
+        bindtap="goPostDetail"
+        data-id="{{item._id}}"
+      >
+        <view class="mini-post-type type-{{item.type}}">{{item.typeLabel}}</view>
+        <view class="mini-post-content">{{item.content}}</view>
+        <view class="mini-post-footer">
+          <text class="mini-post-time">{{item.timeLabel}}</text>
+          <text class="mini-post-likes">♡ {{item.likesCount}}</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-box">
+      <text>还没有发布动态</text>
+    </view>
+
+  </view>
+
+</view>

@@ -1,0 +1,115 @@
+<view class="setup-page">
+  <canvas type="2d" id="portraitResizeCanvas" class="portrait-resize-canvas"></canvas>
+  <view class="setup-head">
+    <view class="setup-kicker">PLAYER IMAGE</view>
+    <view class="setup-title">设置你的球星形象</view>
+    <view class="setup-desc">上传一张清晰的单人照片，系统会自动去除背景。每张比赛卡都会复用这份人物素材。</view>
+  </view>
+
+  <view class="portrait-switcher">
+    <view class="switcher-head">
+      <view><text class="switcher-title">形象库</text><text class="switcher-count">{{portraits.length}}/3</text></view>
+      <view class="switcher-quota">{{portraitUploadQuota.label || ('可上传 ' + portraitUploadQuota.remaining + ' 次')}}</view>
+    </view>
+    <view class="switcher-row">
+      <view class="switcher-slot {{portraitId === (item.portraitId || item._id) ? 'active' : ''}}" wx:for="{{portraits}}" wx:key="portraitId"
+        data-id="{{item.portraitId || item._id}}" bindtap="selectPortrait">
+        <image src="{{item.cutoutFileID}}" mode="aspectFit"/>
+      </view>
+      <view class="switcher-slot add" wx:if="{{portraits.length < 3}}" data-id="" bindtap="selectPortrait">＋</view>
+    </view>
+    <view wx:if="{{currentPortrait}}" class="portrait-actions">
+      <button wx:if="{{!currentPortrait.isActive}}" class="active-btn" bindtap="setActivePortrait">设为当前使用形象</button>
+      <button class="delete-portrait-btn" bindtap="deletePortrait">删除形象</button>
+    </view>
+  </view>
+
+  <view class="mode-title">选择照片构图</view>
+  <view class="mode-row">
+    <view class="mode-card {{compositionMode === 'half' ? 'active' : ''}}" data-mode="half" bindtap="selectMode">
+      <view class="mode-figure half"><view></view></view>
+      <view class="mode-name">半身</view>
+      <view class="mode-note">胸部、腰部或大腿以上</view>
+    </view>
+    <view class="mode-card {{compositionMode === 'full' ? 'active' : ''}}" data-mode="full" bindtap="selectMode">
+      <view class="mode-figure full"><view></view></view>
+      <view class="mode-name">全身</view>
+      <view class="mode-note">膝盖、小腿或完整全身</view>
+    </view>
+  </view>
+
+  <view class="preview-card">
+    <view class="preview-toolbar">
+      <view>
+        <view class="preview-title">卡面实时预览</view>
+        <view class="preview-note">{{hasResult ? '单指拖动 · 双指缩放' : '上传照片后可调整人物位置'}}</view>
+      </view>
+      <view wx:if="{{hasResult}}" class="reset-btn" bindtap="resetLayout">恢复默认</view>
+    </view>
+    <view
+      id="cardStage"
+      class="card-stage"
+      bindtouchstart="handleTouchStart"
+      catchtouchmove="handleTouchMove"
+      bindtouchend="handleTouchEnd"
+      bindtouchcancel="handleTouchEnd"
+    >
+      <image class="card-template" src="{{templateFrontSrc}}" mode="scaleToFill"/>
+      <view wx:if="{{cutoutFileID}}" class="player-viewport" style="{{playerViewportStyle}}">
+        <view
+          class="player-layer {{compositionMode}}"
+          style="{{playerLayerStyle}};transform: translate3d({{translateX}}px, {{translateY}}px, 0) scale({{playerScale}});"
+        >
+          <image class="cutout-image" src="{{cutoutFileID}}" mode="aspectFit"/>
+        </view>
+      </view>
+      <view wx:else class="preview-empty">
+        <view class="preview-plus">＋</view>
+        <view>等待人物素材</view>
+      </view>
+      <view wx:if="{{hasResult}}" class="safe-guide" style="{{playerViewportStyle}}"></view>
+      <view wx:if="{{processing}}" class="processing-mask"><view class="spinner"></view><text>正在识别人像…</text></view>
+    </view>
+  </view>
+
+  <view wx:if="{{hasResult}}" class="layout-controls">
+    <view class="refine-entry" bindtap="openCutoutEditor">
+      <view>
+        <view class="refine-title">精修人物边缘</view>
+        <view class="refine-note">擦除多余背景，恢复误删的头发、手指或球鞋</view>
+      </view>
+      <view class="refine-arrow">›</view>
+    </view>
+    <view class="control-row">
+      <view>
+        <view class="control-title">人物大小</view>
+        <view class="control-note">{{scalePercent}}%</view>
+      </view>
+      <slider
+        class="scale-slider"
+        min="{{scaleMin}}"
+        max="{{scaleMax}}"
+        step="0.01"
+        value="{{playerScale}}"
+        activeColor="#FF641E"
+        backgroundColor="#DDE2E7"
+        block-color="#FF641E"
+        block-size="22"
+        bindchanging="handleScaleChange"
+        bindchange="handleScaleChange"
+      />
+    </view>
+    <view class="layout-hint">保持头顶、手臂和球鞋位于蓝色安全框内；需要时可让球鞋轻微压住底部铭牌。</view>
+  </view>
+
+  <view class="photo-tips">
+    <view class="tips-title">建议使用这样的照片</view>
+    <view>· 单人、光线充足、人物清晰</view>
+    <view>· 身体无遮挡，人物不要贴近照片边缘</view>
+    <view>· 避免多人合影、严重运动模糊和复杂球网</view>
+    <view>· 大尺寸照片会自动优化，无需提前裁剪压缩</view>
+  </view>
+
+  <button class="upload-btn" loading="{{processing}}" disabled="{{processing || portraitUploadQuota.remaining <= 0}}" bindtap="choosePhoto">{{hasResult ? '使用1次机会更换此形象' : '上传照片并自动抠图'}}</button>
+  <button wx:if="{{hasResult}}" class="finish-btn" loading="{{saving}}" disabled="{{saving || processing}}" bindtap="finish">保存人物位置</button>
+</view>

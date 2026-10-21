@@ -1,0 +1,12 @@
+page { background: #0F0F0F; }
+.container { min-height: 100vh; background: #0F0F0F; padding: 24rpx 28rpx calc(48rpx + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.hint { color: #777; font-size: 24rpx; margin-bottom: 18rpx; }
+.empty { color: #777; text-align: center; padding: 140rpx 0; font-size: 26rpx; }
+.venue-card { display: flex; gap: 16rpx; align-items: center; background: #1A1A1A; border: 1rpx solid #282828; border-radius: 20rpx; padding: 18rpx; margin-bottom: 14rpx; }
+.venue-cover { width: 108rpx; height: 108rpx; border-radius: 16rpx; background: #252525; flex-shrink: 0; }
+.empty-cover { display: flex; align-items: center; justify-content: center; color: #777; font-size: 22rpx; }
+.venue-main { flex: 1; min-width: 0; }
+.venue-name { color: #FFF; font-size: 28rpx; font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 6rpx; }
+.venue-meta, .venue-address, .venue-court { color: #888; font-size: 22rpx; line-height: 1.45; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.venue-court { color: #FFB36A; margin-top: 4rpx; }
+.enter-btn { height: 56rpx; line-height: 56rpx; border-radius: 28rpx; background: #FF6B1A; color: #FFF; padding: 0 20rpx; font-size: 23rpx; font-weight: 800; flex-shrink: 0; }

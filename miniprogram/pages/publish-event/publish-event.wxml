@@ -1,0 +1,361 @@
+<scroll-view class="container" scroll-y>
+  <page-guide guide-key="boss-publish-event" title="发布赛事 · 你将完成什么" content="填写赛事信息并发布后，球队即可报名；后续审核报名、编辑赛程、录入赛果都在该赛事的管理入口完成。"></page-guide>
+
+  <!-- 横幅上传 -->
+  <view class="banner-section">
+    <view wx:if="{{!banner && !bannerUploading}}" class="banner-placeholder" bindtap="uploadBanner">
+      <text class="banner-plus">＋</text>
+      <text class="banner-hint">上传赛事横幅 <text class="required">*</text></text>
+      <text class="banner-sub">建议 16:9 横版图片（必填）</text>
+    </view>
+    <view wx:elif="{{bannerUploading}}" class="banner-placeholder">
+      <text class="banner-hint">上传中...</text>
+    </view>
+    <view wx:else class="banner-preview" bindtap="uploadBanner">
+      <image class="banner-img" src="{{banner}}" mode="aspectFill"/>
+      <view class="banner-remove" catchtap="removeBanner">×</view>
+    </view>
+  </view>
+
+  <view class="form-body">
+
+    <!-- 赛事名称 -->
+    <view class="section">
+      <view class="section-title">赛事名称 <text class="required">*</text></view>
+      <textarea
+        class="title-input"
+        placeholder="填写比赛名称，如：2026广州夏季篮球公开赛"
+        placeholder-class="input-placeholder"
+        value="{{title}}"
+        bindinput="onTitleInput"
+        maxlength="50"
+        auto-height
+      />
+    </view>
+
+    <!-- 赛务联系二维码 -->
+    <view class="section">
+      <view class="section-title">赛务联系二维码 <text class="required">*</text></view>
+      <view wx:if="{{!captainGroupQr && !qrUploading}}" class="qr-upload-card" bindtap="uploadCaptainGroupQr">
+        <text class="qr-plus">＋</text>
+        <view class="qr-upload-main">
+          <text class="qr-upload-title">上传赛务联系二维码</text>
+          <text class="qr-upload-sub">仅确认参赛后用于赛务通知与现场沟通</text>
+        </view>
+      </view>
+      <view wx:elif="{{qrUploading}}" class="qr-upload-card">
+        <text class="qr-upload-title">上传中...</text>
+      </view>
+      <view wx:else class="qr-preview-card">
+        <image class="qr-preview-img" src="{{captainGroupQr}}" mode="aspectFit" bindtap="uploadCaptainGroupQr"/>
+        <view class="qr-preview-info">
+          <text class="qr-preview-title">已上传赛务联系二维码</text>
+          <text class="qr-preview-sub">二维码可能过期，赛前请及时更新</text>
+        </view>
+        <view class="qr-remove" catchtap="removeCaptainGroupQr">×</view>
+      </view>
+    </view>
+
+    <!-- 赛事介绍 -->
+    <view class="section">
+      <view class="section-title">赛事介绍</view>
+      <textarea
+        class="content-input"
+        placeholder="介绍这次比赛的规则、要求、注意事项..."
+        placeholder-class="input-placeholder"
+        value="{{content}}"
+        bindinput="onContentInput"
+        maxlength="500"
+        auto-height
+      />
+    </view>
+
+    <!-- 运动项目 -->
+    <view class="section">
+      <view class="section-title">运动项目 <text class="required">*</text></view>
+      <view class="sport-chips">
+        <view
+          wx:for="{{sports}}"
+          wx:key="index"
+          class="sport-chip {{sport === item ? 'active' : ''}}"
+          bindtap="selectSport"
+          data-sport="{{item}}"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 赛事信息 -->
+    <view class="section">
+      <view class="section-title">赛事信息</view>
+
+      <view class="form-row">
+        <text class="form-label">比赛开始日期 <text class="required">*</text></text>
+        <picker mode="date" value="{{eventData.startDate}}" bindchange="onStartDateChange">
+          <view class="form-picker {{eventData.startDate ? '' : 'placeholder'}}">
+            {{eventData.startDate || '选择开始日期'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-row">
+        <text class="form-label">比赛结束日期 <text class="required">*</text></text>
+        <picker mode="date" value="{{eventData.endDate}}" start="{{eventData.startDate}}" bindchange="onEndDateChange">
+          <view class="form-picker {{eventData.endDate ? '' : 'placeholder'}}">
+            {{eventData.endDate || '选择结束日期'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-row">
+        <text class="form-label">比赛地点 <text class="required">*</text></text>
+        <input class="form-input" placeholder="填写详细地址"
+          value="{{eventData.location}}"
+          bindinput="onEventInput" data-field="location"/>
+      </view>
+
+      <view class="form-row">
+        <text class="form-label">报名截止 <text class="required">*</text></text>
+        <picker mode="date" value="{{eventData.registrationDeadline}}" bindchange="onDeadlineChange">
+          <view class="form-picker {{eventData.registrationDeadline ? '' : 'placeholder'}}">
+            {{eventData.registrationDeadline || '选择截止日期'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-block">
+        <view class="form-block-label">赛制 <text class="required">*</text></view>
+        <view class="format-chips">
+          <view
+            wx:for="{{formats}}"
+            wx:key="index"
+            class="format-chip {{eventData.format === item ? 'active' : ''}}"
+            bindtap="selectFormat"
+            data-format="{{item}}"
+          >{{item}}</view>
+        </view>
+      </view>
+
+      <view class="form-block">
+        <view class="form-block-label">参赛形式</view>
+        <view wx:if="{{!sport}}" class="form-block-hint">请先选择运动项目</view>
+        <view wx:else class="format-chips">
+          <view
+            wx:for="{{teamSizeOptions}}"
+            wx:key="value"
+            class="format-chip {{eventData.teamSize == item.value || (item.value === 'custom' && eventData.customTeamSize) || (item.value === 'custom' && eventData.teamSizeLabel === '自定义人制') ? 'active' : ''}}"
+            bindtap="selectTeamSize"
+            data-value="{{item.value}}"
+            data-label="{{item.label}}"
+          >{{item.label}}</view>
+        </view>
+        <view wx:if="{{(sport === '足球' || sport === '羽毛球') && (eventData.teamSizeLabel === '自定义人制' || eventData.customTeamSize)}}" class="custom-team-size-row">
+          <input class="input custom-team-size-input" type="number" placeholder="输入每队上场人数，例如 10" placeholder-class="input-placeholder" value="{{eventData.customTeamSize}}" bindinput="onCustomTeamSizeInput"/>
+          <view class="custom-team-size-unit">人制</view>
+        </view>
+      </view>
+
+      <view class="form-block">
+        <view class="form-block-label">比赛时间 <text class="required">*</text></view>
+        <view class="two-col-inputs">
+          <view class="time-field">
+            <view class="field-label">总时间（分钟）</view>
+            <input class="input" type="number" placeholder="例如 90" placeholder-class="input-placeholder" value="{{eventData.matchDuration}}" data-field="matchDuration" bindinput="onEventInput"/>
+          </view>
+          <view class="time-field">
+            <view class="field-label">半场时间（分钟）</view>
+            <input class="input" type="number" placeholder="例如 45" placeholder-class="input-placeholder" value="{{eventData.halfDuration}}" data-field="halfDuration" bindinput="onEventInput"/>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{sport === '篮球'}}" class="basketball-template">
+        <view class="template-head">
+          <view>
+            <view class="template-title">篮球专属设置</view>
+            <view class="template-sub">用于后续分节比分、个人数据和赛程展示</view>
+          </view>
+        </view>
+
+        <view class="template-block">
+          <view class="template-label">比赛结构</view>
+          <view class="format-chips">
+            <view
+              wx:for="{{basketballStructures}}"
+              wx:key="index"
+              class="format-chip {{eventData.basketballConfig.matchStructure === item ? 'active' : ''}}"
+              data-field="matchStructure"
+              data-value="{{item}}"
+              bindtap="selectBasketballOption"
+            >{{item}}</view>
+          </view>
+        </view>
+
+        <view class="template-block">
+          <view class="template-label">单节/半场时长</view>
+          <view class="format-chips">
+            <view
+              wx:for="{{basketballPeriodLengths}}"
+              wx:key="index"
+              class="format-chip {{eventData.basketballConfig.periodLength === item ? 'active' : ''}}"
+              data-field="periodLength"
+              data-value="{{item}}"
+              bindtap="selectBasketballOption"
+            >{{item}}</view>
+          </view>
+        </view>
+
+        <view class="template-block">
+          <view class="template-label">加时规则</view>
+          <view class="format-chips">
+            <view
+              wx:for="{{basketballOvertimes}}"
+              wx:key="index"
+              class="format-chip {{eventData.basketballConfig.overtime === item ? 'active' : ''}}"
+              data-field="overtime"
+              data-value="{{item}}"
+              bindtap="selectBasketballOption"
+            >{{item}}</view>
+          </view>
+        </view>
+
+        <view class="template-block">
+          <view class="template-label">场地类型</view>
+          <view class="format-chips">
+            <view
+              wx:for="{{basketballCourtTypes}}"
+              wx:key="index"
+              class="format-chip {{eventData.basketballConfig.courtType === item ? 'active' : ''}}"
+              data-field="courtType"
+              data-value="{{item}}"
+              bindtap="selectBasketballOption"
+            >{{item}}</view>
+          </view>
+        </view>
+
+        <view class="template-block">
+          <view class="template-label">犯规规则</view>
+          <view class="format-chips">
+            <view
+              wx:for="{{basketballFoulRules}}"
+              wx:key="index"
+              class="format-chip {{eventData.basketballConfig.foulRule === item ? 'active' : ''}}"
+              data-field="foulRule"
+              data-value="{{item}}"
+              bindtap="selectBasketballOption"
+            >{{item}}</view>
+          </view>
+        </view>
+
+        <view class="template-block">
+          <view class="template-label">暂停规则</view>
+          <view class="format-chips">
+            <view
+              wx:for="{{basketballTimeoutRules}}"
+              wx:key="index"
+              class="format-chip {{eventData.basketballConfig.timeoutRule === item ? 'active' : ''}}"
+              data-field="timeoutRule"
+              data-value="{{item}}"
+              bindtap="selectBasketballOption"
+            >{{item}}</view>
+          </view>
+        </view>
+
+        <view class="template-toggle-row" bindtap="toggleBasketballJersey">
+          <view>
+            <view class="template-label no-margin">报名需填写球衣号码</view>
+            <view class="template-sub">便于现场记录和个人数据录入</view>
+          </view>
+          <view class="switch {{eventData.basketballConfig.requireJerseyNumber ? 'on' : ''}}">
+            <view class="switch-dot"></view>
+          </view>
+        </view>
+
+        <view class="template-block last">
+          <view class="template-label">个人数据统计</view>
+          <view class="stats-toggles">
+            <view class="stat-toggle {{eventData.basketballConfig.stats.points ? 'active' : ''}}" data-key="points" bindtap="toggleBasketballStat">得分</view>
+            <view class="stat-toggle {{eventData.basketballConfig.stats.rebounds ? 'active' : ''}}" data-key="rebounds" bindtap="toggleBasketballStat">篮板</view>
+            <view class="stat-toggle {{eventData.basketballConfig.stats.assists ? 'active' : ''}}" data-key="assists" bindtap="toggleBasketballStat">助攻</view>
+            <view class="stat-toggle {{eventData.basketballConfig.stats.turnovers ? 'active' : ''}}" data-key="turnovers" bindtap="toggleBasketballStat">失误</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-row">
+        <text class="form-label">队伍人数上限</text>
+        <input class="form-input" placeholder="含替补，不填则不限" type="number"
+          value="{{eventData.maxTeamMembers}}"
+          bindinput="onEventInput" data-field="maxTeamMembers"/>
+      </view>
+
+      <view class="form-row">
+        <text class="form-label">参赛队数上限</text>
+        <input class="form-input" placeholder="不填则不限制" type="number"
+          value="{{eventData.maxTeams}}"
+          bindinput="onEventInput" data-field="maxTeams"/>
+      </view>
+
+      <view class="form-row">
+        <text class="form-label">报名费（主办方自收）</text>
+        <input class="form-input" placeholder="免费填 0，收费由主办方自收" type="number"
+          value="{{eventData.entryFee}}"
+          bindinput="onEventInput" data-field="entryFee"/>
+      </view>
+
+    </view>
+
+    <!-- 奖金设置 -->
+    <view class="section">
+      <view class="section-title">奖金设置</view>
+      <view class="prizes-wrap">
+        <view class="prize-row" wx:for="{{prizes}}" wx:key="index" wx:for-item="tier">
+          <image wx:if="{{tier.label === '冠军'}}" class="prize-medal-img" src="/images/icons/medal-gold.png" mode="aspectFit"/>
+          <image wx:elif="{{tier.label === '亚军'}}" class="prize-medal-img" src="/images/icons/medal-silver.png" mode="aspectFit"/>
+          <image wx:elif="{{tier.label === '季军'}}" class="prize-medal-img" src="/images/icons/medal-bronze.png" mode="aspectFit"/>
+          <text wx:else class="prize-medal">{{tier.medal}}</text>
+          <text class="prize-rank-label">{{tier.label}}</text>
+          <view class="prize-amount-wrap">
+            <text class="prize-currency">¥</text>
+            <input class="prize-amount-input" type="number" placeholder="金额（选填）" value="{{tier.amount}}"
+              bindinput="onPrizeInput" data-index="{{index}}"/>
+          </view>
+        </view>
+        <view class="prize-row" wx:for="{{customPrizes}}" wx:key="index" wx:for-item="cp">
+          <text class="prize-medal">🎖</text>
+          <input class="custom-label-input" placeholder="奖项名称" value="{{cp.label}}"
+            bindinput="onCustomLabel" data-index="{{index}}"/>
+          <view class="prize-amount-wrap">
+            <text class="prize-currency">¥</text>
+            <input class="prize-amount-input" type="number" placeholder="金额" value="{{cp.amount}}"
+              bindinput="onCustomAmount" data-index="{{index}}"/>
+          </view>
+          <view class="prize-del" catchtap="removeCustomPrize" data-index="{{index}}">×</view>
+        </view>
+        <view class="add-custom-btn" bindtap="addCustomPrize">+ 添加自定义奖项</view>
+      </view>
+    </view>
+
+    <!-- 详情照片 -->
+    <view class="section">
+      <view class="section-title">详情照片</view>
+      <view class="img-grid">
+        <view class="img-thumb" wx:for="{{images}}" wx:key="index">
+          <image class="thumb-img" src="{{item}}" mode="aspectFill"/>
+          <view class="thumb-del" catchtap="removeImage" data-index="{{index}}">×</view>
+        </view>
+        <view wx:if="{{images.length < 4 && !imagesUploading}}" class="img-add-tile" bindtap="pickImages">
+          <text class="img-add-icon">＋</text>
+          <text class="img-add-hint">{{images.length === 0 ? '添加照片' : '继续添加'}}</text>
+        </view>
+        <view wx:elif="{{imagesUploading}}" class="img-add-tile">
+          <text class="img-add-hint">上传中...</text>
+        </view>
+      </view>
+      <view class="img-tip">最多4张，选填</view>
+    </view>
+
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="submit">{{editMode ? '保存修改' : '发布赛事'}}</view>
+
+  </view>
+
+</scroll-view>

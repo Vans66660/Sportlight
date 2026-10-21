@@ -1,0 +1,18 @@
+<view class="container">
+  <view class="hint">选择 30km 内已审核球场</view>
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{venues.length === 0}}" class="empty">附近暂无已审核球场</view>
+  <view wx:else class="venue-list">
+    <view wx:for="{{venues}}" wx:key="_id" class="venue-card" bindtap="selectVenue" data-id="{{item._id}}">
+      <image wx:if="{{item.coverImage}}" class="venue-cover" src="{{item.coverImage}}" mode="aspectFill"/>
+      <view wx:else class="venue-cover empty-cover">球场</view>
+      <view class="venue-main">
+        <view class="venue-name">{{item.name}}</view>
+        <view class="venue-meta">{{item.distanceText}} · {{item.venueType}}</view>
+        <view class="venue-address">{{item.address}}</view>
+        <view class="venue-court">{{item.courtSummary}}</view>
+      </view>
+      <view class="enter-btn" catchtap="openVenue" data-id="{{item._id}}">进入</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,142 @@
+.container {
+  min-height: 100vh;
+  background-color: #0F0F0F;
+  padding-bottom: 60rpx;
+}
+
+.header {
+  background-color: #111111;
+  padding: 20rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-btn {
+  font-size: 60rpx;
+  color: #FF6B1A;
+  line-height: 1;
+  width: 60rpx;
+}
+
+.header-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.save-btn {
+  font-size: 28rpx;
+  color: #FF6B1A;
+  font-weight: 500;
+}
+
+.section {
+  padding: 28rpx 28rpx 0;
+}
+
+.section-title {
+  font-size: 22rpx;
+  color: #555555;
+  letter-spacing: 2rpx;
+  margin-bottom: 20rpx;
+}
+
+.photo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.profile-photo {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background-color: #1A1A1A;
+  margin-bottom: 16rpx;
+}
+
+.photo-edit {
+  font-size: 26rpx;
+  color: #FF6B1A;
+}
+
+.label {
+  font-size: 24rpx;
+  color: #555555;
+  margin-bottom: 10rpx;
+  margin-top: 24rpx;
+}
+
+.input-box {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  font-size: 28rpx;
+  color: #FFFFFF;
+  width: 100%;
+}
+
+.select-box {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  font-size: 28rpx;
+  color: #444444;
+  display: flex;
+  justify-content: space-between;
+}
+
+.arrow { color: #444; }
+
+.tag-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.tag-btn {
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 40rpx;
+  padding: 12rpx 28rpx;
+  font-size: 26rpx;
+  color: #888888;
+}
+
+.tag-btn.active {
+  background-color: rgba(255, 107, 26, 0.15);
+  border-color: #FF6B1A;
+  color: #FF6B1A;
+}
+
+.price-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.price-box {
+  flex: 1;
+  background-color: #1A1A1A;
+  border: 1rpx solid #2A2A2A;
+  border-radius: 20rpx;
+  padding: 20rpx 24rpx;
+}
+
+.price-label {
+  font-size: 20rpx;
+  color: #555555;
+  margin-bottom: 8rpx;
+}
+
+.price-input-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6rpx;
+}
+
+.currency { font-size: 24rpx; color: #555555; }
+.price-input { font-size: 36rpx; font-weight: 500; color: #FFFFFF; flex: 1; }

@@ -1,0 +1,64 @@
+<scroll-view class="container" scroll-y>
+  <view class="section">
+    <view class="section-title">时间</view>
+    <view class="time-grid">
+      <picker mode="date" value="{{form.date}}" bindchange="onDateChange"><view class="input-box">{{form.date}}</view></picker>
+      <picker mode="time" value="{{form.startTime}}" bindchange="onStartChange"><view class="input-box">{{form.startTime}}</view></picker>
+      <picker mode="time" value="{{form.endTime}}" bindchange="onEndChange"><view class="input-box">{{form.endTime}}</view></picker>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">选择球场</view>
+    <view class="venue-picker-card" bindtap="goVenueSelect">
+      <view>
+        <view class="venue-picker-title">{{selectedVenue ? selectedVenue.name : '选择30km内球场'}}</view>
+        <view class="venue-picker-sub">{{selectedVenue ? selectedVenue.address : '点击进入球场列表，卡片右侧可查看主页'}}</view>
+      </view>
+      <view class="venue-picker-action">选择</view>
+    </view>
+    <view wx:if="{{loadingOptions}}" class="empty">加载可用场地...</view>
+    <view wx:if="{{selectedVenue}}" class="venue-block">
+      <view class="venue-head active">
+        <view>{{selectedVenue.name}}</view><text>{{selectedVenue.address}}</text>
+      </view>
+      <view class="court-grid">
+        <view wx:for="{{selectedVenue.courts}}" wx:key="courtId" class="court-chip {{item.disabled ? 'disabled' : ''}} {{selectedCourt && selectedCourt.courtId === item.courtId ? 'active' : ''}}" bindtap="selectCourt" data-id="{{item.courtId}}">
+          <view>{{item.courtName}}</view><text>{{item.statusLabel}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">组局信息</view>
+    <view class="seg-row">
+      <view wx:for="{{sportOptions}}" wx:key="*this" class="seg {{form.sport === item ? 'active' : ''}}" bindtap="setSport" data-value="{{item}}">{{item}}</view>
+    </view>
+    <input wx:if="{{form.sport === '其他'}}" class="text-input" placeholder="填写活动种类" value="{{form.customSport}}" bindinput="onInput" data-field="customSport"/>
+    <textarea class="textarea" maxlength="300" placeholder="活动公告（选填）" value="{{form.notice}}" bindinput="onInput" data-field="notice"/>
+    <view class="time-grid two">
+      <input class="text-input" type="number" placeholder="发车人数" value="{{form.minPlayers}}" bindinput="onInput" data-field="minPlayers"/>
+      <input class="text-input" type="number" placeholder="上限人数" value="{{form.maxPlayers}}" bindinput="onInput" data-field="maxPlayers"/>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">报名截止</view>
+    <view class="section-sub">建议设在开场前2小时到30分钟之间。</view>
+    <view class="time-grid two">
+      <picker mode="date" value="{{form.deadlineDate}}" bindchange="onDeadlineDateChange"><view class="input-box">{{form.deadlineDate}}</view></picker>
+      <picker mode="time" value="{{form.deadlineTime}}" bindchange="onDeadlineTimeChange"><view class="input-box">{{form.deadlineTime}}</view></picker>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">支付方式</view>
+    <view class="seg-row">
+      <view wx:for="{{paymentOptions}}" wx:key="key" class="seg {{form.paymentMethod === item.key ? 'active' : ''}}" bindtap="setPayment" data-value="{{item.key}}">{{item.label}}</view>
+    </view>
+    <view class="section-sub">{{form.paymentMethod === 'aa' ? '报名人报名时预交散客费。' : (form.paymentMethod === 'private' ? '包场人支付该场地时段的包场费；创建成功后该球局不会在大厅展示，只有包场人分享链接后，其他人才能通过链接进入并上车。' : '发起人预交上限人数散客费，截止后按缺口退款。')}}</view>
+  </view>
+
+  <view class="submit-btn" bindtap="submit">发起组局</view>
+</scroll-view>

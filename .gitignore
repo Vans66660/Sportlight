@@ -1,0 +1,45 @@
+# Windows
+[Dd]esktop.ini
+Thumbs.db
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+
+# Node.js
+node_modules/
+
+# 微信小程序
+miniprogram_npm/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 日志
+*.log
+npm-debug.log*
+
+# 临时文件
+*.tmp
+*.temp
+
+# 密钥（不要提交私钥）
+*.pem
+*.p12
+*.key
+
+# 微信开发者工具
+.tea/
+
+# Local settings and secrets
+project.private.config.json
+.env
+.env.*
+!.env.example
